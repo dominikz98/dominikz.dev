@@ -1,0 +1,7 @@
+﻿input:focus {
+    outline: none !important;
+}
+
+.dz-focus-primary:hover {
+    border-color: var(--color-primary) !important;
+}

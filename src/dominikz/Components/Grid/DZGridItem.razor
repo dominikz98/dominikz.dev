@@ -1,0 +1,21 @@
+﻿
+<div style="@CreateItemStyle()">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter]
+    protected internal int Spacing { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateItemStyle()
+       => _cssBuilder.Create()
+           .SetMargin(new Spacing(Spacing))
+           .Build();
+}

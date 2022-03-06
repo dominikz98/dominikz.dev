@@ -1,0 +1,48 @@
+﻿@page "/pap"
+@using System.Text.Json
+
+<div style="@CreateContainerStyle()">
+    <canvas style="@CreateCanvasStyle()" id="tm_scene"></canvas>
+    <canvas style="@CreateCanvasStyle()" id="tm_selection"></canvas>
+</div>
+
+@code {
+
+    [Inject]
+    private IJSRuntime _jsRuntime { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    [Inject]
+    private CSSTheme _cssTheme { get; set; }
+
+    [Inject]
+    private DataContext _context { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var theme = new
+        {
+            Dot = 25,
+            Spacing = 10,
+            FontSize = 30,
+            ImgWidth = 200,
+            ImgHeight = 100,
+            Primary = _cssTheme.GetHex(ThemeColor.Primary, CSSOpacity.P100),
+            Surface = _cssTheme.GetHex(ThemeColor.Surface, CSSOpacity.P100),
+        };
+        var paps = await _context.From(new Get<List<VMPenAndPaper>>(Endpoints.PenAndPaper.Get), default);
+        await _jsRuntime.InvokeVoidAsync("drawTreasureMap", JsonSerializer.Serialize(paps), JsonSerializer.Serialize(theme));
+    }
+
+    private string CreateContainerStyle()
+        => _cssBuilder.Create()
+            .SetPosition(CSSPosition.Relative)
+            .Build();
+
+    private string CreateCanvasStyle()
+        => _cssBuilder.Create()
+            .SetAbsolutePosition(0, null, null, 0)
+            .Build();
+}

@@ -1,0 +1,40 @@
+﻿
+<div class="dz-hover fullWidthOnMobileWithoutBorder" style="@CreateNavlinkStyle()">
+
+    <DZGrid ItemAlgin=CSSAlignment.Center>
+        <DZText>@Text</DZText>
+        <DZSpacer Spacing=3 Style=SpacingStyle.LeftAndRight />
+        <div class="hideOnMobile">
+            <DZIcon Icon="fas fa-chevron-down" Size=@CSSSize.Normal />
+        </div>
+    </DZGrid>
+
+    <div class="dz-hover-content fullWidthOnMobileWithoutBorder" style="@CreateContentStyle()">
+        @ChildContent
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateNavlinkStyle()
+        => _cssBuilder.Create()
+            .SetMargin(new Spacing(5))
+            .SetPadding(new Spacing(5))
+            .Build();
+
+    private string CreateContentStyle()
+        => _cssBuilder.Create()
+            .SetBackground(ThemeColor.Menu)
+            .SetWidth(160)
+            //.SetBorder(4, 1, ThemeColor.Secondary)
+            .Build();
+}

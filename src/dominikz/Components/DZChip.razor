@@ -1,0 +1,26 @@
+﻿<div class="dz-hover" style="@CreateChipContainerStyle()">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public CSSSize Size { get; set; } = CSSSize.Normal;
+
+    [Parameter]
+    public ThemeColor Color { get; set; } = ThemeColor.Secondary;
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateChipContainerStyle()
+        => _cssBuilder.Create()
+            .SetColor(Color)
+            .SetPadding(new Spacing(5, 10, Size))
+            .SetMargin(new Spacing(5))
+            .SetBorder(50, 1.5, Color)
+            .SetDisplay(CSSDisplay.Inline_flex)
+            .Build();
+}

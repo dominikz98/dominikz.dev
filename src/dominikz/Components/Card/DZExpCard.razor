@@ -1,0 +1,36 @@
+﻿<div style="@CreateCardStyle()">
+    <CascadingValue Value=this>
+        @ChildContent
+    </CascadingValue>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public int Width { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    public bool Expanded { get; private set; }
+
+    public void ExpandClicked()
+    {
+        Console.WriteLine("ExpandClicked");
+        Expanded = !Expanded;
+        StateHasChanged();
+    }
+
+    private string CreateCardStyle()
+       => _cssBuilder.Create()
+           .SetBackground(ThemeColor.Surface)
+           .SetBorder(4, 0, ThemeColor.Surface)
+           .SetShadow(1, 1, 3, "black")
+           .SetWidthInPercent(Width)
+           .SetPadding(new Spacing(10))
+           .Build();
+}

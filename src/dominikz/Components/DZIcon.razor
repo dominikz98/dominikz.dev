@@ -1,0 +1,32 @@
+﻿<i class="@Icon" style="@CreateIconStyle()"></i>
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public ThemeColor Color { get; set; } = ThemeColor.Secondary;
+
+    [Parameter]
+    public string CustomColor { get; set; }
+
+    [Parameter]
+    public CSSSize Size { get; set; } = CSSSize.Large;
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateIconStyle()
+    {
+        var config = _cssBuilder.Create()
+            .SetFontSize(Size)
+            .SetMargin(new Spacing(2));
+
+        if (!string.IsNullOrWhiteSpace(CustomColor))
+            config.SetColor(CustomColor);
+        else
+            config.SetColor(Color);
+
+        return config.Build();
+    }
+}

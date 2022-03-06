@@ -1,0 +1,17 @@
+﻿.click-chip, .click-chip-hover {
+    padding: 5px 10px;
+    border-radius: 50px;
+    display: inline-flex;
+    margin: 5px;
+    cursor: pointer;
+}
+
+    .click-chip-hover:hover {
+        filter: brightness(70%);
+    }
+
+.outline {
+    border: 1.5px solid #cccccc;
+    color: #cccccc;
+    outline: none;
+}

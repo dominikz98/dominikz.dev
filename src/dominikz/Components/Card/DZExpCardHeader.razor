@@ -1,0 +1,23 @@
+﻿
+<DZGrid Direction=CSSDirection.Row JustifyContent=CSSJustifyContent.Space_Between ItemAlgin=CSSAlignment.Center>
+    <DZGridItem>
+        @ChildContent
+    </DZGridItem>
+    <DZGridItem>
+        <DZIconButton Icon=@GetIcon() OnClick=@(() => Parent?.ExpandClicked()) />
+    </DZGridItem>
+</DZGrid>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter]
+    protected internal DZExpCard Parent { get; set; }
+
+    private string GetIcon()
+        => (Parent?.Expanded ?? false)
+            ? "fas fa-chevron-up"
+            : "fas fa-chevron-down";
+}

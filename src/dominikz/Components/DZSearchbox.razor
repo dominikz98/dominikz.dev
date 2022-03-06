@@ -1,0 +1,42 @@
+﻿<div class="dz-focus-primary fullWidthOnMobile" style="@CreateContainerStyle()">
+    <div style="@CreateIconStyle()">
+        <DZIcon Icon=@Icon />
+    </div>
+    <input type="text" style="@CreateSearchboxStyle()" placeholder="Search ..." @oninput=OnInput>
+</div>
+
+@code {
+
+    [Inject]
+    public CSSBuilder _cssBuilder { get; set; }
+
+    [Parameter]
+    public int Width { get; set; } = 300;
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnInput { get; set; }
+
+    public string Icon { get; set; } = "fas fa-search";
+
+    private string CreateSearchboxStyle()
+        => _cssBuilder.Create()
+            .SetBorder(0, 0, ThemeColor.Background)
+            .SetColor(ThemeColor.Secondary)
+            .SetBackground(ThemeColor.Background)
+            .SetPadding(new Spacing(8))
+            .SetWidthInPercent(98)
+            .SetMargin(new Spacing(0, 2, 0, 0, CSSSize.Normal))
+            .Build();
+
+    private string CreateContainerStyle()
+        => _cssBuilder.Create()
+            .SetWidth(Width)
+            .SetFlex(new FlexBox() { ItemAlignment = CSSAlignment.Center })
+            .SetBorder(0, 0, 0, 1, 0, ThemeColor.Secondary)
+            .Build();
+
+    private string CreateIconStyle()
+        => _cssBuilder.Create()
+            .SetMargin(new Spacing(0, 0, 0, 6, CSSSize.Normal))
+            .Build();
+}

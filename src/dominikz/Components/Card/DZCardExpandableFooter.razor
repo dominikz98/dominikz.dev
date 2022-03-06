@@ -1,0 +1,19 @@
+﻿<div class="dz-hover-content-relative" style="@CreateFooterStyle()">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateFooterStyle()
+        => _cssBuilder.Create()
+            .SetBorder(0, 1, 0, 0, 0, ThemeColor.Secondary)
+            .SetMargin(new Spacing(0, 10, 0, 10, CSSSize.Normal))
+            .SetPadding(new Spacing(10, 0, 10, 0, CSSSize.Normal))
+            .Build();
+}

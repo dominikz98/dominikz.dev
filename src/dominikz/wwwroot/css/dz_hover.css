@@ -1,0 +1,28 @@
+﻿.dz-hover:hover {
+    filter: brightness(0.80);
+}
+
+.dz-hover-black:hover {
+    background-color: rgba(0,0,0, 0.7);
+}
+
+@media (min-width: 769px) {
+    .dz-hover:hover .dz-hover-content {
+        display: inline-block;
+    }
+
+    .dz-hover:hover .dz-hover-content-relative {
+        display: block;
+        position: relative;
+    }
+
+    .dz-hover-content {
+        position: absolute;
+        display: none;
+    }
+
+    .dz-hover-content-relative {
+        position: absolute;
+        display: none;
+    }
+}

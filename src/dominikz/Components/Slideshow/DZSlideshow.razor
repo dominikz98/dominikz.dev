@@ -1,0 +1,112 @@
+﻿
+<div style="@CreateSlideshowStyle()">
+
+    <div style="@CreatePrevStyle()">
+        <DZIconButton Icon="fas fa-chevron-left" OnClick=Prev />
+    </div>
+
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+
+    <div style="@CreateNextStyle()">
+        <DZIconButton Icon="fas fa-chevron-right" OnClick=Next />
+    </div>
+
+    <div style="@CreateNavStyle()">
+
+        @for (var i = 0; i < _itemCount; i++)
+        {
+            if (_selectedIndex == i)
+            {
+                <DZIconButton Color=ThemeColor.Primary Icon="fas fa-circle" />
+            }
+            else
+            {
+                <DZIconButton Icon="far fa-circle" />
+            }
+        }
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    public event EventHandler OnSelectedItemChanged;
+    private List<DZSlideshowItem> _items { get; } = new();
+    private int _itemCount;
+
+    private int _selectedIndex;
+    private DZSlideshowItem _selectedItem;
+    public DZSlideshowItem SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            _selectedItem = value;
+            _selectedIndex = _items.IndexOf(value);
+            OnSelectedItemChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    public void AddItem(DZSlideshowItem item)
+    {
+        _items.Add(item);
+        _itemCount++;
+        Set(0);
+    }
+
+    private void Prev()
+    {
+        var index = SelectedItem == null ? 0 : _items.IndexOf(SelectedItem);
+        index = Math.Max(0, --index);
+        Set(index);
+    }
+
+    private void Next()
+    {
+        var index = SelectedItem == null ? 0 : _items.IndexOf(SelectedItem);
+        index = Math.Min(_items.Count - 1, ++index);
+        Set(index);
+    }
+
+    private void Set(int index)
+    {
+        SelectedItem = _items.ElementAt(index);
+    }
+
+    private string CreateNextStyle()
+        => _cssBuilder.Create()
+        .SetAbsolutePosition(null, 0, null, null)
+        .Build();
+
+    private string CreatePrevStyle()
+        => _cssBuilder.Create()
+        .SetAbsolutePosition(null, null, null, 0)
+        .Build();
+
+    private string CreateSlideshowStyle()
+        => _cssBuilder.Create()
+        .SetPosition(CSSPosition.Relative)
+        .SetWidthInPercent(100)
+        .SetFlex(new FlexBox() { ItemAlignment = CSSAlignment.Center, JustifyContent = CSSJustifyContent.Center })
+        .Build();
+
+    private string CreateNavStyle()
+        => _cssBuilder.Create()
+        .SetAbsolutePosition(null, null, 0, null)
+        .SetFlex(new FlexBox() { JustifyContent = CSSJustifyContent.Center })
+        .Build();
+
+}

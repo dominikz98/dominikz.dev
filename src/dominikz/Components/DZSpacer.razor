@@ -1,0 +1,26 @@
+﻿<div style="@CreateSpacerStyle()"></div>
+
+@code {
+
+    [Parameter]
+    public int Spacing { get; set; }
+
+    [Parameter]
+    public SpacingStyle Style { get; set; } = SpacingStyle.All;
+
+    [Inject]
+    public CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateSpacerStyle()
+        => _cssBuilder.Create()
+            .SetMargin(CreateSpacingFromStyle())
+            .Build();
+
+    private Spacing CreateSpacingFromStyle()
+        => Style switch
+        {
+            SpacingStyle.LeftAndRight => new Spacing(0, Spacing),
+            SpacingStyle.TopAndBottom => new Spacing(Spacing, 0),
+            SpacingStyle.All or _ => new Spacing(Spacing)
+        };
+}

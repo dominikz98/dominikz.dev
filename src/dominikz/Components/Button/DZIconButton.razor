@@ -1,0 +1,40 @@
+﻿
+<i class="dz-hover-black @Icon" style="@CreateIconStyle()"  @onclick=OnIconClick></i>
+
+@code {
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public ThemeColor Color { get; set; } = ThemeColor.Secondary;
+
+    [Parameter]
+    public string CustomColor { get; set; }
+
+    [Parameter]
+    public CSSSize Size { get; set; } = CSSSize.Large;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateIconStyle()
+    {
+        var config = _cssBuilder.Create()
+            .SetMargin(new Spacing(5))
+            .SetPadding(new Spacing(10))
+            .SetBorder(50, 0d, Color).SetFontSize(Size);
+
+        if (!string.IsNullOrWhiteSpace(CustomColor))
+            config.SetColor(CustomColor);
+        else
+            config.SetColor(Color);
+
+        return config.Build();
+    }
+    
+    private async Task OnIconClick()
+        => await OnClick.InvokeAsync();
+}

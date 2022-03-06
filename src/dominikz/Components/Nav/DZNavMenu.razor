@@ -1,0 +1,52 @@
+﻿
+<div style="@CreateMenuStyle()">
+
+    <div class="hideOnDesktop" style="@CreateHeaderStyle()">
+        <DZText Typo=CSSTypo.H1>&lt;dz/&gt;</DZText>
+
+        <div style="@CreateMobilMenuStyle()">
+            <DZIconButton Icon="fas fa-bars" OnClick="(() => _show = !_show)" />
+        </div>
+    </div>
+
+    <DZGrid ItemAlgin=CSSAlignment.Center>
+
+        <div class="hideOnMobile" style="@CreateHeaderStyle()">
+            <DZText Typo=CSSTypo.H1>&lt;dz/&gt;</DZText>
+        </div>
+
+        @if (_show)
+        {
+            @ChildContent
+        }
+
+    </DZGrid>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private bool _show = true;
+
+    private string CreateMenuStyle()
+        => _cssBuilder.Create()
+            .SetBackground(ThemeColor.Menu)
+            .SetWidthInPercent(100)
+            .Build();
+
+    private string CreateHeaderStyle()
+        => _cssBuilder.Create()
+            .SetFlex(new FlexBox())
+            .SetHeight(50)
+            .SetItemAlignment(CSSAlignment.Center)
+            .Build();
+
+    private string CreateMobilMenuStyle()
+        => _cssBuilder.Create()
+            .SetAbsolutePosition(null, 0, null, null)
+            .Build();
+}

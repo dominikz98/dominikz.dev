@@ -1,0 +1,59 @@
+﻿@page "/blog"
+
+<DZGrid Spacing=5>
+    @foreach (var post in _blogposts)
+    {
+        <DZGridItem>
+
+            <DZCard Width=300 OnClick=@(() => NavigateToBlogpost(post.Id))>
+                <DZCardImageHeader Height=200 ImageUrl=@post.Banner />
+
+                <DZCardContent>
+                    <DZGrid Direction=CSSDirection.Column>
+                        <DZText Typo="@CSSTypo.H2" Color="@ThemeColor.Primary">@post.Title</DZText>
+                        <DZText Typo="@CSSTypo.Subtitle">@post.Release.ToShortDateString()</DZText>
+                    </DZGrid>
+                </DZCardContent>
+
+                <DZCardExpandableFooter>
+                    <DZGrid Direction=CSSDirection.Column Spacing=5>
+                        <DZGridItem>
+                            <DZText>@post.Description</DZText>
+                        </DZGridItem>
+                        <DZGridItem>
+                            <DZGrid>
+                                @foreach (var tag in post.Tags)
+                                {
+                                    <DZChip Size=CSSSize.Small>@tag</DZChip>
+                                }
+                            </DZGrid>
+                        </DZGridItem>
+                        <DZGridItem>
+                            <DZButton OnClick=@(() => NavigateToBlogpost(post.Id)) Text="Show Post" />
+                        </DZGridItem>
+                    </DZGrid>
+                </DZCardExpandableFooter>
+            </DZCard>
+        </DZGridItem>
+    }
+</DZGrid>
+
+@code {
+    [Inject]
+    public DataContext DataContext { get; set; }
+
+    [Inject]
+    public NavigationManager NavManager { get; set; }
+
+    private List<VMBlogpostPreview> _blogposts { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _blogposts = (await DataContext.From(new Get<IReadOnlyList<VMBlogpostPreview>>(Endpoints.Blog.Get), default)).ToList();
+        foreach (var post in _blogposts)
+            post.Banner += "?height=200&width=300";
+    }
+
+    private void NavigateToBlogpost(int postId)
+        => NavManager.NavigateTo($"/blog/{postId}");
+}

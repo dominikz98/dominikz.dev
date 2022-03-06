@@ -1,0 +1,20 @@
+﻿<img src="@ImageUrl" style="@CreateImageStyle()"/>
+
+@code {
+
+    [Parameter]
+    public string ImageUrl { get; set; }
+
+    [Parameter]
+    public int Height { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private string CreateImageStyle()
+        => _cssBuilder.Create()
+            .SetObjectFit(CSSObjectFit.Cover)
+            .SetWidthInPercent(100)
+            .SetHeight(Height)
+            .Build();
+}

@@ -1,0 +1,85 @@
+﻿<div style="@_containerStyle" @onclick=DirectionChanged>
+
+    <DZIcon Color=@_color Icon=@Icon />
+
+    @if (_direction == SortDirection.Ascending || _direction == SortDirection.None)
+    {
+        <i class="fas fa-long-arrow-alt-down"></i>
+    }
+    else
+    {
+        <i class="fas fa-long-arrow-alt-up"></i>
+    }
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public EventCallback<SortDirection> OnDirectionChanged { get; set; }
+
+    [CascadingParameter]
+    protected internal DZSortField Parent { get; set; }
+
+    [Inject]
+    public CSSBuilder _cssBuilder { get; set; }
+
+    [Inject]
+    public CSSTheme _cssTheme { get; set; }
+
+    public event EventHandler SortingChanged;
+    private string _containerStyle;
+    private SortDirection _direction { get; set; }
+    private ThemeColor _color = ThemeColor.Secondary;
+
+    protected override void OnInitialized()
+    {
+        Parent.AddSort(this);
+        RefreshLayout();
+    }
+
+    private async Task DirectionChanged(MouseEventArgs _)
+    {
+        var direction = _direction switch
+        {
+            SortDirection.Ascending => SortDirection.Descending,
+            SortDirection.Descending => SortDirection.None,
+            SortDirection.None or _ => SortDirection.Ascending
+        };
+        await SetDirection(direction);
+    }
+
+    public async Task SetDirection(SortDirection direction)
+    {
+        _direction = direction;
+        RefreshLayout();
+        SortingChanged?.Invoke(this, null);
+        await OnDirectionChanged.InvokeAsync(_direction);
+    }
+
+    public void SetDirectionWithoutEvents(SortDirection direction)
+    {
+        _direction = direction;
+        RefreshLayout();
+    }
+
+    private void RefreshLayout()
+    {
+        _color = _direction switch
+        {
+            SortDirection.Ascending or SortDirection.Descending => ThemeColor.Primary,
+            SortDirection.None or _ => ThemeColor.Secondary
+        };
+
+        _containerStyle = _cssBuilder.Create()
+              .SetMargin(new Spacing(5))
+              .SetPadding(new Spacing(8))
+              .SetBorder(5, 0.7, _color)
+              .SetCursor(CSSCursor.Pointer)
+              .SetColor(_color)
+              .Build();
+    }
+}

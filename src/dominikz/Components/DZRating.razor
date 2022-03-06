@@ -1,0 +1,63 @@
+﻿<div>
+    <div style="@CreateContainerStyle()">
+        @for (var i = 0; i < Full; i++)
+        {
+            <i class="fas fa-star" style="@CreateStarStyle()"></i>
+        }
+
+        @for (var i = 0; i < Half; i++)
+        {
+            <i class="fas fa-star-half-alt" style="@CreateStarStyle()"></i>
+        }
+
+        @for (var i = 0; i < Empty; i++)
+        {
+            <i class="far fa-star" style="@CreateStarStyle()"></i>
+        }
+    </div>
+
+    <hr />
+
+    @if (!string.IsNullOrWhiteSpace(Icon) && !string.IsNullOrWhiteSpace(Title))
+    {
+        <DZGrid JustifyContent=CSSJustifyContent.Center>
+            <DZIcon Icon="@Icon" />
+            <DZText><b>· @Title</b></DZText>
+        </DZGrid>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public double Score { get; set; }
+
+    [Parameter]
+    public CSSSize Size { get; set; } = CSSSize.Normal;
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Inject]
+    private CSSBuilder _cssBuilder { get; set; }
+
+    private int Full { get => (int)(Score / 1); }
+    private int Half { get => (Score - Full) < 0.5 ? 0 : 1; }
+    private int Empty { get => (int)(5 - Math.Round(Score, 0, MidpointRounding.AwayFromZero)); }
+
+    private string CreateContainerStyle()
+        => _cssBuilder.Create()
+            .SetMargin(new Spacing(3))
+            .SetFlex(new FlexBox())
+            .Build();
+
+    private string CreateStarStyle()
+       => _cssBuilder.Create()
+           .SetPadding(new Spacing(0, 2, 0, 0, CSSSize.Normal))
+           .SetColor("#FFB400")
+           .SetFontSize(Size)
+           .Build();
+}

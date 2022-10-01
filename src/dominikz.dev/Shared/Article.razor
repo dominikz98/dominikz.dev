@@ -1,0 +1,41 @@
+﻿<div class="article @(IsHighlighted ? "article-highlight" : string.Empty)" style="width: @(Width)px">
+
+    <div class="article-header">
+        <img src="@Image" width="@(IsHighlighted ? Width - 6 : Width)" />
+        @if (IsHighlighted)
+        {
+            <span>star</span>
+        }
+    </div>
+
+    <div class="article-body">
+
+        <div class="article-content" style="width: @((int)(Width * 0.8))px">
+
+            <div class="article-content-header">
+                <span class="article-content-header-title">@Title</span>
+                <div class="article-content-header-container">
+
+                    <div class="article-content-header-subtitle">
+                        <span style="font-family: Material Icons">calendar_today</span>
+                        <span>@(Date?.ToString("yyyy-MM-dd"))</span>
+                    </div>
+                    <div class="article-content-header-subtitle">
+                        <span style="font-family: Material Icons">contacts</span>
+                        <span>@Author</span>
+                    </div>
+                    <div class="article-content-header-subtitle">
+                        <span style="font-family: Material Icons">category</span>
+                        <span>@Category</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="article-sidebar">
+            <img src="@AuthorImage" width="@(Width / 5)" />
+        </div>
+
+    </div>
+</div>

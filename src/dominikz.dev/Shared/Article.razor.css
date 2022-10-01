@@ -1,0 +1,74 @@
+﻿.article {
+    margin: 10px;
+    opacity: 1.0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+    .article:hover {
+        opacity: 0.8;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+.article-highlight {
+    border-style: solid;
+    border-radius: 12px;
+    border-color: #f1ec5db3;
+}
+
+.article-header {
+    position: relative;
+}
+
+    .article-header span {
+        position: absolute;
+        top: 8px;
+        left: 16px;
+        font-family: Material Icons;
+        color: #f1ec5db3;
+        font-size: xx-large;
+        font-weight: 900
+    }
+
+    .article-header img {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+.article-body {
+    background-color: var(--mdc-theme-surface);
+    display: flex;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.article-content-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-content-header-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.article-content-header-title {
+    font-size: large;
+    font-weight: 600;
+}
+
+.article-content-header-subtitle {
+    font-size: small;
+    color: lightslategray;
+    padding-right: 10px;
+}
+
+.article-sidebar {
+    padding: 8px;
+}
+
+    .article-sidebar img {
+        border-radius: 50px;
+    }

@@ -1,0 +1,11 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>dominikz.dev</PageTitle>
+
+<MatThemeProvider Theme="@_theme">
+    <AppBar OnSidebarToggled="ToggleSidebar">
+        <NavMenu @ref="_navMenu">
+            @Body
+        </NavMenu>
+    </AppBar>
+</MatThemeProvider>

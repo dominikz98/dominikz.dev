@@ -29,7 +29,7 @@ public partial class NavMenu
         {
             new NavMenuEntry("home", "Home", "/"),
             new NavMenuEntry("explore", "Blog", "/blog"),
-            new NavMenuEntry("movie_filter", "Movies", "/movies"),
+            new NavMenuEntry("movie_filter", "Media", "/media"),
             new NavMenuEntry("stars", "Projects", "/projects"),
         };
     }

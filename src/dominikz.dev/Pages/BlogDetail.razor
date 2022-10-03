@@ -1,3 +1,35 @@
 ﻿@page "/blog/{articleid:guid}"
 
-<h3>Blogpost</h3>
+<h2 class="mat-h2">@_article?.Title</h2>
+
+<div class="blogdetail-subtitle-container">
+    <div class="blogdetail-subtitle">
+        <span style="font-family: Material Icons">calendar_today</span>
+        <span>&nbsp; @(_article?.Date.ToString("yyyy-MM-dd"))</span>
+    </div>
+    <div class="blogdetail-subtitle">
+        <span style="font-family: Material Icons">contacts</span>
+        <span>&nbsp; @_article?.Author</span>
+    </div>
+    <div class="blogdetail-subtitle">
+        <span style="font-family: Material Icons">category</span>
+        <span>&nbsp; @_article?.Category</span>
+    </div>
+</div>
+
+<MatDivider />
+
+<div class="blogdetail-tag-container">
+    @foreach (var tag in _article?.Tags ?? new())
+    {
+        <div class="blogdetail-tag">
+            <MatChip Label="@tag"></MatChip>
+        </div>
+    }
+</div>
+
+<MatDivider />
+
+<div class="blogdetail-text">
+    @((MarkupString)(_article?.HtmlText ?? string.Empty))
+</div>

@@ -60,6 +60,7 @@
 }
 
 .article-content-header-subtitle {
+    display: flex;
     font-size: small;
     color: lightslategray;
     padding-right: 10px;

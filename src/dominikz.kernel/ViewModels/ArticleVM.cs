@@ -24,9 +24,11 @@ public class ArticleVM
 public class ArticleDetailVM : ArticleVM
 {
     public List<string> Tags { get; set; }
+    public string HtmlText { get; set; }
 
     public ArticleDetailVM()
     {
         Tags = new();
+        HtmlText = string.Empty;
     }
 }

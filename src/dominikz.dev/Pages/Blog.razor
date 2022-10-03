@@ -6,38 +6,26 @@
     <div class="serachbox-icon">
         <MatIcon Icon="search" />
     </div>
-    <input type="text" placeholder="Search.." value="@_search" />
+    <input type="text" placeholder="Search.." @bind="_search" @bind:event="oninput" @onkeyup="OnFilterChanged" />
 </div>
 
-<MatChipSet Choice="true">
-    <MatChip Label="Alle"></MatChip>
-    <MatChip Label="Coding"></MatChip>
-    <MatChip Label="Festivals"></MatChip>
-    <MatChip Label="Books"></MatChip>
-    <MatChip Label="Movies"></MatChip>
-    <MatChip Label="News"></MatChip>
+<MatChipSet Choice="true" @bind-SelectedChip="_category">
+    @foreach (var category in _categories)
+    {
+        <MatChip @onclick="OnFilterChanged" Label="@category"></MatChip>
+    }
 </MatChipSet>
 
-<div class="blog-trend">
-    <Article Width="350"
-             IsHighlighted="true"
-             Image="@_articles[0].Image"
-             AuthorImage="@_articles[0].AuthorImage"
-             Author="@_articles[0].Author"
-             Title="@_articles[0].Title"
-             Category="@_articles[0].Category"
-             Date="@_articles[0].Date" />
+<div class="blog-articles">
+    @foreach (var featureAarticle in _featureArticles)
+    {
+        <Article Width="350" Data="featureAarticle" OnClick="() => NavigateToDetail(featureAarticle.Id)" />
+    }
 </div>
 
 <div class="blog-articles">
-    @foreach (var article in _articles.GetRange(1, _articles.Count -1))
+    @foreach (var filterArticle in _filteredArticles)
     {
-        <Article Width="300"
-             Image="@article.Image"
-             AuthorImage="@article.AuthorImage"
-             Author="@article.Author"
-             Title="@article.Title"
-             Category="@article.Category"
-             Date="@article.Date" />
+        <Article Width="300" Data="filterArticle" OnClick="() => NavigateToDetail(filterArticle.Id)" />
     }
 </div>

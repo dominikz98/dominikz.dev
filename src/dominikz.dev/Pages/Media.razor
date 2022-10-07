@@ -1,9 +1,24 @@
 ﻿@page "/media"
+@using dominikz.kernel.ViewModels
 
 <PageTitle>Media</PageTitle>
 
-<h3>Media</h3>
+<MediaCarousel Data="_preview" />
 
-@code {
+<Searchbox OnChanged="@OnSearchChanged" />
 
+<ChipFilter TEnum="MediaCategoryEnum" OnChanged="@OnCategoryChanged" />
+
+<MatDivider />
+
+@if (_category != MediaCategoryEnum.ALL)
+{
+    <ChipFilter TEnum="MediaGenre" Values="_genresByCategory[_category]" OnChanged="@OnGenreChanged" />
 }
+
+<div class="media-content">
+    @foreach (var media in _media)
+    {
+        <MediaCard Data="media" ShowCategory="@(_category != MediaCategoryEnum.ALL)" Width="250" Height="150" />
+    }
+</div>

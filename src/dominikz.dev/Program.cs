@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using dominikz.dev.Utils;
+using dominikz.kernel;
 using dominikz.kernel.Endpoints;
 using MatBlazor;
 
@@ -10,8 +11,10 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMatBlazor();
+builder.Services.AddApiEndpoints()
+    .AddHttpClient<ApiClient>((client) => client.BaseAddress = new Uri("http://localhost:5187/"));
+
 builder.Services.AddScoped<BrowserService>();
-builder.Services.AddScoped<ArticlesEndpoints>();
 
 var app = builder.Build();
 

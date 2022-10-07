@@ -1,0 +1,9 @@
+﻿@typeparam TEnum
+
+<MatChipSet Choice="true" @bind-SelectedChip="_selected">
+
+    @foreach (var value in _mappings.Keys)
+    {
+        <MatChip @ref="_chipRef" @onclick="CallOnChanged" Label="@value"></MatChip>
+    }
+</MatChipSet>

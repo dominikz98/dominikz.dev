@@ -11,7 +11,7 @@
 
 .article-highlight {
     border-style: solid;
-    border-radius: 12px;
+    border-radius: 7px;
     border-color: #f1ec5db3;
 }
 
@@ -30,8 +30,8 @@
     }
 
     .article-header img {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
     }
 
 .article-body {
@@ -40,8 +40,8 @@
     padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .article-content-header {

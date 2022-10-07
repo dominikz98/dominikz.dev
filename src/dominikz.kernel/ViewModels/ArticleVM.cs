@@ -1,34 +1,33 @@
 ﻿namespace dominikz.kernel.ViewModels;
 
-public class ArticleVM
+public abstract class ArticleVM
 {
     public Guid Id { get; set; }
-    public bool Featured { get; set; }
-    public string Image { get; set; }
-    public string AuthorImage { get; set; }
-    public string Author { get; set; }
-    public string Title { get; set; }
-    public DateTime Date { get; set; }
-    public string Category { get; set; }
+    public string Author { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public DateTime Timestamp { get; set; }
+    public ArticleCategoryEnum Category { get; set; }
+}
 
-    public ArticleVM()
-    {
-        Image = string.Empty;
-        AuthorImage = string.Empty;
-        Author = string.Empty;
-        Title = string.Empty;
-        Category = string.Empty;
-    }
+public class ArticleListVM : ArticleVM
+{
+    public bool Featured { get; set; }
+    public string ImageUrl { get; set; } = string.Empty; 
+    public string AuthorUrl { get; set; } = string.Empty;
+    public bool Available { get; set; }
 }
 
 public class ArticleDetailVM : ArticleVM
 {
-    public List<string> Tags { get; set; }
-    public string HtmlText { get; set; }
+    public string? HtmlText { get; set; }
+    public List<string> Tags { get; set; } = new();
+}
 
-    public ArticleDetailVM()
-    {
-        Tags = new();
-        HtmlText = string.Empty;
-    }
+public enum ArticleCategoryEnum
+{
+    ALL = 0,
+    CODING = 1,
+    MOVIE = 2,
+    PROJECT = 3,
+    GAMING = 4
 }

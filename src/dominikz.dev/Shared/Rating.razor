@@ -1,0 +1,20 @@
+﻿<div class="rating-wrapper">
+
+    <span>(@(Value))&nbsp;</span>
+
+    @for (int i = 0; i < FullStars; i++)
+    {
+        <span class="rating-star">star</span>
+    }
+    
+    @if (HalfStar) 
+    {
+        <span class="rating-star">star_half</span>
+    }
+
+    @for (int i = 0; i < EmptyStars; i++)
+    {
+        <span class="rating-star">star_border</span>
+    }
+
+</div>

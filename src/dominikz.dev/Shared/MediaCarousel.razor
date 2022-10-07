@@ -1,0 +1,48 @@
+﻿@using dominikz.dev.Utils
+@using dominikz.kernel.ViewModels
+
+<div class="carousel-wrapper">
+
+    <button class="carousel-arrow" id="carousel-arrow-prev" @onclick="OnPrevClicked">
+        &#8249;
+    </button>
+
+    <button class="carousel-arrow" id="carousel-arrow-next" @onclick="OnNextClicked">
+        &#8250;
+    </button>
+
+    <div class="carousel-container" id="carousel-container">
+        @foreach (var media in Data)
+        {
+            <div class="carouselitem">
+                <div class="carouselitem-container">
+
+                    <div class="carouselitem-thumbnail-ambilight" style="height: @(Height)px; width: @((int)(Height * 0.675))px;">
+                        <img src="@media.ImageUrl" height="@Height" class="carouselitem-thumbnail-image" />
+                        <img src="@media.ImageUrl" height="@Height" class="carouselitem-thumbnail-light" />
+                    </div>
+
+                    <div class="carouselitem-container-content">
+
+                        <span class="carouselitem-container-title">@media.Title</span>
+
+                        <Rating Value=@media.Rating />
+
+                        <span>Category: @(EnumConverter.ToString(media.Category))</span>
+
+                        <span>Genres: @(EnumConverter.ToString(media.Genres))</span>
+
+                        <div class="carouselitem-container-subtitle">
+                            <span style="font-family: Material Icons">calendar_today</span>
+                            <span>&nbsp; @(media.Timestamp.ToString("yyyy-MM-dd"))</span>
+                        </div>
+
+                        <MatButton>Read review</MatButton>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>

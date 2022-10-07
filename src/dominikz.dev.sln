@@ -5,7 +5,9 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.dev", "dominikz.dev\dominikz.dev.csproj", "{DFA87E2F-FDD1-46C7-A397-67180311F5DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.kernel", "dominikz.kernel\dominikz.kernel.csproj", "{569999F0-CFCD-43EE-B198-52E42C6A971C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.kernel", "dominikz.kernel\dominikz.kernel.csproj", "{569999F0-CFCD-43EE-B198-52E42C6A971C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Api", "dominikz.Api\dominikz.Api.csproj", "{E98FB977-CE40-4F68-9314-D9B70D3140B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

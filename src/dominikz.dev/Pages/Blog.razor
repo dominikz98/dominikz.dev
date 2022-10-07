@@ -1,31 +1,22 @@
 ﻿@page "/blog"
+@using dominikz.kernel.ViewModels
 
 <PageTitle>Blog</PageTitle>
 
-<div class="serachbox">
-    <div class="serachbox-icon">
-        <MatIcon Icon="search" />
-    </div>
-    <input type="text" placeholder="Search.." @bind="_search" @bind:event="oninput" @onkeyup="OnFilterChanged" />
-</div>
+<Searchbox OnChanged="@OnSearchChanged" />
 
-<MatChipSet Choice="true" @bind-SelectedChip="_category">
-    @foreach (var category in _categories)
-    {
-        <MatChip @onclick="OnFilterChanged" Label="@category"></MatChip>
-    }
-</MatChipSet>
+<ChipFilter TEnum="ArticleCategoryEnum" OnChanged="@OnCategoryChanged" />
 
 <div class="blog-articles">
     @foreach (var featureAarticle in _featureArticles)
     {
-        <Article Width="350" Data="featureAarticle" OnClick="() => NavigateToDetail(featureAarticle.Id)" />
+        <BlogArticleCard Width="350" Data="featureAarticle" OnClick="() => NavigateToDetail(featureAarticle.Id)" />
     }
 </div>
 
 <div class="blog-articles">
     @foreach (var filterArticle in _filteredArticles)
     {
-        <Article Width="300" Data="filterArticle" OnClick="() => NavigateToDetail(filterArticle.Id)" />
+        <BlogArticleCard Width="300" Data="filterArticle" OnClick="() => NavigateToDetail(filterArticle.Id)" />
     }
 </div>

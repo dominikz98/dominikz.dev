@@ -1,0 +1,23 @@
+﻿@using dominikz.dev.Utils
+@if (Data is not null)
+{
+    <div class="mediacard-wrapper" style="height: @(Height)px; width: @(Width)px">
+
+        <img src="@Data.ImageUrl" class="mediacard-image" width="@((int)(Height * 0.675))" />
+
+        <div class="mediacard-content">
+
+            <span>@Data.Title</span>
+
+            <Rating Value=@Data.Rating />
+
+            @if (ShowCategory)
+            {
+                <span>@(EnumConverter.ToString(Data.Category))</span>
+            }
+
+            <span>@(EnumConverter.ToString(Data.Genres))</span>
+
+        </div>
+    </div>
+}

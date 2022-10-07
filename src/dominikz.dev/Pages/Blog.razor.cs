@@ -1,6 +1,5 @@
 ﻿using dominikz.kernel.Endpoints;
 using dominikz.kernel.ViewModels;
-using MatBlazor;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages;
@@ -8,40 +7,56 @@ namespace dominikz.dev.Pages;
 public partial class Blog
 {
     [Inject]
-    public ArticlesEndpoints? Endpoints { get; set; }
+    public BlogEndpoints? Endpoints { get; set; }
 
     [Inject]
     protected NavigationManager? Navigation { get; set; }
 
     private string? _search;
-    private MatChip? _category;
-    private List<string> _categories = new();
-    private List<ArticleVM> _filteredArticles = new();
-    private List<ArticleVM> _featureArticles = new();
+    private ArticleCategoryEnum _category;
+
+    private List<ArticleListVM> _filteredArticles = new();
+    private List<ArticleListVM> _featureArticles = new();
 
     protected override async Task OnInitializedAsync()
-        => await FilterArticles(ArticleFilter.Default);
+        => await SearchArticles();
 
-    private async Task FilterArticles(ArticleFilter? filter)
+    private async Task OnSearchChanged(string? search)
     {
-        _categories = await Endpoints!.GetAllCategories();
+        _search = search;
+        await SearchArticles();
+    }
 
-        filter ??= ArticleFilter.Default;
+    private async Task OnCategoryChanged(ArticleCategoryEnum category)
+    {
+        _category = category;
+        await SearchArticles();
+    }
+
+    private async Task SearchArticles()
+    {
+        var filter = new ArticleFilter()
+        {
+            Category = _category,
+            Text = _search
+        };
+
         var all = await Endpoints!.Search(filter);
         _featureArticles = all.Where(x => x.Featured).ToList();
         _filteredArticles = all.Except(_featureArticles).ToList();
     }
 
-    private async Task OnFilterChanged()
-    {
-        var filter = new ArticleFilter()
-        {
-            Category = _category?.Label,
-            Text = _search
-        };
-        await FilterArticles(filter);
-    }
-
     private void NavigateToDetail(Guid articleId)
-        => Navigation!.NavigateTo($"/blog/{articleId}");
+    {
+        var isAvailable = _featureArticles
+            .Union(_filteredArticles)
+            .Where(x => x.Id == articleId)
+            .Where(x => x.Available)
+            .Any();
+
+        if (isAvailable == false)
+            return;
+
+        Navigation!.NavigateTo($"/blog/{articleId}");
+    }
 }

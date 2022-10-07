@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Shared;
 
-public partial class Article
+public partial class BlogArticleCard
 {
     [Parameter]
-    public ArticleVM? Data { get; set; }
+    public ArticleListVM? Data { get; set; }
 
     [Parameter]
     public int Width { get; set; } = 300;
@@ -27,7 +27,7 @@ public partial class Article
         if (!window.IsMobile)
             return;
 
-        Width = window.Width - 50;
+        Width = window.Width - 36;
         StateHasChanged();
     }
 }

@@ -1,11 +1,12 @@
-﻿.sidebar {
+﻿
+.sidebar {
     background-color: var(--mdc-theme-surface);
     height: 100%;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    overflow-x: hidden;
+    overflow-x: hidden;    
     transition: 0.5s;
     padding-top: 64px;
 }
@@ -46,10 +47,16 @@
     position: fixed;
     height: 100%;
     width: 100%;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
     overflow-y: scroll;
 }
 
+    #page::-webkit-scrollbar {
+        display: none;
+    }
+
 #main {
     transition: margin-left .5s;
-    margin: 16px;
+    margin: 8px;
 }

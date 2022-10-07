@@ -13,6 +13,9 @@ public class BrowserService
 
     public async Task<WindowDimension> GetWindow()
         => await _jsRuntime.InvokeAsync<WindowDimension>("getDimensions");
+
+    public async Task ChangeCarouselScrollLeft(bool add)
+        => await _jsRuntime.InvokeVoidAsync("changeCarouselScrollLeft", add);
 }
 
 public class WindowDimension

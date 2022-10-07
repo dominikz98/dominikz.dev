@@ -10,7 +10,7 @@ public partial class BlogDetail
     public Guid? ArticleId { get; set; }
 
     [Inject]
-    protected ArticlesEndpoints? Endpoints { get; set; }
+    protected BlogEndpoints? Endpoints { get; set; }
 
     private ArticleDetailVM? _article;
 

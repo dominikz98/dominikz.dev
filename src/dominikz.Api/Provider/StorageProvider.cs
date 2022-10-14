@@ -1,4 +1,4 @@
-﻿namespace dominikz.Api.Provider;
+﻿namespace dominikz.api.Provider;
 
 public interface IStorageProvider
 {

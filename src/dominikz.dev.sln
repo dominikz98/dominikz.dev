@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.dev", "dominikz.de
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.kernel", "dominikz.kernel\dominikz.kernel.csproj", "{569999F0-CFCD-43EE-B198-52E42C6A971C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Api", "dominikz.Api\dominikz.Api.csproj", "{E98FB977-CE40-4F68-9314-D9B70D3140B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.api", "dominikz.Api\dominikz.api.csproj", "{E98FB977-CE40-4F68-9314-D9B70D3140B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

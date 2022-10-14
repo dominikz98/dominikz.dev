@@ -59,4 +59,5 @@
 #main {
     transition: margin-left .5s;
     margin: 8px;
+    margin-bottom: 64px;
 }

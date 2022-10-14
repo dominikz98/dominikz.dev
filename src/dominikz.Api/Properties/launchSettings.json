@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "dominikz.Api": {
+    "dominikz.api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

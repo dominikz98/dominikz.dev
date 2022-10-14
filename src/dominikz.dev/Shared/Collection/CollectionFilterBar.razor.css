@@ -1,0 +1,47 @@
+﻿
+.filter-bar-wrapper {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+
+.filter-bar-content {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.filter-title {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: var(--mdc-theme-surface);
+    margin-right: 4px;
+    border-radius: 4px;
+    cursor: default;
+}
+
+.filter-bar-expand {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-left: 18px;
+    margin-right: 4px;
+    background-color: white;
+    opacity: 0.8;
+    transition: ease-in-out 0.1s;
+    color: black;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+    .filter-bar-expand:hover {
+        opacity: 0.6;
+        transition: ease-in-out 0.1s;
+    }

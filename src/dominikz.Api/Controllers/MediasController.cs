@@ -1,9 +1,9 @@
-﻿using dominikz.Api.Commands;
+﻿using dominikz.api.Commands;
 using dominikz.kernel.Endpoints;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace dominikz.Api.Controllers;
+namespace dominikz.api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,16 +14,6 @@ public class MediasController : ControllerBase
     public MediasController(IMediator mediator)
     {
         _mediator = mediator;
-    }
-
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var vm = (await _mediator.Send(new SearchMediasQuery() { Id = id }, cancellationToken)).FirstOrDefault();
-        if (vm is null)
-            return NotFound();
-
-        return Ok(vm);
     }
 
     [HttpGet("search")]

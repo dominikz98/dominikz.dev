@@ -7,5 +7,6 @@ public static class Extensions
 {
     public static IServiceCollection AddApiEndpoints(this IServiceCollection services)
         => services.AddScoped<BlogEndpoints>()
-            .AddScoped<MediasEndpoints>();
+            .AddScoped<MediasEndpoints>()
+            .AddScoped<CookbookEndpoints>();
 }

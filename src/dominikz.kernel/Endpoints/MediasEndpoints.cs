@@ -21,7 +21,6 @@ public class MediasEndpoints
 
 public class MediaFilter : IFilter
 {
-    public Guid? Id { get; set; }
     public MediaCategoryEnum Category { get; set; }
     public MediaGenre Genre { get; set; }
     public string? Text { get; set; }
@@ -31,27 +30,24 @@ public class MediaFilter : IFilter
     public static MediaFilter Default => new();
     public static MediaFilter Preview => new() { Count = 5 };
 
-    public Dictionary<string, string> GetParameter()
+    public IReadOnlyCollection<FilterParam> GetParameter()
     {
-        var result = new Dictionary<string, string>();
-
-        if (Id is not null)
-            result.Add(nameof(Id), Id.ToString()!);
+        var result = new List<FilterParam>();
 
         if (Text is not null)
-            result.Add(nameof(Text), Text);
+            result.Add(new(nameof(Text), Text));
 
         if (Category != MediaCategoryEnum.ALL)
-            result.Add(nameof(Category), Category.ToString()!);
+            result.Add(new(nameof(Category), Category.ToString()!));
 
         if (Genre != MediaGenre.ALL)
-            result.Add(nameof(Genre), Genre.ToString()!);
+            result.Add(new(nameof(Genre), Genre.ToString()!));
 
         if (Index is not null)
-            result.Add(nameof(Index), Index.ToString()!);
+            result.Add(new(nameof(Index), Index.ToString()!));
 
         if (Count is not null)
-            result.Add(nameof(Count), Count.ToString()!);
+            result.Add(new(nameof(Count), Count.ToString()!));
 
         return result;
     }

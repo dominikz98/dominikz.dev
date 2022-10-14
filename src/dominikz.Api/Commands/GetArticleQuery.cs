@@ -1,12 +1,13 @@
-﻿using dominikz.Api.Extensions;
-using dominikz.Api.Provider;
+﻿using dominikz.api.Extensions;
+using dominikz.api.Provider;
+using dominikz.api.Utils;
 using dominikz.kernel.Endpoints;
 using dominikz.kernel.ViewModels;
 using Markdig;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace dominikz.Api.Commands;
+namespace dominikz.api.Commands;
 
 public class GetArticleQuery : IRequest<ArticleDetailVM?>
 {
@@ -21,10 +22,12 @@ public class GetArticleQuery : IRequest<ArticleDetailVM?>
 public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleDetailVM?>
 {
     private readonly DatabaseContext _database;
+    private readonly ILinkCreator _linkCreator;
 
-    public GetArticleQueryHandler(DatabaseContext database)
+    public GetArticleQueryHandler(DatabaseContext database, ILinkCreator linkCreator)
     {
         _database = database;
+        _linkCreator = linkCreator;
     }
 
     public async Task<ArticleDetailVM?> Handle(GetArticleQuery request, CancellationToken cancellationToken)
@@ -48,7 +51,8 @@ public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleDe
             Category = article.Category,
             Timestamp = article.Timestamp,
             Title = article.Title,
-            Tags = article.Tags
+            Tags = article.Tags,
+            ImageUrl = _linkCreator.Create(article.FileId)?.ToString()
         };
 
         if (string.IsNullOrWhiteSpace(article.MDText))

@@ -1,10 +1,10 @@
-﻿using dominikz.Api.Models;
+﻿using dominikz.api.Models;
 using dominikz.kernel.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace dominikz.Api.Provider;
+namespace dominikz.api.Provider;
 
 public class DatabaseContext : DbContext
 {
@@ -12,6 +12,8 @@ public class DatabaseContext : DbContext
     public DbSet<Author> Authors { get; set; }
     public DbSet<Media> Medias { get; set; }
     public DbSet<StorageFile> Files { get; set; }
+    public DbSet<Food> Foods { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
@@ -22,24 +24,31 @@ public class DatabaseContext : DbContext
         var article = builder.Entity<Article>();
         article.ToTable("articles");
         article.HasKey(x => x.Id);
-        article.Property(x => x.Category).HasConversion(x => (int)x, x => (ArticleCategoryEnum)x);
         article.Property(x => x.Tags).HasConversion<TagsConverter>(new ListComparer<string>());
 
         var media = builder.Entity<Media>();
         media.ToTable("medias");
         media.HasKey(x => x.Id);
-        media.Property(x => x.Category).HasConversion(x => (int)x, x => (MediaCategoryEnum)x);
-        media.Property(x => x.Genres);
 
         var author = builder.Entity<Author>();
         author.ToTable("authors");
         author.HasKey(x => x.Id);
 
+        var recipesFoodsMapping = builder.Entity<RecipesFoodsMapping>();
+        recipesFoodsMapping.ToTable("recipes_foods_mapping");
+        recipesFoodsMapping.HasKey(x => new { x.RecipeId, x.FoodId });
+
+        var foods = builder.Entity<Food>();
+        foods.ToTable("foods");
+        foods.HasKey(x => x.Id);
+
+        var recipes = builder.Entity<Recipe>();
+        recipes.ToTable("recipes");
+        recipes.HasKey(x => x.Id);
+
         var file = builder.Entity<StorageFile>();
         file.ToTable("files");
         file.HasKey(x => x.Id);
-        file.Property(x => x.Category).HasConversion(x => (int)x, x => (FileCagetory)x);
-        file.Property(x => x.Extension).HasConversion(x => (int)x, x => (FileExtension)x);
     }
 }
 

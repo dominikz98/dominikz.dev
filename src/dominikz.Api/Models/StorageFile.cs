@@ -1,4 +1,4 @@
-﻿namespace dominikz.Api.Models;
+﻿namespace dominikz.api.Models;
 
 public class StorageFile
 {

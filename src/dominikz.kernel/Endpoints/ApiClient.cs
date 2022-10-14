@@ -31,7 +31,7 @@ public class ApiClient
         var route = $"{_prefix}/{endpoint}";
 
         var parameter = filter?.GetParameter()
-                .Select(x => $"{x.Key}={x.Value}")
+                .Select(x => $"{x.Name}={x.Value}")
                 .ToList() ?? new List<string>();
 
         if (parameter.Count > 0)
@@ -47,5 +47,17 @@ public class ApiClient
 
 public interface IFilter
 {
-    Dictionary<string, string> GetParameter();
+    IReadOnlyCollection<FilterParam> GetParameter();
+}
+
+public class FilterParam
+{
+    public string Name { get; set; }
+    public string Value { get; set; }
+
+    public FilterParam(string name, string value)
+    {
+        Name = name;
+        Value = value;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using dominikz.kernel.ViewModels;
 
-namespace dominikz.Api.Models;
+namespace dominikz.api.Models;
 
 public class Article
 {

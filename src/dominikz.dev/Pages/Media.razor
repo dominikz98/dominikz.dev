@@ -1,4 +1,6 @@
 ﻿@page "/media"
+@using dominikz.dev.Shared.Cards
+@using dominikz.dev.Shared.Collection
 @using dominikz.kernel.ViewModels
 
 <PageTitle>Media</PageTitle>
@@ -7,18 +9,18 @@
 
 <Searchbox OnChanged="@OnSearchChanged" />
 
-<ChipFilter TEnum="MediaCategoryEnum" OnChanged="@OnCategoryChanged" />
+<CollectionFilterBar T="MediaCategoryEnum" Values="Enum.GetValues<MediaCategoryEnum>().ToList()" OnChanged="@OnCategoryChanged" />
 
 <MatDivider />
 
 @if (_category != MediaCategoryEnum.ALL)
 {
-    <ChipFilter TEnum="MediaGenre" Values="_genresByCategory[_category]" OnChanged="@OnGenreChanged" />
+    <CollectionFilterBar T="MediaGenre" Values="_genresByCategory[_category]" OnChanged="@OnGenreChanged" />
 }
 
-<div class="media-content">
+<Panel>
     @foreach (var media in _media)
     {
         <MediaCard Data="media" ShowCategory="@(_category != MediaCategoryEnum.ALL)" Width="250" Height="150" />
     }
-</div>
+</Panel>

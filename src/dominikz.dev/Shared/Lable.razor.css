@@ -1,0 +1,10 @@
+﻿
+.lable-wrapper {
+    display: flex;
+    padding-right: 14px;
+    align-items: center;
+}
+
+.lable-text {
+    padding-left: 5px;
+}

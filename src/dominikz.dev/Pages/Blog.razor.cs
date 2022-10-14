@@ -27,9 +27,9 @@ public partial class Blog
         await SearchArticles();
     }
 
-    private async Task OnCategoryChanged(ArticleCategoryEnum category)
+    private async Task OnCategoryChanged(List<ArticleCategoryEnum> category)
     {
-        _category = category;
+        _category = category.FirstOrDefault();
         await SearchArticles();
     }
 

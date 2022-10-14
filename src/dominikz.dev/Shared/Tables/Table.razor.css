@@ -1,0 +1,23 @@
+﻿
+.table-row-odd {
+    background-color: var(--bs-gray-700);
+}
+
+.table-wrapper {
+    opacity: 1;
+    transition: opacity 0.1s ease-in-out;
+    width: 100%
+}
+
+    .table-wrapper table {
+        width: 100%
+    }
+
+    .table-wrapper td, th {
+        padding: 12px;
+    }
+
+    .table-wrapper tbody tr:hover {
+        opacity: 0.7;
+        transition: opacity 0.1s ease-in-out;
+    }

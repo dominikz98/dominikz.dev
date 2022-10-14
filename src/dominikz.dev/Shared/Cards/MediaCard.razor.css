@@ -1,0 +1,22 @@
+﻿
+.mediacard-wrapper {
+    display: flex;
+    align-items: center;
+    opacity: 1.0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+    .mediacard-wrapper:hover {
+        opacity: 0.8;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+.mediacard-image {
+    height: 100%;
+}
+
+.mediacard-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}

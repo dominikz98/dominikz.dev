@@ -22,9 +22,21 @@ public class EnumConverter
         else if (value is ArticleCategoryEnum articleCategory)
             return ToString(articleCategory);
 
+        else if (value is FoodUnitEnum foodUnit)
+            return ToString(foodUnit);
+
         else
             return value.ToString()!;
     }
+
+    private static string ToString(FoodUnitEnum unit)
+       => unit switch
+       {
+           FoodUnitEnum.Pieces => "pc.",
+           FoodUnitEnum.Grams => "g",
+           FoodUnitEnum.Liter => "l",
+           _ => Default
+       };
 
     private static string ToString(MediaCategoryEnum category)
         => category switch

@@ -36,15 +36,15 @@ public partial class Media
         await SearchMedia();
     }
 
-    private async Task OnCategoryChanged(MediaCategoryEnum value)
+    private async Task OnCategoryChanged(List<MediaCategoryEnum> value)
     {
-        _category = value;
+        _category = value.FirstOrDefault();
         await SearchMedia();
     }
 
-    private async Task OnGenreChanged(MediaGenre value)
+    private async Task OnGenreChanged(List<MediaGenre> value)
     {
-        _genre = value;
+        _genre = value.FirstOrDefault();
         await SearchMedia();
     }
 

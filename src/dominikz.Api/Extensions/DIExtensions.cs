@@ -1,11 +1,11 @@
-﻿using dominikz.Api.Provider;
-using dominikz.Api.Utils;
+﻿using dominikz.api.Provider;
+using dominikz.api.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 
-namespace dominikz.Api.Extensions;
+namespace dominikz.api.Extensions;
 
 public static class DIExtensions
 {

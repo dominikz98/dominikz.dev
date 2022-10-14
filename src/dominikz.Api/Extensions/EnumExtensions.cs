@@ -1,4 +1,4 @@
-﻿namespace dominikz.Api.Extensions;
+﻿namespace dominikz.api.Extensions;
 
 public static class EnumExtensions
 {

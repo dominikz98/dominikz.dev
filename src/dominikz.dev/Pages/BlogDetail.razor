@@ -1,35 +1,28 @@
 ﻿@page "/blog/{articleid:guid}"
+@using dominikz.dev.Utils
 
-<h2 class="mat-h2">@_article?.Title</h2>
+@if (_article is not null)
+{
+    <DetailHeader Title="@_article.Title" ImageUrl="@_article.ImageUrl">
+        <Lable Darken=true FontSize="large" Icon="calendar_today" Text="@_article.Timestamp.ToString("yyyy-MM-dd")" />
+        <Lable Darken=true FontSize="large" Icon="contacts" Text="@_article.Author" />
+        <Lable Darken=true FontSize="large" Icon="category" Text="@(EnumConverter.ToString(_article.Category))" />
+    </DetailHeader>
+    
+    <MatDivider />
 
-<div class="blogdetail-subtitle-container">
-    <div class="blogdetail-subtitle">
-        <span style="font-family: Material Icons">calendar_today</span>
-        <span>&nbsp; @(_article?.Timestamp.ToString("yyyy-MM-dd"))</span>
+    <Panel>
+        @foreach (var tag in _article.Tags)
+        {
+            <div class="blogdetail-tag">
+                <MatChip Label="@tag"></MatChip>
+            </div>
+        }
+    </Panel>
+
+    <MatDivider />
+
+    <div class="blogdetail-text">
+        @((MarkupString)(_article.HtmlText ?? string.Empty))
     </div>
-    <div class="blogdetail-subtitle">
-        <span style="font-family: Material Icons">contacts</span>
-        <span>&nbsp; @_article?.Author</span>
-    </div>
-    <div class="blogdetail-subtitle">
-        <span style="font-family: Material Icons">category</span>
-        <span>&nbsp; @_article?.Category</span>
-    </div>
-</div>
-
-<MatDivider />
-
-<div class="blogdetail-tag-container">
-    @foreach (var tag in _article?.Tags ?? new())
-    {
-        <div class="blogdetail-tag">
-            <MatChip Label="@tag"></MatChip>
-        </div>
-    }
-</div>
-
-<MatDivider />
-
-<div class="blogdetail-text">
-    @((MarkupString)(_article?.HtmlText ?? string.Empty))
-</div>
+}

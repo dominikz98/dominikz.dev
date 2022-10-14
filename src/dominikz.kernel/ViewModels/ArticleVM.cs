@@ -19,6 +19,7 @@ public class ArticleListVM : ArticleVM
 
 public class ArticleDetailVM : ArticleVM
 {
+    public string? ImageUrl { get; set; }
     public string? HtmlText { get; set; }
     public List<string> Tags { get; set; } = new();
 }

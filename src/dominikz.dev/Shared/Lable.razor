@@ -1,0 +1,19 @@
+﻿
+<div class="lable-wrapper" style="@(Darken ? "color: lightslategray" : string.Empty)">
+    @if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <span class="@Icon"></span>
+    }
+    <span class="lable-text">@Text</span>
+</div>
+
+@code {
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public object? Text { get; set; }
+
+    [Parameter]
+    public bool Darken { get; set; }
+}

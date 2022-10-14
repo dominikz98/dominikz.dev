@@ -1,4 +1,4 @@
-using dominikz.Api.Extensions;
+using dominikz.api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

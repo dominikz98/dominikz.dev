@@ -1,0 +1,42 @@
+﻿@page "/cookbook/{recipeid:guid}"
+@using dominikz.dev.Shared.Tables
+@using dominikz.dev.Utils
+@using dominikz.kernel.ViewModels
+@using static dominikz.dev.Shared.Panel
+
+@if (_recipe is not null)
+{
+    <DetailHeader ImageUrl="@_recipe.ImageUrl" Title="@_recipe.Title" />
+
+    <Panel>
+        <Panel UseAsSurface=true Alignment="CSSAlignment.Column">
+
+            <Spacing>
+                <Lable Icon="fa-regular fa-hourglass-half" Text="@($"Time: {_recipe.Duration.TotalMinutes}")" />
+                <Lable Icon="fa-solid fa-bowl-rice" Text="@($"Portions: {_recipe.Portions}")" />
+
+                <Lable Icon="fa-solid fa-bag-shopping" Text="@($"Components: {_recipe.FoodCount}")" />
+                <Lable Icon="fa-solid fa-money-bill" Text="@($"Price / Portion: {_recipe.PricePerPortion:c2}")" />
+            </Spacing>
+
+            <MatDivider />
+
+            <Spacing>
+                <Lable Text="@($"Kilocalories: {_recipe.Foods.Sum(x => (x.Multiplier * x.Kilocalories) / _recipe.Portions):0.##}")" />
+                <Lable Text="@($"Carbohydrates: {_recipe.Foods.Sum(x => (x.Multiplier * x.Carbohydrates) / _recipe.Portions):0.##}g")" />
+
+                <Lable Text="@($"Protein: {_recipe.Foods.Sum(x => (x.Multiplier * x.Protein) / _recipe.Portions):0.##}g")" />
+                <Lable Text="@($"Fat: {_recipe.Foods.Sum(x => (x.Multiplier * x.Fat) / _recipe.Portions):0.##}g")" />
+            </Spacing>
+
+        </Panel>
+
+        <Panel UseAsSurface=true>
+            <Table T="FoodDetailVM" Values="@_recipe.Foods" Columns="@_foodColumns" ShowIndex=true />
+        </Panel>
+
+        <Panel UseAsSurface=true>
+            @((MarkupString)_recipe.HtmlText)
+        </Panel>
+    </Panel>
+}

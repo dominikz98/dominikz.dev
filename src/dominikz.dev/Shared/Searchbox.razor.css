@@ -13,12 +13,13 @@ input[type="text"], textarea :active {
     border-radius: 25px;
 }
 
-.serachbox {
+.serachbox-wrapper {
     display: flex;
     align-items: center;
     background-color: var(--mdc-theme-surface);
     border-radius: 25px;
     margin: 8px;
+    width: 100%;
 }
 
 .serachbox-icon {

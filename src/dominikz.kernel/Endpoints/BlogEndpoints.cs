@@ -27,18 +27,18 @@ public class ArticleFilter : IFilter
 
     public static ArticleFilter Default => new();
 
-    public Dictionary<string, string> GetParameter()
+    public IReadOnlyCollection<FilterParam> GetParameter()
     {
-        var result = new Dictionary<string, string>();
+        var result = new List<FilterParam>();
 
         if (Id is not null)
-            result.Add(nameof(Id), Id.ToString()!);
+            result.Add(new(nameof(Id), Id.ToString()!));
 
         if (Text is not null)
-            result.Add(nameof(Text), Text);
+            result.Add(new(nameof(Text), Text));
 
         if (Category != ArticleCategoryEnum.ALL)
-            result.Add(nameof(Category), Category.ToString()!);
+            result.Add(new(nameof(Category), Category.ToString()!));
 
         return result;
     }

@@ -1,7 +1,7 @@
-﻿using dominikz.Api.Provider;
+﻿using dominikz.api.Provider;
 using MediatR;
 
-namespace dominikz.Api.Commands;
+namespace dominikz.api.Commands;
 
 public class GetImageQuery : IRequest<Stream?>
 {

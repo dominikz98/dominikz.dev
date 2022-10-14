@@ -1,0 +1,26 @@
+﻿
+<div class="detail-header-wrapper">
+    <img src="@ImageUrl" />
+
+    <div>
+        <h2 class="mat-h2">@Title</h2>
+
+        <Panel>
+            @ChildContent
+        </Panel>
+
+        <MatDivider />
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? ImageUrl { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

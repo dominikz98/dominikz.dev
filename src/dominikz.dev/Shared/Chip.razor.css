@@ -1,0 +1,26 @@
+﻿
+.chip-wrapper {
+    margin-right: 4px;
+    margin-left: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: white;
+    opacity: 0.8;
+    transition: ease-in-out 0.1s;
+    color: black;
+    border-radius: 25px;
+}
+
+.chip-wrapper:hover {
+    opacity: 0.6;
+    transition: ease-in-out 0.1s;
+}
+
+    .chip-wrapper span {
+        white-space: pre;
+        cursor: default;
+    }

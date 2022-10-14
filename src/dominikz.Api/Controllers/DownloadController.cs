@@ -1,8 +1,8 @@
-﻿using dominikz.Api.Commands;
+﻿using dominikz.api.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace dominikz.Api.Controllers;
+namespace dominikz.api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -1,12 +1,12 @@
-﻿using dominikz.Api.Extensions;
-using dominikz.Api.Provider;
-using dominikz.Api.Utils;
+﻿using dominikz.api.Extensions;
+using dominikz.api.Provider;
+using dominikz.api.Utils;
 using dominikz.kernel.Endpoints;
 using dominikz.kernel.ViewModels;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace dominikz.Api.Commands;
+namespace dominikz.api.Commands;
 
 public class SearchMediasQuery : MediaFilter, IRequest<IReadOnlyCollection<MediaVM>> { }
 
@@ -25,7 +25,6 @@ public class SearchMediaQueryHandler : IRequestHandler<SearchMediasQuery, IReadO
     {
         var medias = await _database
             .Medias
-            .Include(x => x.Author)
             .Search(request)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

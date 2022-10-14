@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace dominikz.Api.Utils;
+namespace dominikz.api.Utils;
 
 public interface ILinkCreator
 {
-    Uri? Create(Guid docId);
+    Uri? Create(Guid fileId);
 }
 
 public class LinkCreator : ILinkCreator

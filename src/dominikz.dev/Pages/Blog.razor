@@ -1,22 +1,37 @@
 ﻿@page "/blog"
+@using dominikz.dev.Shared.Cards
+@using dominikz.dev.Shared.Collection
+@using dominikz.dev.Utils
 @using dominikz.kernel.ViewModels
 
 <PageTitle>Blog</PageTitle>
 
 <Searchbox OnChanged="@OnSearchChanged" />
 
-<ChipFilter TEnum="ArticleCategoryEnum" OnChanged="@OnCategoryChanged" />
+<CollectionFilterBar T="ArticleCategoryEnum" Values="Enum.GetValues<ArticleCategoryEnum>().ToList()" OnChanged="@OnCategoryChanged" />
 
-<div class="blog-articles">
+<Panel>
     @foreach (var featureAarticle in _featureArticles)
     {
-        <BlogArticleCard Width="350" Data="featureAarticle" OnClick="() => NavigateToDetail(featureAarticle.Id)" />
+        <Card Width="350" Highlight=true Title="@featureAarticle.Title" ImageUrl="@featureAarticle.ImageUrl" OnClick="() => NavigateToDetail(featureAarticle.Id)">
+            <CardSidebarContent ImageUrl="@featureAarticle.AuthorUrl">
+                <Lable Darken=true Icon="calendar_today" Text="@featureAarticle.Timestamp.ToString("yyyy-MM-dd")" />
+                <Lable Darken=true Icon="contacts" Text="@featureAarticle.Author" />
+                <Lable Darken=true Text="@EnumConverter.ToString(featureAarticle.Category)" />
+            </CardSidebarContent>
+        </Card>
     }
-</div>
+</Panel>
 
-<div class="blog-articles">
+<Panel>
     @foreach (var filterArticle in _filteredArticles)
     {
-        <BlogArticleCard Width="300" Data="filterArticle" OnClick="() => NavigateToDetail(filterArticle.Id)" />
+        <Card Width="300" Title="@filterArticle.Title" ImageUrl="@filterArticle.ImageUrl" OnClick="() => NavigateToDetail(filterArticle.Id)">
+            <CardSidebarContent ImageUrl="@filterArticle.AuthorUrl">
+                <Lable Darken=true Icon="calendar_today" Text="@filterArticle.Timestamp.ToString("yyyy-MM-dd")" />
+                <Lable Darken=true Icon="contacts" Text="@filterArticle.Author" />
+                <Lable Darken=true Text="@EnumConverter.ToString(filterArticle.Category)" />
+            </CardSidebarContent>
+        </Card>
     }
-</div>
+</Panel>

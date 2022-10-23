@@ -1,14 +1,5 @@
-﻿@using MatBlazor
-
-<MatAppBar Fixed="true">
-    <MatAppBarRow Style="background-color: var(--mdc-theme-surface)">
-        <MatAppBarSection>
-            <MatIconButton Icon="menu" OnClick="ToggleSidebar"></MatIconButton>
-            <MatAppBarTitle>dominikzettl.dev</MatAppBarTitle>
-        </MatAppBarSection>
-    </MatAppBarRow>
-</MatAppBar>
-
-<MatAppBarContent>
-    @ChildContent
-</MatAppBarContent>
+﻿
+<div class="appbar">
+    <span @onclick="CallOnExpandClicked" class="appbar-menu fa-solid fa-bars"></span>
+    <span>dominikzettl.dev</span>
+</div>

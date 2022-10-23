@@ -1,0 +1,11 @@
+﻿
+<div class="icon-button @(IsSelected ? "icon-button-selected" : string.Empty)" @onclick="(() => CallOnClick())">
+
+    <i class="@Icon"></i>
+
+    @if (!string.IsNullOrWhiteSpace(Text))
+    {
+        <spanc class="icon-button-text">@Text</spanc>
+    }
+
+</div>

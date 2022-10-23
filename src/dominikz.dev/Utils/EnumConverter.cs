@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
 namespace dominikz.dev.Utils;
 
@@ -8,7 +8,7 @@ public class EnumConverter
     public const string Default = "Unknown";
     // https://emojipedia.org/
 
-    public static string ToString<TEnum>(List<TEnum> values) where TEnum : struct, Enum
+    public static string ToString<TEnum>(IReadOnlyCollection<TEnum> values) where TEnum : struct, Enum
         => string.Join(", ", values.Select(x => ToString(x)));
 
     public static string ToString<TEnum>(TEnum value) where TEnum : struct, Enum
@@ -16,7 +16,7 @@ public class EnumConverter
         if (value is MediaCategoryEnum mediaCategory)
             return ToString(mediaCategory);
 
-        else if (value is MediaGenre mediaGenre)
+        else if (value is MovieGenreFlags mediaGenre)
             return ToString(mediaGenre);
 
         else if (value is ArticleCategoryEnum articleCategory)
@@ -42,33 +42,47 @@ public class EnumConverter
         => category switch
         {
             MediaCategoryEnum.ALL => ALL,
-            MediaCategoryEnum.SERIES => "🍿 Series",
-            MediaCategoryEnum.MOVIE => "🎞 Movie",
-            MediaCategoryEnum.BOOK => "📖 Book",
-            MediaCategoryEnum.GAME => "🎮 Game",
+            MediaCategoryEnum.Series => "🍿 Series",
+            MediaCategoryEnum.Movie => "🎞 Movie",
+            MediaCategoryEnum.Book => "📖 Book",
+            MediaCategoryEnum.Game => "🎮 Game",
             _ => Default
         };
 
-    private static string ToString(MediaGenre genre)
+    private static string ToString(MovieGenreFlags genre)
         => genre switch
         {
-            MediaGenre.ALL => ALL,
-            MediaGenre.SUPERHERO => "🦸 Superhero",
-            MediaGenre.HORROR => "👻 Horror",
-            MediaGenre.DRAMA => "🎭 Drama",
-            MediaGenre.COOP => "🤲 Coop",
-            MediaGenre.TRASH => "🗑 Trash",
-            _ => Default
+            MovieGenreFlags.Horror => "👻 Horror",
+            MovieGenreFlags.Drama => "🎭 Drama",
+            MovieGenreFlags.Mystery => "🔮 Mystery",
+            MovieGenreFlags.Thriller => "🧟 Thriller",
+            MovieGenreFlags.Action => "📣 Action",
+            MovieGenreFlags.Adventure => "🗺 Adventure",
+            MovieGenreFlags.Fantasy => "🦄 Fantasy",
+            MovieGenreFlags.Comedy => "🎤 Comedy",
+            MovieGenreFlags.Western => "🐴 Western",
+            MovieGenreFlags.SciFi => "🚀 SciFi",
+            MovieGenreFlags.Animation => "🐇 Animation",
+            MovieGenreFlags.Crime => "🎈 Crime",
+            MovieGenreFlags.Musical => "🎻 Musical",
+            MovieGenreFlags.War => "🔫 War",
+            MovieGenreFlags.Romance => "♥ Romance",
+            MovieGenreFlags.Biography => "🎩 Biography",
+            MovieGenreFlags.History => "📙 History",
+            MovieGenreFlags.ALL or _ => Default
         };
+
+    //MediaGenreFlags.Horror => "👻 Horror",
+    //MediaGenreFlags.Drama => "🎭 Drama",
 
     private static string ToString(ArticleCategoryEnum category)
         => category switch
         {
             ArticleCategoryEnum.ALL => ALL,
-            ArticleCategoryEnum.CODING => "💡 Coding",
-            ArticleCategoryEnum.MOVIE => "🎞 Movie",
-            ArticleCategoryEnum.PROJECT => "🚀 Project",
-            ArticleCategoryEnum.GAMING => "🎮 Gaming",
+            ArticleCategoryEnum.Coding => "💡 Coding",
+            ArticleCategoryEnum.Movie => "🎞 Movie",
+            ArticleCategoryEnum.Project => "🚀 Project",
+            ArticleCategoryEnum.Gaming => "🎮 Gaming",
             _ => Default
         };
 }

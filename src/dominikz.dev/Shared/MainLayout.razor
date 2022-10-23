@@ -1,11 +1,22 @@
-﻿@inherits LayoutComponentBase
+﻿@using dominikz.dev.Theme
+@inherits LayoutComponentBase
 
 <PageTitle>dominikz.dev</PageTitle>
 
-<MatThemeProvider Theme="@_theme">
-    <AppBar OnSidebarToggled="ToggleSidebar">
-        <NavMenu @ref="_navMenu">
+<ThemeProvider ClassByUrlChanged="OnClassByUrlChanged" />
+
+<div class="page @_classByUrl">
+
+    <AppBar OnExpandClicked="OnExpandClicked" />
+
+    <div class="content">
+
+        <AppMenue IsExpanded="IsMenuOpen" />
+
+        <div class="main">
             @Body
-        </NavMenu>
-    </AppBar>
-</MatThemeProvider>
+        </div>
+
+    </div>
+
+</div>

@@ -1,6 +1,0 @@
-﻿@using dominikz.dev.Utils
-
-<div class="panel-wrapper @(UseAsSurface ? "panel-surface" : string.Empty)"
-     style="flex-direction: @Alignment; padding: @(Padding)px; align-items: @ItemAlignment; @(_width != null ? $"width: {_width};" : string.Empty)">
-    @ChildContent
-</div>

@@ -1,0 +1,23 @@
+﻿
+.blog {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.blog-card {
+    display: flex;
+    padding-top: 8px;
+    justify-content: space-between;
+}
+
+.blog-card-author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.blog-card-author img {
+    width: 50px;
+    border-radius: 50px;
+}

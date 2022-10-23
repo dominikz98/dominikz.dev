@@ -1,5 +1,65 @@
 ﻿@page "/"
+@using dominikz.dev.Components
+@using dominikz.dev.Components.Buttons
+@using dominikz.dev.Components.Cards
+@using dominikz.dev.Components.Chips
+@using dominikz.dev.Components.Tables
+@using dominikz.dev.Theme
 
 <PageTitle>Index</PageTitle>
 
-<h3>Index</h3>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+
+    <h1>Index</h1>
+
+    <OrderSelector OrderKeys="_values" />
+
+    <ViewSelector />
+
+    <ChipSelection T="string" Values="_values" Title="Category" AllowExpand=true />
+
+    <Table T="TableData" Values="_tableData" Columns="_columnDefinitions" ShowIndex=true />
+
+    <VerticalCard Highlight=true Title="TEST_CARD" ImageUrl="https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg">
+        <span>TEST</span>
+    </VerticalCard>
+
+    <HorizontalCard Highlight=true Title="TEST_CARD" ImageUrl="https://upload.wikimedia.org/wikipedia/commons/e/e7/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg">
+        <span>TEST</span>
+    </HorizontalCard>
+
+    <TextButton Text="TEST" />
+
+    <IconButton Icon="fa-solid fa-grip" AllowSelection=true />
+
+    <Searchbox />
+
+    <ComboBox Values="@_values" />
+
+    <Rating Value="85" />
+
+</div>
+
+@code {
+    private OrderInfo _default = new("Key2", OrderDirection.Descending);
+
+    private List<string> _values = new() { " Key1", "Key2", "Key3", "Key4", "Key5", "Key6" };
+
+    private List<TableData> _tableData = new() { new TableData() { Col1 = "VA", Col2 = "AASF" }, new TableData() { Col1 = "asdgas", Col2 = "ASDFAGA" } };
+    private List<ColumnDefinition<TableData>> _columnDefinitions = new()
+    {
+        new (nameof(TableData.Col1), x => x.Col1) { Actions = ColumnActionFlags.HIDE_ON_MOBILE},
+        new (nameof(TableData.Col2), x => x.Col2)
+    };
+
+    class TableData
+    {
+        public string Col1 { get; set; } = string.Empty;
+        public string Col2 { get; set; } = string.Empty;
+    }
+
+    private void CallOnChanged()
+    {
+        ;
+    }
+}

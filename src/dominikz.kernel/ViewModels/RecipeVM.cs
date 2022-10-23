@@ -1,29 +1,21 @@
-﻿namespace dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
-public class RecipeVM
+namespace dominikz.kernel.ViewModels;
+
+public class RecipeVM : IViewModel
 {
     public Guid Id { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
+    public FileVM? Image { get; set; }
     public string Title { get; set; } = string.Empty;
     public int Portions { get; set; }
     public decimal PricePerPortion { get; set; }
     public int FoodCount { get; set; }
     public TimeSpan Duration { get; set; }
-    public List<RecipeCategoryFlags> Categories { get; set; } = new();
+    public RecipeCategoryFlags Categories { get; set; } = new();
 }
 
 public class RecipeDetailVM : RecipeVM
 {
-    public string HtmlText { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
     public List<FoodDetailVM> Foods { get; set; } = new();
-}
-
-[Flags]
-public enum RecipeCategoryFlags
-{
-    ALL = 0,
-    Vegetarian = 1,
-    Starter = 4,
-    Dish = 8,
-    Dessert = 16
 }

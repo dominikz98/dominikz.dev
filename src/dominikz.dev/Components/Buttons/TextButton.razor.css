@@ -1,0 +1,17 @@
+﻿
+.text-button {
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: var(--theme-primary);
+    color: black;
+}
+
+    .text-button:hover {
+        background-color: var(--theme-onprimary);
+        transition: ease-in-out 0.1s;
+    }
+
+.text-button-selected {
+    background-color: var(--theme-onprimary);
+}

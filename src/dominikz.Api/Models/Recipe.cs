@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
 namespace dominikz.api.Models;
 
@@ -13,6 +13,7 @@ public class Recipe
     public RecipeCategoryFlags Categories { get; set; } = new();
 
     public List<RecipesFoodsMapping> RecipesFoodsMappings { get; set; } = new();
+    public StorageFile? File { get; set; }
 }
 
 public class RecipesFoodsMapping

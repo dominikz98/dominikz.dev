@@ -1,0 +1,39 @@
+﻿@using dominikz.dev.Utils
+<div class="carousel-wrapper">
+
+    <button class="carousel-arrow" id="carousel-arrow-prev" @onclick="OnPrevClicked">
+        &#8249;
+    </button>
+
+    <button class="carousel-arrow" id="carousel-arrow-next" @onclick="OnNextClicked">
+        &#8250;
+    </button>
+
+    <div class="carousel-container" id="carousel-container">
+        @foreach (var media in Data)
+        {
+            <div class="carouselitem">
+                <div class="carouselitem-container">
+
+                    <div class="carouselitem-thumbnail-ambilight">
+                        <img src="@media.Image!.Url" class="carouselitem-thumbnail-image" />
+                        <img src="@media.Image!.Url" class="carouselitem-thumbnail-light" />
+                    </div>
+
+                    <div class="carouselitem-container-content">
+
+                        <span class="carouselitem-container-title">@media.Title</span>
+
+                        <span>Category: @(EnumConverter.ToString(media.Category))</span>
+
+                        <div class="carouselitem-container-subtitle">
+                            <span>🕑 @(media.Timestamp.ToString("yyyy-MM-dd"))</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>

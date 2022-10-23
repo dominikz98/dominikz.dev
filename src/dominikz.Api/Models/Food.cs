@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
 namespace dominikz.api.Models;
 
@@ -6,7 +6,6 @@ public class Food
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
-    public string? Icon { get; set; }
     public FoodUnitEnum Unit { get; set; }
     public int Count { get; set; }
     public decimal PricePerCount { get; set; }

@@ -1,0 +1,20 @@
+﻿
+.icon-button {
+    display: inline-block;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: var(--theme-primary);
+}
+
+    .icon-button:hover {
+        background-color: var(--theme-onprimary);
+        transition: ease-in-out 0.1s;
+    }
+
+.icon-button-selected {
+    background-color: var(--theme-onprimary);
+}

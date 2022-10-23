@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
-    <PackageReference Include="MatBlazor" Version="2.8.0" />
+    <None Remove="Components\Table.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

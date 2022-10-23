@@ -13,6 +13,7 @@ public static class DIExtensions
     {
         // Add Context
         builder.Services.AddDbContext<DatabaseContext>(options =>
+            //options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(DatabaseContext)))
             options.UseMySql(builder.Configuration.GetConnectionString(nameof(DatabaseContext)), MariaDbServerVersion.LatestSupportedServerVersion)
                 .EnableDetailedErrors(builder.Environment.IsDevelopment())
                 .EnableSensitiveDataLogging(builder.Environment.IsDevelopment()));
@@ -30,6 +31,8 @@ public static class DIExtensions
         //  Add Provider
         builder.Services.AddScoped<ILinkCreator, LinkCreator>();
         builder.Services.AddScoped<IStorageProvider, StorageProvider>();
+        builder.Services.AddScoped<ImdbClient>()
+            .AddHttpClient<ImdbClient>((client) => client.BaseAddress = new Uri("https://imdb-api.tprojects.workers.dev/"));
 
         //  Add Medatir
         builder.Services.AddMediatR(typeof(Program));

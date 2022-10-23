@@ -5,30 +5,4 @@
     Layout = "_Layout";
 }
 
-<script type="text/javascript">
-    function getWidthById(id) {
-        return document.getElementById(id).clientWidth
-    }
-
-    function getDimensions() {
-        return {
-            width: window.innerWidth,
-            height: window.innerHeight
-        };
-    };
-
-    function changeCarouselScrollLeft(add) {
-
-        const slidesContainer = document.getElementById("carousel-container");
-        const slide = document.querySelector(".carouselitem");
-        const slideWidth = slide.clientWidth;
-
-        if (add) {
-            slidesContainer.scrollLeft += slideWidth;
-        } else {
-            slidesContainer.scrollLeft -= slideWidth;
-        }
-    }
-</script>
-
 <component type="typeof(App)" render-mode="ServerPrerendered" />

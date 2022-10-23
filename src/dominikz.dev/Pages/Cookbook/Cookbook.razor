@@ -1,0 +1,64 @@
+﻿@page "/cookbook"
+@using dominikz.dev.Components
+@using dominikz.dev.Components.Cards
+@using dominikz.dev.Components.Chips
+@using dominikz.dev.Components.Tables
+@using dominikz.dev.Definitions
+@using dominikz.dev.Utils
+@using dominikz.kernel.Contracts
+@using dominikz.kernel.ViewModels
+
+<div class="cookbook">
+
+    <Searchbox ValueChanged="OnSearchChanged" />
+
+    <ChipSelection T="RecipeCategoryFlags"
+                   Title="Category"
+                   Values="Enum.GetValues<RecipeCategoryFlags>()[1..].ToList()"
+                   SelectedChanged="OnCategoriesChanged"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))" />
+
+    <ChipSelection T="FoodVM"
+                   Title="Foods"
+                   Values="@_foods"
+                   SelectedChanged="OnFoodsChanged"
+                   AllowExpand=true
+                   AllowMultiSelect=true
+                   TextFormatter="@((x) => x.Title)" />
+
+    <div class="cookbook-menue-container">
+
+        <ViewSelector @bind-Selected="_view" />
+
+        <OrderSelector OrderKeys="@RecipesTableDefinition.OrderKeys" ValueChanged="OnOrderChanged" />
+
+    </div>
+
+    @if (_view == CollectionView.Table)
+    {
+        <Table T="RecipeVM"
+           OnRowClicked="(x) => NavigateToDetail(x.Id)"
+           Values="@_recipes"
+           Columns="@RecipesTableDefinition.Columns"
+           ShowIndex=true />
+    }
+    else
+    {
+        <CardGrid>
+            @foreach (var recipe in _recipes)
+            {
+                <div class="cookbook-card">
+                    <VerticalCard ImageUrl="@recipe.Image!.Url" Title="@recipe.Title" OnClick="() => NavigateToDetail(recipe.Id)">
+                        <div class="cookbook-card-content">
+                            <Lable Icon="fa-regular fa-hourglass-half" Text="@recipe.Duration.TotalMinutes" />
+                            <Lable Icon="fa-solid fa-bowl-rice" Text="@recipe.Portions" />
+                            <Lable Icon="fa-solid fa-bag-shopping" Text="@recipe.FoodCount" />
+                            <Lable Icon="fa-solid fa-money-bill" Text="@recipe.PricePerPortion.ToString("#.00")" />
+                        </div>
+                    </VerticalCard>
+                </div>
+            }
+        </CardGrid>
+    }
+
+</div>

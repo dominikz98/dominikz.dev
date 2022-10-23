@@ -1,0 +1,22 @@
+﻿
+.cookbook {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cookbook-menue-container {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--theme-surface);
+    border-radius: 5px;
+    gap: 16px;
+    padding: 4px;
+}
+
+.cookbook-card-content {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    margin-top: 8px;
+}

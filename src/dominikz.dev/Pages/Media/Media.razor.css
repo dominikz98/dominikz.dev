@@ -1,0 +1,30 @@
+﻿
+.media {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.media-menue-container {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--theme-surface);
+    border-radius: 5px;
+    gap: 16px;
+    padding: 4px;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 350px);
+    grid-gap: 12px;
+    grid-auto-rows: 1fr;
+}
+
+@media (max-width: 600px) {
+
+    .media-grid {
+        width: 100%;
+        grid-template-columns: repeat(auto-fill, 100%) !important;
+    }
+}

@@ -11,8 +11,8 @@ public class BrowserService
         _jsRuntime = jsRuntime;
     }
 
-    public async Task<double> GetWidthById(string id)
-        => await _jsRuntime.InvokeAsync<double>("getWidthById", id);
+    //public async Task<double> GetWidthById(string id)
+    //    => await _jsRuntime.InvokeAsync<double>("getWidthById", id);
 
     public async Task<WindowDimension> GetWindow()
         => await _jsRuntime.InvokeAsync<WindowDimension>("getDimensions");

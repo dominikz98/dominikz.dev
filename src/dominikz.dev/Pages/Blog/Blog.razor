@@ -1,0 +1,43 @@
+﻿@page "/blog"
+@using dominikz.dev.Components
+@using dominikz.dev.Components.Cards
+@using dominikz.dev.Components.Chips
+@using dominikz.dev.Utils
+@using dominikz.kernel.Contracts
+
+<PageTitle>Blog</PageTitle>
+
+<div class="blog">
+    <Searchbox ValueChanged="@OnSearchChanged" />
+
+    <ChipSelection T="ArticleCategoryEnum"
+                   Title="Category"
+                   Values="Enum.GetValues<ArticleCategoryEnum>()[1..].ToList()"
+                   TextFormatter="(x) => EnumConverter.ToString(x)"
+                   SelectedChanged="@OnCategoryChanged" />
+
+    <CardGrid>
+        @foreach (var article in _articles)
+        {
+            <VerticalCard Highlight=@article.Featured
+              Title="@article.Title"
+              ImageUrl="@article.Image!.Url"
+              OnClick="() => NavigateToDetail(article.Id)">
+
+                <div class="blog-card">
+
+                    <div class="blog-card-content">
+                        <Lable Icon="fa-solid fa-calendar" Text="@article.Timestamp.ToString("yyyy-MM-dd")" />
+                        <Lable Text="@EnumConverter.ToString(article.Category)" />
+                    </div>
+
+                    <div class="blog-card-author">
+                        <img src="@article.Author!.Image!.Url" />
+                        <Lable Icon="fa-solid fa-at" Text="@GetInitials(article.Author!.Name)" />
+                    </div>
+
+                </div>
+            </VerticalCard>
+        }
+    </CardGrid>
+</div>

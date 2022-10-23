@@ -1,0 +1,27 @@
+﻿
+<Panel UseAsSurface=true>
+
+    <div class="vertical-card" @onclick="(_ => OnClick.InvokeAsync())">
+
+        <div class="vertical-card-header">
+
+            <img src="@ImageUrl" />
+
+            @if (Highlight)
+            {
+                <i class="vertical-card-header-highlight fa-solid fa-star"></i>
+            }
+
+        </div>
+
+        <div class="vertical-card-body">
+
+            <span class="vertical-card-body-title">@Title</span>
+
+            @ChildContent
+
+        </div>
+
+    </div>
+
+</Panel>

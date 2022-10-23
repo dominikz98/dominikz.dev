@@ -1,5 +1,4 @@
 ﻿using dominikz.api.Models;
-using dominikz.kernel.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -8,16 +7,10 @@ namespace dominikz.api.Provider;
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<Article> Articles { get; set; }
-    public DbSet<Author> Authors { get; set; }
-    public DbSet<Media> Medias { get; set; }
-    public DbSet<StorageFile> Files { get; set; }
-    public DbSet<Food> Foods { get; set; }
-    public DbSet<Recipe> Recipes { get; set; }
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
+    public IQueryable<T> From<T>() where T : class
+        => Set<T>().AsQueryable();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -30,8 +23,15 @@ public class DatabaseContext : DbContext
         media.ToTable("medias");
         media.HasKey(x => x.Id);
 
-        var author = builder.Entity<Author>();
-        author.ToTable("authors");
+        var movie = builder.Entity<Movie>();
+        movie.ToTable("movies");
+
+        var moviesPersonsMapping = builder.Entity<MoviesPersonsMapping>();
+        moviesPersonsMapping.ToTable("movies_persons_mapping");
+        moviesPersonsMapping.HasKey(x => new { x.MovieId, x.PersonId });
+
+        var author = builder.Entity<Person>();
+        author.ToTable("persons");
         author.HasKey(x => x.Id);
 
         var recipesFoodsMapping = builder.Entity<RecipesFoodsMapping>();

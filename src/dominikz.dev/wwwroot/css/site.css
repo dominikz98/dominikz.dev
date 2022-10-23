@@ -1,16 +1,38 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    margin: 0;
+    height: 100%;
+    background-color: var(--theme-background);
+    color: whitesmoke;
 }
 
-h1:focus {
-    outline: none;
+a {
+    color: whitesmoke;
+    text-decoration: none;
 }
 
-.content {
-    padding-top: 1.1rem;
+div {
+    box-sizing: border-box;
 }
+
+/*nav menue styles (cant access in appmenue compeonent)*/
+
+.appmenue a {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+}
+
+.appmenue a:hover {
+    background-color: var(--theme-onprimary);
+    transition: ease-in-out 0.1s;
+}
+
+.active {
+    background-color: #5f7d8f;
+}
+
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -52,3 +74,11 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 100;
+    font-display: block;
+    src: url("../webfonts/OpenSans-Regular.ttf") format("truetype");
+}

@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
 namespace dominikz.api.Models;
 
@@ -13,7 +13,7 @@ public class Article
     public ArticleCategoryEnum Category { get; set; }
     public List<string> Tags { get; set; } = new();
 
-    public Author? Author { get; set; }
+    public Person? Author { get; set; }
     public StorageFile? File { get; set; }
 
     public Article()

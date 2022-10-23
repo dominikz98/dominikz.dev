@@ -1,19 +1,12 @@
-﻿namespace dominikz.api.Models;
+﻿using dominikz.kernel.Contracts;
+
+namespace dominikz.api.Models;
 
 public class StorageFile
 {
     public Guid Id { get; set; }
-    public FileCagetory Category { get; set; }
-    public FileExtension Extension { get; set; }
-}
+    public FileCagetoryEnum Category { get; set; }
+    public FileExtensionEnum Extension { get; set; }
 
-public enum FileCagetory
-{
-    IMAGE
-}
-
-public enum FileExtension
-{
-    PNG,
-    JPG
+    public ICollection<Media> Medias { get; set; } = new List<Media>();
 }

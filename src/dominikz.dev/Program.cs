@@ -1,20 +1,18 @@
-using Blazored.LocalStorage;
+using dominikz.dev.Endpoints;
 using dominikz.dev.Utils;
-using dominikz.kernel;
-using dominikz.kernel.Endpoints;
-using MatBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddMatBlazor();
-builder.Services.AddApiEndpoints()
-    .AddHttpClient<ApiClient>((client) => client.BaseAddress = new Uri("http://localhost:5187/"));
 
-builder.Services.AddScoped<BrowserService>();
+builder.Services.AddScoped<BrowserService>()
+    .AddScoped<BlogEndpoints>()
+    .AddScoped<CookbookEndpoints>()
+    .AddScoped<MediaEndpoints>()
+    .AddScoped<MovieEndpoints>()
+    .AddHttpClient<ApiClient>((client) => client.BaseAddress = new Uri("http://localhost:5187/"));
 
 var app = builder.Build();
 

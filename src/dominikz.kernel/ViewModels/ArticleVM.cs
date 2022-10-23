@@ -1,10 +1,13 @@
-﻿namespace dominikz.kernel.ViewModels;
+﻿using dominikz.kernel.Contracts;
 
-public abstract class ArticleVM
+namespace dominikz.kernel.ViewModels;
+
+public abstract class ArticleVM : IViewModel
 {
     public Guid Id { get; set; }
-    public string Author { get; set; } = string.Empty;
+    public FileVM? Image { get; set; }
     public string Title { get; set; } = string.Empty;
+    public PersonVM? Author { get; set; }
     public DateTime Timestamp { get; set; }
     public ArticleCategoryEnum Category { get; set; }
 }
@@ -12,23 +15,11 @@ public abstract class ArticleVM
 public class ArticleListVM : ArticleVM
 {
     public bool Featured { get; set; }
-    public string ImageUrl { get; set; } = string.Empty; 
-    public string AuthorUrl { get; set; } = string.Empty;
     public bool Available { get; set; }
 }
 
 public class ArticleDetailVM : ArticleVM
 {
-    public string? ImageUrl { get; set; }
-    public string? HtmlText { get; set; }
+    public string? Text { get; set; }
     public List<string> Tags { get; set; } = new();
-}
-
-public enum ArticleCategoryEnum
-{
-    ALL = 0,
-    CODING = 1,
-    MOVIE = 2,
-    PROJECT = 3,
-    GAMING = 4
 }

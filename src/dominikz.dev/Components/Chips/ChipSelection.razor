@@ -1,0 +1,22 @@
+﻿@typeparam T
+
+<Panel Gap="8">
+
+    <span class="chip-selection-title">@Title</span>
+
+    @foreach (var value in Values)
+    {
+        <Chip @ref="ChipRef" Value="@value" AllowSelect=true Title="@TextFormatter(value)" OnChanged="CallOnChanged" />
+    }
+
+    @if (AllowExpand && !IsExpanded && _values.Count > ExpandLimiter)
+    {
+        <span class="chip-selection-expand" @onclick="() => CallOnExpand(string.Empty)">Show more ...</span>
+    }
+
+    @if (AllowExpand && IsExpanded && _values.Count > ExpandLimiter)
+    {
+        <span class="chip-selection-expand" @onclick="() => CallOnExpand(string.Empty)">Show less ...</span>
+    }
+
+</Panel>

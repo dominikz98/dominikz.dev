@@ -1,0 +1,84 @@
+﻿@page "/media"
+@using dominikz.dev.Components
+@using dominikz.dev.Components.Cards
+@using dominikz.dev.Components.Chips
+@using dominikz.dev.Components.Tables
+@using dominikz.dev.Definitions
+@using dominikz.dev.Theme
+@using dominikz.dev.Utils
+@using dominikz.kernel
+@using dominikz.kernel.Contracts
+@using dominikz.kernel.ViewModels
+
+<PageTitle>Media</PageTitle>
+
+<div class="media">
+
+    <MediaCarousel Data="_previews" />
+
+    <Searchbox ValueChanged="OnSearchChanged" />
+
+    <ChipSelection T="MediaCategoryEnum"
+                   Title="Category"
+                   Init="MediaCategoryEnum.Movie"
+                   Values="Enum.GetValues<MediaCategoryEnum>()[1..].ToList()"
+                   SelectedChanged="OnCategoriesChanged"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))" />
+
+    @switch (_category)
+    {
+        case MediaCategoryEnum.Movie:
+            <ChipSelection T="MovieGenreFlags"
+                   AllowExpand=true
+                   AllowMultiSelect=true
+                   Title="Genres"
+                   Values="Enum.GetValues<MovieGenreFlags>()[1..].ToList()"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))"
+                   SelectedChanged="@OnMovieGenreChanged" />
+            break;
+    }
+
+    <div class="media-menue-container">
+
+        <ViewSelector @bind-Selected="_view" />
+
+        <OrderSelector OrderKeys="@_orderKeys" ValueChanged="OnOrderChanged" />
+
+    </div>
+
+    @switch (_category)
+    {
+        case MediaCategoryEnum.Movie:
+
+            @if (_view == CollectionView.Table)
+            {
+                <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex=true />
+            }
+            else
+            {
+
+                <div class="media-grid">
+                    @foreach (var movie in _movies)
+                    {
+                        <HorizontalCard ImageUrl="@movie.Image!.Url"
+                        Title="@movie.Title"
+                        OnClick="() => NavigateToMovie(movie.Id)">
+
+                            <Panel Gap="8">
+                                <span>@movie.Year</span>
+                                <Rating Value=@movie.Rating />
+                                <Panel>
+                                    @foreach (var genre in movie.Genres.GetFlags().ToArray()[1..])
+                                    {
+                                        <span>@EnumConverter.ToString(genre)&nbsp;</span>
+                                    }
+                                </Panel>
+                            </Panel>
+
+                        </HorizontalCard>
+                    }
+                </div>
+            }
+            break;
+    }
+</div>

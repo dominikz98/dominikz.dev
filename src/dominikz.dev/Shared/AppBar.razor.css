@@ -1,35 +1,22 @@
 ﻿
-.icon-container {
-    width: 46px;
-    height: 46px;
+.appbar {
+    background-color: var(--theme-surface);
+    padding: 8px;
+    font-size: x-large;
+    position: fixed;
+    z-index: 999;
+    height: 60px;
+    width: 100%;
     display: flex;
-    opacity: 1.0;
-    transition: opacity 0.2s ease-in-out;
-    justify-content: center;
     align-items: center;
-    background-color: var(--mdc-theme-background);
-    border-radius: 25px;
-    margin-left: 3px;
-    margin-right: 3px;
+    gap: 12px;
 }
 
-    .icon-container:hover {
+.appbar-menu {
+    padding-left: 15px;
+}
+
+    .appbar-menu:hover {
+        transition: ease-in-out 0.1s;
         opacity: 0.6;
-        transition: opacity 0.2s ease-in-out;
     }
-/*
-.icon-container :hover {
-    opacity: 0.7;
-    background-color: var(--mdc-theme-primary);
-}
-*/
-.icon {
-    width: 30px;
-    height: 30px;
-}
-
-@media (max-width: 400px) {
-    .icon-container {
-        display: none;
-    }
-}

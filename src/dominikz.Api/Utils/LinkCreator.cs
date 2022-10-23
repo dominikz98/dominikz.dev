@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using dominikz.kernel.Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace dominikz.api.Utils;
 
 public interface ILinkCreator
 {
-    Uri? Create(Guid fileId);
+    Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size);
 }
 
 public class LinkCreator : ILinkCreator
@@ -18,8 +19,8 @@ public class LinkCreator : ILinkCreator
         _urlHelper = urlHelper;
     }
 
-    public Uri? Create(Guid fileId)
-        => GetUri($"~/download/{fileId}");
+    public Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size)
+        => GetUri($"~/download/image/{fileId}/{(int)size}");
 
     private Uri? GetUri(string relativePath)
     {

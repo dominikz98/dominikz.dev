@@ -1,0 +1,9 @@
+﻿
+.lable {
+    display: flex;
+    align-items: center;
+}
+
+.lable-icon {
+    padding-right: 5px;
+}

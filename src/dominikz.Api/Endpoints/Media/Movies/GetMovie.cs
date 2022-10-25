@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.api.Endpoints.Movies;
 
-[Tags("movies")]
+[Tags("medias/movies")]
 [ApiController]
-[Route("api/movies")]
+[Route("api/medias/movies")]
 public class GetMovie : ControllerBase
 {
     private readonly IMediator _mediator;

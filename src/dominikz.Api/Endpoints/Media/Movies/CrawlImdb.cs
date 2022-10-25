@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.api.Endpoints.Movies;
 
 
-[Tags("movies")]
+[Tags("medias/movies")]
 [ApiController]
-[Route("api/movies")]
+[Route("api/medias/movies")]
 public class CrawlImdb : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -79,7 +79,7 @@ public class CrawlImdbQueryHandler : IRequestHandler<CrawlImdbQuery, ImdbVM?>
         movie.Year = int.TryParse(vm.Year, out var year) ? year : default;
         movie.Runtime = TryParseRuntime(vm.Runtime, out var runtime) ? runtime : default;
         movie.Rating = (int)((vm.Rating?.Star ?? 0) * 10);
-        movie.Genres = (MovieGenreFlags)vm.Genre.Select(x => MapGenreFromVM(x)).Sum(x => (int)x);
+        movie.Genres = (MovieGenresFlags)vm.Genre.Select(x => MapGenreFromVM(x)).Sum(x => (int)x);
         _database.Update(movie);
 
         // stars
@@ -90,12 +90,12 @@ public class CrawlImdbQueryHandler : IRequestHandler<CrawlImdbQuery, ImdbVM?>
         await _database.SaveChangesAsync(cancellationToken);
     }
 
-    private MovieGenreFlags MapGenreFromVM(string genre)
+    private MovieGenresFlags MapGenreFromVM(string genre)
     {
         if (genre.Equals("sci-fi", StringComparison.OrdinalIgnoreCase))
-            return MovieGenreFlags.SciFi;
+            return MovieGenresFlags.SciFi;
 
-        return Enum.Parse<MovieGenreFlags>(genre);
+        return Enum.Parse<MovieGenresFlags>(genre);
     }
 
     private static bool TryParseRuntime(string runtime, out TimeSpan value)

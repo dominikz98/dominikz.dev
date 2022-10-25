@@ -28,13 +28,47 @@
     @switch (_category)
     {
         case MediaCategoryEnum.Movie:
-            <ChipSelection T="MovieGenreFlags"
+            <ChipSelection T="MovieGenresFlags"
                    AllowExpand=true
                    AllowMultiSelect=true
                    Title="Genres"
-                   Values="Enum.GetValues<MovieGenreFlags>()[1..].ToList()"
+                   Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"
                    TextFormatter="@((x) => EnumConverter.ToString(x))"
                    SelectedChanged="@OnMovieGenreChanged" />
+            break;
+
+        case MediaCategoryEnum.Book:
+            <ChipSelection T="BookGenresFlags"
+                   AllowExpand=true
+                   AllowMultiSelect=true
+                   Title="Genres"
+                   Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))"
+                   SelectedChanged="@OnBookGenreChanged" />
+
+            <ChipSelection T="BookLanguageEnum"
+                   Init="BookLanguageEnum.German"
+                   Title="Genres"
+                   Values="Enum.GetValues<BookLanguageEnum>().ToList()"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))"
+                   SelectedChanged="@OnBookLanguageChanged" />
+            break;
+
+        case MediaCategoryEnum.Game:
+            <ChipSelection T="GameGenresFlags"
+                   AllowExpand=true
+                   AllowMultiSelect=true
+                   Title="Genres"
+                   Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))"
+                   SelectedChanged="@OnGameGenreChanged" />
+
+            <ChipSelection T="GamePlatformEnum"
+                   Init="GamePlatformEnum.PC"
+                   Title="Genres"
+                   Values="Enum.GetValues<GamePlatformEnum>().ToList()"
+                   TextFormatter="@((x) => EnumConverter.ToString(x))"
+                   SelectedChanged="@OnGamePlatformChanged" />
             break;
     }
 
@@ -56,7 +90,6 @@
             }
             else
             {
-
                 <div class="media-grid">
                     @foreach (var movie in _movies)
                     {
@@ -64,7 +97,7 @@
                         Title="@movie.Title"
                         OnClick="() => NavigateToMovie(movie.Id)">
 
-                            <Panel Gap="8">
+                            <Panel Gap="8" FlexAlignment="CssFlexAlignment.Column" ItemAlignment="CssItemAlignment.Start">
                                 <span>@movie.Year</span>
                                 <Rating Value=@movie.Rating />
                                 <Panel>
@@ -75,6 +108,59 @@
                                 </Panel>
                             </Panel>
 
+                        </HorizontalCard>
+                    }
+                </div>
+            }
+            break;
+
+        case MediaCategoryEnum.Game:
+
+            @if (_view == CollectionView.Table)
+            {
+                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex=true />
+            }
+            else
+            {
+                <div class="media-grid">
+                    @foreach (var game in _games)
+                    {
+                        <HorizontalCard ImageUrl="@game.Image!.Url" Title="@game.Title">
+                            <span>@game.Year</span>
+                            <span>@EnumConverter.ToString(game.Platform)</span>
+                            <Panel>
+                                @foreach (var genre in game.Genres.GetFlags().ToArray()[1..])
+                                {
+                                    <span>@EnumConverter.ToString(genre)&nbsp;</span>
+                                }
+                            </Panel>
+                        </HorizontalCard>
+                    }
+                </div>
+            }
+            break;
+
+        case MediaCategoryEnum.Book:
+
+            @if (_view == CollectionView.Table)
+            {
+                <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex=true />
+            }
+            else
+            {
+                <div class="media-grid">
+                    @foreach (var book in _books)
+                    {
+                        <HorizontalCard ImageUrl="@book.Image!.Url" Title="@book.Title">
+                            <span>@book.Year</span>
+                            <span>@book.Author</span>
+                            <span>@EnumConverter.ToString(book.Language)</span>
+                            <Panel>
+                                @foreach (var genre in book.Genres.GetFlags().ToArray()[1..])
+                                {
+                                    <span>@EnumConverter.ToString(genre)&nbsp;</span>
+                                }
+                            </Panel>
                         </HorizontalCard>
                     }
                 </div>

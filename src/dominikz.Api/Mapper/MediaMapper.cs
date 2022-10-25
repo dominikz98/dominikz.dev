@@ -5,7 +5,7 @@ namespace dominikz.api.Mapper;
 
 public static class MediaMapper
 {
-    public static IQueryable<MediaPreviewVM> MapToVM(this IQueryable<Media> query)
+    public static IQueryable<MediaPreviewVM> MapToPreviewVM(this IQueryable<Media> query)
         => query.Select(media => new MediaPreviewVM()
         {
             Id = media.Id,

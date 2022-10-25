@@ -6,7 +6,7 @@ namespace dominikz.dev.Endpoints;
 public class MovieEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string _endpoint = "movies";
+    private static readonly string _endpoint = "medias/movies";
 
     public MovieEndpoints(ApiClient client)
     {

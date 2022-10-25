@@ -12,9 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.api.Endpoints.Movies;
 
-[Tags("movies")]
+[Tags("medias/movies")]
 [ApiController]
-[Route("api/movies")]
+[Route("api/medias/movies")]
 public class SearchMovies : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -55,7 +55,7 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
     {
         var query = _database.From<Movie>();
 
-        if (request.Genres != MovieGenreFlags.ALL)
+        if (request.Genres != MovieGenresFlags.ALL)
             foreach (var genre in request.Genres.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));
 

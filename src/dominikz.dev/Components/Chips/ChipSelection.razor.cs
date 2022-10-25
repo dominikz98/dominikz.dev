@@ -53,17 +53,18 @@ public partial class ChipSelection<T>
         await SelectInitChip();
     }
 
-    private async Task SelectInitChip()
+    private async Task<bool> SelectInitChip()
     {
         var chip = Refs.Where(x => x.Value != null)
             .Where(x => x.Value!.Equals(Init))
             .FirstOrDefault();
 
         if (chip is null)
-            return;
+            return false;
 
         chip.Select();
         await CallOnChanged(chip);
+        return true;
     }
 
     private void CallOnExpand(string _)
@@ -84,8 +85,9 @@ public partial class ChipSelection<T>
 
         if (Selected.Count == 0)
         {
-            await SelectInitChip();
-            return;
+            var success = await SelectInitChip();
+            if (success)
+                return;
         }
 
         await SelectedChanged.InvokeAsync(Selected);

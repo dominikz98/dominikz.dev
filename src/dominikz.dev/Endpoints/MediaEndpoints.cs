@@ -5,7 +5,7 @@ namespace dominikz.dev.Endpoints;
 public class MediaEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string _endpoint = "media";
+    private static readonly string _endpoint = "medias";
 
     public MediaEndpoints(ApiClient client)
     {

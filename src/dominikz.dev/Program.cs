@@ -12,6 +12,8 @@ builder.Services.AddScoped<BrowserService>()
     .AddScoped<CookbookEndpoints>()
     .AddScoped<MediaEndpoints>()
     .AddScoped<MovieEndpoints>()
+    .AddScoped<GameEndpoints>()
+    .AddScoped<BookEndpoints>()
     .AddHttpClient<ApiClient>((client) => client.BaseAddress = new Uri("http://localhost:5187/"));
 
 var app = builder.Build();

@@ -2,10 +2,11 @@
 
 namespace dominikz.kernel.Filter;
 
-public class MoviesFilter : IFilter
+public class GamesFilter : IFilter
 {
     public string? Text { get; set; }
-    public MovieGenresFlags Genres { get; set; }
+    public GamePlatformEnum? Platform { get; set; }
+    public GameGenresFlags Genres { get; set; }
 
     public IReadOnlyCollection<FilterParam> GetParameter()
     {
@@ -14,8 +15,11 @@ public class MoviesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres != MovieGenresFlags.ALL)
+        if (Genres != GameGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
+
+        if (Platform is not null)
+            result.Add(new(nameof(Platform), Platform.ToString()!));
 
         return result;
     }

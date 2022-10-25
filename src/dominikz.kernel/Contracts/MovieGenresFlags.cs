@@ -1,7 +1,7 @@
 ﻿namespace dominikz.kernel.Contracts;
 
 [Flags]
-public enum MovieGenreFlags
+public enum MovieGenresFlags
 {
     ALL = 0,
     Horror = 2,

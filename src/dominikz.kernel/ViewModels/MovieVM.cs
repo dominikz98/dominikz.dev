@@ -4,7 +4,7 @@ namespace dominikz.kernel.ViewModels;
 
 public class MovieVM : MediaVM
 {
-    public MovieGenreFlags Genres { get; set; } = new();
+    public MovieGenresFlags Genres { get; set; } = new();
     public int Rating { get; set; }
     public int Year { get; set; }
 }

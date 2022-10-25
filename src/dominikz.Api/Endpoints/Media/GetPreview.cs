@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.api.Endpoints.Media;
 
-[Tags("media")]
+[Tags("medias")]
 [ApiController]
-[Route("api/media")]
+[Route("api/medias")]
 public class GetPreview : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -68,6 +68,6 @@ public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCo
             .AsNoTracking()
             .Where(x => x.Category == category)
             .OrderByDescending(x => x.Timestamp)
-            .MapToVM()
+            .MapToPreviewVM()
             .FirstOrDefaultAsync(cancellationToken);
 }

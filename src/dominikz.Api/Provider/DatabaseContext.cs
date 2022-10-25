@@ -19,6 +19,12 @@ public class DatabaseContext : DbContext
         article.HasKey(x => x.Id);
         article.Property(x => x.Tags).HasConversion<TagsConverter>(new ListComparer<string>());
 
+        var book = builder.Entity<Book>();
+        book.ToTable("books");
+
+        var game = builder.Entity<Game>();
+        game.ToTable("games");
+
         var media = builder.Entity<Media>();
         media.ToTable("medias");
         media.HasKey(x => x.Id);

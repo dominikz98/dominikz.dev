@@ -21,3 +21,12 @@
     width: 50px;
     border-radius: 50px;
 }
+
+.blog-menue-container {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--theme-surface);
+    border-radius: 5px;
+    gap: 16px;
+    padding: 4px;
+}

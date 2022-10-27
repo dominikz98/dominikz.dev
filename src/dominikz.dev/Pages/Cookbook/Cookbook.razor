@@ -47,16 +47,14 @@
         <CardGrid>
             @foreach (var recipe in _recipes)
             {
-                <div class="cookbook-card">
-                    <VerticalCard ImageUrl="@recipe.Image!.Url" Title="@recipe.Title" OnClick="() => NavigateToDetail(recipe.Id)">
-                        <div class="cookbook-card-content">
-                            <Lable Icon="fa-regular fa-hourglass-half" Text="@recipe.Duration.TotalMinutes" />
-                            <Lable Icon="fa-solid fa-bowl-rice" Text="@recipe.Portions" />
-                            <Lable Icon="fa-solid fa-bag-shopping" Text="@recipe.FoodCount" />
-                            <Lable Icon="fa-solid fa-money-bill" Text="@recipe.PricePerPortion.ToString("#.00")" />
-                        </div>
-                    </VerticalCard>
-                </div>
+                <VerticalCard ImageUrl="@recipe.Image!.Url" Title="@recipe.Title" OnClick="() => NavigateToDetail(recipe.Id)">
+                    <div class="cookbook-card-content">
+                        <Lable Icon="fa-regular fa-hourglass-half" Text="@recipe.Duration.TotalMinutes" />
+                        <Lable Icon="fa-solid fa-bowl-rice" Text="@recipe.Portions" />
+                        <Lable Icon="fa-solid fa-bag-shopping" Text="@recipe.FoodCount" />
+                        <Lable Icon="fa-solid fa-money-bill" Text="@recipe.PricePerPortion.ToString("#.00")" />
+                    </div>
+                </VerticalCard>
             }
         </CardGrid>
     }

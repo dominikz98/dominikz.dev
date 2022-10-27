@@ -2,8 +2,11 @@
 @using dominikz.dev.Components
 @using dominikz.dev.Components.Cards
 @using dominikz.dev.Components.Chips
+@using dominikz.dev.Components.Tables
+@using dominikz.dev.Definitions
 @using dominikz.dev.Utils
 @using dominikz.kernel.Contracts
+@using dominikz.kernel.ViewModels
 
 <PageTitle>Blog</PageTitle>
 
@@ -16,28 +19,47 @@
                    TextFormatter="(x) => EnumConverter.ToString(x)"
                    SelectedChanged="@OnCategoryChanged" />
 
-    <CardGrid>
-        @foreach (var article in _articles)
-        {
-            <VerticalCard Highlight=@article.Featured
-              Title="@article.Title"
-              ImageUrl="@article.Image!.Url"
-              OnClick="() => NavigateToDetail(article.Id)">
+    <div class="blog-menue-container">
 
-                <div class="blog-card">
+        <ViewSelector @bind-Selected="_view" />
 
-                    <div class="blog-card-content">
-                        <Lable Icon="fa-solid fa-calendar" Text="@article.Timestamp.ToString("yyyy-MM-dd")" />
-                        <Lable Text="@EnumConverter.ToString(article.Category)" />
+        <OrderSelector OrderKeys="@ArticleTableDefinition.OrderKeys" ValueChanged="OnOrderChanged" />
+
+    </div>
+
+    @if (_view == CollectionView.Table)
+    {
+        <Table T="ArticleListVM"
+           Values="@_articles"
+           Columns="@ArticleTableDefinition.Columns"
+           OnRowClicked="(article) => NavigateToDetail(article.Id)"
+           ShowIndex=true />
+    }
+    else
+    {
+        <CardGrid>
+            @foreach (var article in _articles)
+            {
+                <VerticalCard Highlight=@article.Featured
+                      Title="@article.Title"
+                      ImageUrl="@article.Image!.Url"
+                      OnClick="() => NavigateToDetail(article.Id)">
+
+                    <div class="blog-card">
+
+                        <div class="blog-card-content">
+                            <Lable Icon="fa-solid fa-calendar" Text="@article.Timestamp.ToString("yyyy-MM-dd")" />
+                            <Lable Text="@EnumConverter.ToString(article.Category)" />
+                        </div>
+
+                        <div class="blog-card-author">
+                            <img src="@article.Author!.Image!.Url" />
+                            <Lable Icon="fa-solid fa-at" Text="@GetInitials(article.Author!.Name)" />
+                        </div>
+
                     </div>
-
-                    <div class="blog-card-author">
-                        <img src="@article.Author!.Image!.Url" />
-                        <Lable Icon="fa-solid fa-at" Text="@GetInitials(article.Author!.Name)" />
-                    </div>
-
-                </div>
-            </VerticalCard>
-        }
-    </CardGrid>
+                </VerticalCard>
+            }
+        </CardGrid>
+    }
 </div>

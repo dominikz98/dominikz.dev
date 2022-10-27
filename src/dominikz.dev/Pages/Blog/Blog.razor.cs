@@ -1,4 +1,6 @@
-﻿using dominikz.dev.Endpoints;
+﻿using dominikz.dev.Components;
+using dominikz.dev.Definitions;
+using dominikz.dev.Endpoints;
 using dominikz.kernel.Contracts;
 using dominikz.kernel.Filter;
 using dominikz.kernel.ViewModels;
@@ -17,6 +19,7 @@ public partial class Blog
     private string? _search;
     private ArticleCategoryEnum _category;
     private List<ArticleListVM> _articles = new();
+    private CollectionView _view;
 
     protected override async Task OnInitializedAsync()
         => await SearchArticles();
@@ -33,6 +36,9 @@ public partial class Blog
         await SearchArticles();
     }
 
+    private void OnOrderChanged(OrderInfo order)
+        => _articles = _articles.OrderByKey(order).ToList();
+
     private async Task SearchArticles()
     {
         var filter = new ArticleFilter()
@@ -44,7 +50,7 @@ public partial class Blog
         _articles = await Endpoints!.Search(filter);
     }
 
-    private string GetInitials(string value)
+    private static string GetInitials(string value)
     {
         var parts = value.Split(" ", StringSplitOptions.RemoveEmptyEntries)
             .Select(x => $"{x[..1].ToUpper()}.")
@@ -55,14 +61,16 @@ public partial class Blog
 
     private void NavigateToDetail(Guid articleId)
     {
-        var isAvailable = _articles
+        var article = _articles
             .Where(x => x.Id == articleId)
-            .Where(x => x.Available)
-            .Any();
+            .FirstOrDefault();
 
-        if (isAvailable == false)
+        if (article is null)
             return;
 
-        Navigation!.NavigateTo($"/blog/{articleId}");
+        if (article.Path.StartsWith('~'))
+            Navigation!.NavigateTo(article.Path[1..].ToString());
+        else
+            Navigation!.NavigateTo(article.Path.ToString());
     }
 }

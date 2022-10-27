@@ -93,6 +93,9 @@ public class EnumConverter
             ArticleCategoryEnum.Movie => "🎞 Movie",
             ArticleCategoryEnum.Project => "🚀 Project",
             ArticleCategoryEnum.Gaming => "🎮 Gaming",
+            ArticleCategoryEnum.Travel => "✈ Travel",
+            ArticleCategoryEnum.Birds => "🐤 Birds",
+            ArticleCategoryEnum.Thoughts => "💡 Thoughts",
             _ => Default
         };
 

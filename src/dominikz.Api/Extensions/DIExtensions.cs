@@ -31,6 +31,9 @@ public static class DIExtensions
         //  Add Provider
         builder.Services.AddScoped<ILinkCreator, LinkCreator>();
         builder.Services.AddScoped<IStorageProvider, StorageProvider>();
+        builder.Services.AddScoped<NoobitClient>()
+            .AddHttpClient<NoobitClient>((client) => client.BaseAddress = new Uri("https://www.noobit.dev/"));
+
         builder.Services.AddScoped<ImdbClient>()
             .AddHttpClient<ImdbClient>((client) => client.BaseAddress = new Uri("https://imdb-api.tprojects.workers.dev/"));
 

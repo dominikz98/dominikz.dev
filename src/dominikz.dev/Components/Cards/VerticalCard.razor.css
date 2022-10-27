@@ -15,6 +15,11 @@
     position: relative;
 }
 
+.vertical-card-header img {
+    width: 300px;
+    height: 160px;
+}
+
 .vertical-card-header-highlight {
     position: absolute;
     top: 16px;

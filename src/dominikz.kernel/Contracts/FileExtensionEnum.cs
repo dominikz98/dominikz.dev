@@ -3,5 +3,6 @@
 public enum FileExtensionEnum
 {
     PNG,
-    JPG
+    JPG,
+    WEBP
 }

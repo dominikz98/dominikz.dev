@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace dominikz.api.Endpoints.Games;
+namespace dominikz.api.Endpoints.Media;
 
 [Tags("medias/games")]
 [ApiController]

@@ -15,7 +15,7 @@ public abstract class ArticleVM : IViewModel
 public class ArticleListVM : ArticleVM
 {
     public bool Featured { get; set; }
-    public bool Available { get; set; }
+    public string Path { get; set; } = new("about:blank");
 }
 
 public class ArticleDetailVM : ArticleVM

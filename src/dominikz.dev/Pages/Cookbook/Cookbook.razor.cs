@@ -1,9 +1,9 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
-using dominikz.kernel.Contracts;
-using dominikz.kernel.Filter;
-using dominikz.kernel.ViewModels;
+using dominikz.shared.Contracts;
+using dominikz.shared.Filter;
+using dominikz.shared.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Cookbook;

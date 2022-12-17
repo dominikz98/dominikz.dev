@@ -1,5 +1,5 @@
-﻿using dominikz.kernel.Filter;
-using dominikz.kernel.ViewModels;
+﻿using dominikz.shared.Filter;
+using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Endpoints;
 

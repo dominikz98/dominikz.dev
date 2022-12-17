@@ -19,4 +19,5 @@
     .chip span {
         white-space: pre;
         cursor: default;
+        line-height: 25px;
     }

@@ -1,9 +1,9 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
-using dominikz.kernel.Contracts;
-using dominikz.kernel.Filter;
-using dominikz.kernel.ViewModels;
+using dominikz.shared.Contracts;
+using dominikz.shared.Filter;
+using dominikz.shared.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Blog;
@@ -18,7 +18,7 @@ public partial class Blog
 
     private string? _search;
     private ArticleCategoryEnum _category;
-    private List<ArticleListVM> _articles = new();
+    private List<ArticleListVm> _articles = new();
     private CollectionView _view;
 
     protected override async Task OnInitializedAsync()

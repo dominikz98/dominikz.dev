@@ -1,9 +1,9 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Components.Tables;
 using dominikz.dev.Utils;
-using dominikz.kernel;
-using dominikz.kernel.Contracts;
-using dominikz.kernel.ViewModels;
+using dominikz.shared;
+using dominikz.shared.Contracts;
+using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Definitions;
 

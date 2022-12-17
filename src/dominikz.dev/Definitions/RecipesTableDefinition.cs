@@ -1,6 +1,6 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Components.Tables;
-using dominikz.kernel.ViewModels;
+using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Definitions;
 

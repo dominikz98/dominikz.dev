@@ -1,11 +1,14 @@
+using dominikz.dev;
 using dominikz.dev.Endpoints;
+using dominikz.dev.Models;
 using dominikz.dev.Utils;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Options;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<BrowserService>()
     .AddScoped<BlogEndpoints>()
@@ -14,25 +17,10 @@ builder.Services.AddScoped<BrowserService>()
     .AddScoped<MovieEndpoints>()
     .AddScoped<GameEndpoints>()
     .AddScoped<BookEndpoints>()
-    .AddHttpClient<ApiClient>((client) => client.BaseAddress = new Uri("http://localhost:5187/"));
+    .AddHttpClient<ApiClient>((sp, client) =>
+    {
+        var url = builder.Configuration.GetValue<string>($"{nameof(ExternalUrls)}:{nameof(ExternalUrls.Api)}");
+        client.BaseAddress = new Uri(url!);
+    });
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-
-app.Run();
+await builder.Build().RunAsync();

@@ -1,7 +1,7 @@
 ﻿
-input[type="text"], textarea
-input[type="text"], textarea :hover
-input[type="text"], textarea :focus
+input[type="text"], textarea,
+input[type="text"], textarea :hover,
+input[type="text"], textarea :focus,
 input[type="text"], textarea :active {
     width: 100%;
     background-color: var(--theme-surface);
@@ -13,7 +13,7 @@ input[type="text"], textarea :active {
     border-radius: 25px;
 }
 
-.serachbox {
+.searchbox {
     display: flex;
     align-items: center;
     background-color: var(--theme-surface);

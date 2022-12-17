@@ -1,9 +1,9 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Components.Tables;
 using dominikz.dev.Utils;
-using dominikz.kernel;
-using dominikz.kernel.Contracts;
-using dominikz.kernel.ViewModels;
+using dominikz.shared;
+using dominikz.shared.Contracts;
+using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Definitions;
 
@@ -13,25 +13,25 @@ public static class ArticleTableDefinition
     {
         get => new()
         {
-            nameof(ArticleListVM.Title),
-            nameof(ArticleListVM.Timestamp)
+            nameof(ArticleListVm.Title),
+            nameof(ArticleListVm.Timestamp)
         };
     }
 
-    public static List<ColumnDefinition<ArticleListVM>> Columns
+    public static List<ColumnDefinition<ArticleListVm>> Columns
     {
         get => new()
         {
-            new (nameof(ArticleListVM.Title), x => x.Title),
-            new (nameof(ArticleListVM.Author), x => x.Author!.Name) { Actions = ColumnActionFlags.HIDE_ON_MOBILE },
-            new (nameof(ArticleListVM.Category), x => x.Category) {  Formatter = (x) => EnumConverter.ToString(((ArticleCategoryEnum)(x ?? string.Empty)).GetFlags().ToArray()[1..]) },
-            new (nameof(ArticleListVM.Timestamp), x => x.Timestamp) {  Formatter = (x) => $"{x:yyyy.MM.dd}", Actions = ColumnActionFlags.HIDE_ON_MOBILE }
+            new (nameof(ArticleListVm.Title), x => x.Title),
+            new (nameof(ArticleListVm.Author), x => x.Author!.Name) { Actions = ColumnActionFlags.HIDE_ON_MOBILE },
+            new (nameof(ArticleListVm.Category), x => x.Category) {  Formatter = (x) => EnumConverter.ToString(((ArticleCategoryEnum)(x ?? string.Empty)).GetFlags().ToArray()[1..]) },
+            new (nameof(ArticleListVm.Timestamp), x => x.Timestamp) {  Formatter = (x) => $"{x:yyyy.MM.dd}", Actions = ColumnActionFlags.HIDE_ON_MOBILE }
         };
     }
 
-    public static IOrderedEnumerable<ArticleListVM> OrderByKey(this List<ArticleListVM> query, OrderInfo order)
+    public static IOrderedEnumerable<ArticleListVm> OrderByKey(this List<ArticleListVm> query, OrderInfo order)
     {
-        if (order.Key.Equals(nameof(ArticleListVM.Timestamp), StringComparison.OrdinalIgnoreCase))
+        if (order.Key.Equals(nameof(ArticleListVm.Timestamp), StringComparison.OrdinalIgnoreCase))
         {
             if (order.Direction == OrderDirection.Ascending)
                 return query.OrderBy(x => x.Timestamp);

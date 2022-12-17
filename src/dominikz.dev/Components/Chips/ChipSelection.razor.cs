@@ -14,8 +14,8 @@ public partial class ChipSelection<T>
     [Parameter]
     public List<T> Values
     {
-        get { return AllowExpand && !IsExpanded ? _values.Take(ExpandLimiter).ToList() : _values; }
-        set { _values = value; }
+        get => AllowExpand && !IsExpanded ? _values.Take(ExpandLimiter).ToList() : _values;
+        set => _values = value;
     }
 
     [Parameter]

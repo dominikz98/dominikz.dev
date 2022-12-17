@@ -12,7 +12,7 @@ public partial class ComboBox
     [Parameter]
     public string Selected
     {
-        get { return _selected; }
+        get => _selected;
         set { 
             _selected = value; 
             CallOnChanged();

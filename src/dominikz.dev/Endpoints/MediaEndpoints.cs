@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.ViewModels;
+﻿using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Endpoints;
 

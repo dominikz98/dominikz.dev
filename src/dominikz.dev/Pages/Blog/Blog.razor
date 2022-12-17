@@ -5,8 +5,8 @@
 @using dominikz.dev.Components.Tables
 @using dominikz.dev.Definitions
 @using dominikz.dev.Utils
-@using dominikz.kernel.Contracts
-@using dominikz.kernel.ViewModels
+@using dominikz.shared.Contracts
+@using dominikz.shared.ViewModels
 
 <PageTitle>Blog</PageTitle>
 
@@ -29,7 +29,7 @@
 
     @if (_view == CollectionView.Table)
     {
-        <Table T="ArticleListVM"
+        <Table T="ArticleListVm"
            Values="@_articles"
            Columns="@ArticleTableDefinition.Columns"
            OnRowClicked="(article) => NavigateToDetail(article.Id)"

@@ -1,5 +1,5 @@
 ﻿using dominikz.dev.Endpoints;
-using dominikz.kernel.ViewModels;
+using dominikz.shared.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Cookbook;

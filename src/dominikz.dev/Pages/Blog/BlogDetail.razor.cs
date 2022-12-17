@@ -1,5 +1,5 @@
 ﻿using dominikz.dev.Endpoints;
-using dominikz.kernel.ViewModels;
+using dominikz.shared.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Blog;
@@ -12,7 +12,7 @@ public partial class BlogDetail
     [Inject]
     protected BlogEndpoints? Endpoints { get; set; }
 
-    private ArticleDetailVM? _article;
+    private ArticleDetailVm? _article;
 
     protected override async Task OnInitializedAsync()
     {

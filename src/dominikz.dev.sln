@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.kernel", "dominikz.kernel\dominikz.kernel.csproj", "{569999F0-CFCD-43EE-B198-52E42C6A971C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.api", "dominikz.api\dominikz.api.csproj", "{6D29F3A2-72ED-4F38-8773-90E0F4903469}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.api", "dominikz.Api\dominikz.api.csproj", "{E98FB977-CE40-4F68-9314-D9B70D3140B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.shared", "dominikz.shared\dominikz.shared.csproj", "{1B80F3FC-FEC1-4612-841B-CE84585F3339}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.dev", "dominikz.dev\dominikz.dev.csproj", "{EB8B7AE5-7854-4B52-8D57-67A7C22BA038}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.dev", "dominikz.dev\dominikz.dev.csproj", "{B582FEE3-F142-46CE-9D38-9FC306E8E6EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{569999F0-CFCD-43EE-B198-52E42C6A971C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E98FB977-CE40-4F68-9314-D9B70D3140B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB8B7AE5-7854-4B52-8D57-67A7C22BA038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB8B7AE5-7854-4B52-8D57-67A7C22BA038}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB8B7AE5-7854-4B52-8D57-67A7C22BA038}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB8B7AE5-7854-4B52-8D57-67A7C22BA038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D29F3A2-72ED-4F38-8773-90E0F4903469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D29F3A2-72ED-4F38-8773-90E0F4903469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D29F3A2-72ED-4F38-8773-90E0F4903469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D29F3A2-72ED-4F38-8773-90E0F4903469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B80F3FC-FEC1-4612-841B-CE84585F3339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B80F3FC-FEC1-4612-841B-CE84585F3339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B80F3FC-FEC1-4612-841B-CE84585F3339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B80F3FC-FEC1-4612-841B-CE84585F3339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B582FEE3-F142-46CE-9D38-9FC306E8E6EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B582FEE3-F142-46CE-9D38-9FC306E8E6EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B582FEE3-F142-46CE-9D38-9FC306E8E6EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B582FEE3-F142-46CE-9D38-9FC306E8E6EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

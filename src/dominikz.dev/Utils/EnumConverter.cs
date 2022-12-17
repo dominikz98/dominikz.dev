@@ -1,4 +1,4 @@
-﻿using dominikz.kernel.Contracts;
+﻿using dominikz.shared.Contracts;
 
 namespace dominikz.dev.Utils;
 

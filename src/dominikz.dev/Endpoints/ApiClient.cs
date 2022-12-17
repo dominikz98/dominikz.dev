@@ -1,5 +1,6 @@
-﻿using dominikz.kernel.Contracts;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
+using dominikz.shared.Contracts;
 
 namespace dominikz.dev.Endpoints;
 

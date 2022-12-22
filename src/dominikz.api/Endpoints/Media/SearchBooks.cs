@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace dominikz.api.Endpoints.Media.Books;
+namespace dominikz.api.Endpoints.Media;
 
 [Tags("medias/books")]
 [ApiController]
@@ -59,8 +59,8 @@ public class SearchBooksQueryHandler : IRequestHandler<SearchBooksQuery, IReadOn
         if (!string.IsNullOrWhiteSpace(request.Text))
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
 
-        if (request.Genres != BookGenresFlags.ALL)
-            foreach (var genre in request.Genres.GetFlags())
+        if (request.Genres is not null or BookGenresFlags.ALL)
+            foreach (var genre in request.Genres.Value.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));
 
         if (request.Language is not null)

@@ -1,6 +1,7 @@
 ﻿using dominikz.dev.Components;
-using dominikz.dev.Definitions;
+using dominikz.dev.Components.Chips;
 using dominikz.dev.Endpoints;
+using dominikz.dev.Models;
 using dominikz.shared.Contracts;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels;
@@ -10,20 +11,15 @@ namespace dominikz.dev.Pages.Media;
 
 public partial class Media
 {
-    [Inject]
-    protected MediaEndpoints? MediaEndpoints { get; set; }
+    [Inject] protected MediaEndpoints? MediaEndpoints { get; set; }
 
-    [Inject]
-    protected MovieEndpoints? MovieEndpoints { get; set; }
+    [Inject] protected MovieEndpoints? MovieEndpoints { get; set; }
 
-    [Inject]
-    protected GameEndpoints? GameEndpoints { get; set; }
+    [Inject] protected GameEndpoints? GameEndpoints { get; set; }
 
-    [Inject]
-    protected BookEndpoints? BookEndpoints { get; set; }
+    [Inject] protected BookEndpoints? BookEndpoints { get; set; }
 
-    [Inject]
-    protected NavigationManager? Navigation { get; set; }
+    [Inject] protected NavigationManager? NavManager { get; set; }
 
     // data
     private List<MediaPreviewVM> _previews = new();
@@ -31,154 +27,69 @@ public partial class Media
     private List<GameVM> _games = new();
     private List<BookVM> _books = new();
 
-    // searchbar
-    private string? _search;
-    private OrderInfo? _order;
-    private List<string> _orderKeys = new();
-    private CollectionView _view;
+    private readonly CollectionView _view = CollectionView.Grid;
+    private Searchbox? _searchbox;
+    private ChipSelect<MediaCategoryEnum>? _categorySelect;
+    private ChipSelect<MovieGenresFlags>? _movieGenresSelect;
+    private ChipSelect<BookGenresFlags>? _bookGenresSelect;
+    private ChipSelect<BookLanguageEnum>? _bookLanguageSelect;
+    private ChipSelect<GameGenresFlags>? _gameGenresSelect;
+    private ChipSelect<GamePlatformEnum>? _gamePlatformSelect;
 
-    // filter
-    private MediaCategoryEnum _category;
-    private GameGenresFlags _gameGenres;
-    private GamePlatformEnum _gamePlatform;
-    private BookGenresFlags _bookGenres;
-    private BookLanguageEnum _bookLanguage;
+    private MediaCategoryEnum Category
+        => _categorySelect?.Selected ?? MediaCategoryEnum.Movie;
 
     protected override async Task OnInitializedAsync()
-       => _previews = await MediaEndpoints!.GetPreview();
-
-    private async Task OnSearchChanged(string value)
     {
-        _search = value;
-        await LoadByCategory();
+        if (_previews.Count == 0)
+            _previews = await MediaEndpoints!.GetPreview();
+
+        NavManager!.LocationChanged += async (_, _) => await SearchByCategory();
     }
 
-    private async Task OnCategoriesChanged(List<MediaCategoryEnum> categories)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _category = categories.FirstOrDefault();
-        await LoadByCategory();
+        if (firstRender == false)
+            return;
+
+        await SearchByCategory();
     }
 
-    private async Task OnMovieGenreChanged(List<MovieGenresFlags> genres)
+    private async Task SearchByCategory()
     {
-        var genre = (MovieGenresFlags)genres.Sum(x => (int)x);
-        await LoadMovies(genre);
-        OrderByCategory();
-    }
-
-    private async Task OnGameGenreChanged(List<GameGenresFlags> genres)
-    {
-        var genre = (GameGenresFlags)genres.Sum(x => (int)x);
-        _gameGenres = genre;
-        await LoadGames();
-        OrderByCategory();
-    }
-
-    private async Task OnGamePlatformChanged(List<GamePlatformEnum> platforms)
-    {
-        _gamePlatform = platforms.FirstOrDefault();
-        await LoadGames();
-        OrderByCategory();
-    }
-
-    private async Task OnBookGenreChanged(List<BookGenresFlags> genres)
-    {
-        var genre = (BookGenresFlags)genres.Sum(x => (int)x);
-        _bookGenres = genre;
-        await LoadBooks();
-        OrderByCategory();
-    }
-
-    private async Task OnBookLanguageChanged(List<BookLanguageEnum> language)
-    {
-        _bookLanguage = language.FirstOrDefault();
-        await LoadBooks();
-        OrderByCategory();
-    }
-
-    private void OnOrderChanged(OrderInfo order)
-    {
-        _order = order;
-        OrderByCategory();
-    }
-
-    private async Task LoadByCategory()
-    {
-        switch (_category)
+        switch (Category)
         {
             case MediaCategoryEnum.Movie:
-                _orderKeys = MovieTableDefinition.OrderKeys;
-                await LoadMovies(MovieGenresFlags.ALL);
+                var movieFilter = new MoviesFilter()
+                {
+                    Text = _searchbox?.Value,
+                    Genres = _movieGenresSelect?.Selected
+                };
+                _movies = await MovieEndpoints!.Search(movieFilter);
                 break;
             case MediaCategoryEnum.Book:
-                _orderKeys = BookTableDefinition.OrderKeys;
-                await LoadBooks();
+                var bookFilter = new BooksFilter()
+                {
+                    Text = _searchbox?.Value,
+                    Genres = _bookGenresSelect?.Selected,
+                    Language = _bookLanguageSelect?.Selected
+                };
+                _books = await BookEndpoints!.Search(bookFilter);
                 break;
             case MediaCategoryEnum.Game:
-                _orderKeys = GameTableDefinition.OrderKeys;
-                await LoadGames();
-                break;
-            default:
+                var gameFilter = new GamesFilter()
+                {
+                    Text = _searchbox?.Value,
+                    Genres = _gameGenresSelect?.Selected,
+                    Platform = _gamePlatformSelect?.Selected
+                };
+                _games = await GameEndpoints!.Search(gameFilter);
                 break;
         }
 
-        OrderByCategory();
         StateHasChanged();
     }
 
-    private async Task LoadMovies(MovieGenresFlags genres)
-    {
-        var filter = new MoviesFilter()
-        {
-            Text = _search,
-            Genres = genres
-        };
-        _movies = await MovieEndpoints!.Search(filter);
-    }
-
-    private async Task LoadGames()
-    {
-        var filter = new GamesFilter()
-        {
-            Text = _search,
-            Genres = _gameGenres,
-            Platform = _gamePlatform
-        };
-        _games = await GameEndpoints!.Search(filter);
-    }
-
-    private async Task LoadBooks()
-    {
-        var filter = new BooksFilter()
-        {
-            Text = _search,
-            Genres = _bookGenres,
-            Language = _bookLanguage
-        };
-        _books = await BookEndpoints!.Search(filter);
-    }
-
-    private void OrderByCategory()
-    {
-        if (_order is null)
-            return;
-
-        switch (_category)
-        {
-            case MediaCategoryEnum.Movie:
-                _movies = _movies.OrderByKey(_order).ToList();
-                break;
-            case MediaCategoryEnum.Book:
-                _books = _books.OrderByKey(_order).ToList();
-                break;
-            case MediaCategoryEnum.Game:
-                _games = _games.OrderByKey(_order).ToList();
-                break;
-            default:
-                break;
-        }
-    }
-
     private void NavigateToMovie(Guid movieId)
-        => Navigation!.NavigateTo($"/media/movie/{movieId}");
+        => NavManager!.NavigateTo($"/media/movie/{movieId}");
 }

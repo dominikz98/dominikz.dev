@@ -38,7 +38,9 @@ public class SearchMovies : ControllerBase
     }
 }
 
-public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVM>> { }
+public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVM>>
+{
+}
 
 public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IReadOnlyCollection<MovieVM>>
 {
@@ -55,8 +57,8 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
     {
         var query = _database.From<Movie>();
 
-        if (request.Genres != MovieGenresFlags.ALL)
-            foreach (var genre in request.Genres.GetFlags())
+        if (request.Genres is not null or MovieGenresFlags.ALL)
+            foreach (var genre in request.Genres.Value.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));
 
         if (!string.IsNullOrWhiteSpace(request.Text))

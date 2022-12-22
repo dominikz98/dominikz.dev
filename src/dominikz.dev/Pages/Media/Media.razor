@@ -4,6 +4,7 @@
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Components.Tables
 @using dominikz.dev.Definitions
+@using dominikz.dev.Models
 @using dominikz.dev.Theme
 @using dominikz.dev.Utils
 @using dominikz.shared
@@ -14,79 +15,65 @@
 
 <div class="media">
 
-    <MediaCarousel Data="_previews" />
+    <MediaCarousel Data="_previews"/>
 
-    <Searchbox ValueChanged="OnSearchChanged" />
+    <Searchbox @ref="_searchbox" QueryBinding="search"/>
 
-    <ChipSelection T="MediaCategoryEnum"
+    <ChipSelect T="MediaCategoryEnum"
+                   @ref="_categorySelect"
+                   QueryBinding="category"
                    Title="Category"
-                   Init="MediaCategoryEnum.Movie"
-                   Values="Enum.GetValues<MediaCategoryEnum>()[1..].ToList()"
-                   SelectedChanged="OnCategoriesChanged"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))" />
+                   Values="Enum.GetValues<MediaCategoryEnum>()[1..].ToList()"/>
 
-    @switch (_category)
+    @switch (Category)
     {
         case MediaCategoryEnum.Movie:
-            <ChipSelection T="MovieGenresFlags"
-                   AllowExpand=true
-                   AllowMultiSelect=true
-                   Title="Genres"
-                   Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))"
-                   SelectedChanged="@OnMovieGenreChanged" />
+            <ChipSelect T="MovieGenresFlags"
+                           @ref="_movieGenresSelect"
+                           QueryBinding="g_genres"
+                           AllowExpand=true
+                           Title="Genres"
+                           Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
             break;
 
         case MediaCategoryEnum.Book:
-            <ChipSelection T="BookGenresFlags"
-                   AllowExpand=true
-                   AllowMultiSelect=true
-                   Title="Genres"
-                   Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))"
-                   SelectedChanged="@OnBookGenreChanged" />
+            <ChipSelect T="BookGenresFlags"
+                           @ref="_bookGenresSelect"
+                           QueryBinding="b_genres"
+                           AllowExpand=true
+                           Title="Genres"
+                           Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
 
-            <ChipSelection T="BookLanguageEnum"
-                   Init="BookLanguageEnum.German"
-                   Title="Genres"
-                   Values="Enum.GetValues<BookLanguageEnum>().ToList()"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))"
-                   SelectedChanged="@OnBookLanguageChanged" />
+            <ChipSelect T="BookLanguageEnum"
+                           @ref="_bookLanguageSelect"
+                           QueryBinding="b_language"
+                           Title="Genres"
+                           Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
             break;
 
         case MediaCategoryEnum.Game:
-            <ChipSelection T="GameGenresFlags"
-                   AllowExpand=true
-                   AllowMultiSelect=true
-                   Title="Genres"
-                   Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))"
-                   SelectedChanged="@OnGameGenreChanged" />
+            <ChipSelect T="GameGenresFlags"
+                           @ref="_gameGenresSelect"
+                           QueryBinding="g_genres"
+                           AllowExpand=true
+                           Title="Genres"
+                           Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
 
-            <ChipSelection T="GamePlatformEnum"
-                   Init="GamePlatformEnum.PC"
-                   Title="Genres"
-                   Values="Enum.GetValues<GamePlatformEnum>().ToList()"
-                   TextFormatter="@((x) => EnumConverter.ToString(x))"
-                   SelectedChanged="@OnGamePlatformChanged" />
+            <ChipSelect T="GamePlatformEnum"
+                           @ref="_gamePlatformSelect"
+                           QueryBinding="g_platforms"
+                           Title="Genres"
+                           Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
             break;
     }
 
-    <div class="media-menue-container">
-
-        <ViewSelector @bind-Selected="_view" />
-
-        <OrderSelector OrderKeys="@_orderKeys" ValueChanged="OnOrderChanged" />
-
-    </div>
-
-    @switch (_category)
+    @switch (Category)
     {
         case MediaCategoryEnum.Movie:
 
             @if (_view == CollectionView.Table)
             {
-                <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex=true />
+                <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {
@@ -94,8 +81,8 @@
                     @foreach (var movie in _movies)
                     {
                         <HorizontalCard ImageUrl="@movie.Image!.Url"
-                        Title="@movie.Title"
-                        OnClick="() => NavigateToMovie(movie.Id)">
+                                        Title="@movie.Title"
+                                        OnClick="() => NavigateToMovie(movie.Id)">
 
                             <Panel Gap="8" FlexAlignment="CssFlexAlignment.Column" ItemAlignment="CssItemAlignment.Start">
                                 <span>@movie.Year</span>
@@ -118,7 +105,7 @@
 
             @if (_view == CollectionView.Table)
             {
-                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex=true />
+                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {
@@ -144,7 +131,7 @@
 
             @if (_view == CollectionView.Table)
             {
-                <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex=true />
+                <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {

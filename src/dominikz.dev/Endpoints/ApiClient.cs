@@ -1,14 +1,15 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using dominikz.shared.Contracts;
+using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Endpoints;
 
 public class ApiClient
 {
     private readonly HttpClient _client;
-
-    private static readonly string _prefix = "api";
+    
+    public const string Prefix = "api";
 
     private readonly JsonSerializerOptions _serializerOptions;
 
@@ -19,17 +20,17 @@ public class ApiClient
     }
 
     public async Task<T?> Get<T>(string endpoint, Guid id, CancellationToken cancellationToken) where T : new()
-        => await _client.GetFromJsonAsync<T>($"{_prefix}/{endpoint}/{id}", _serializerOptions, cancellationToken);
+        => await _client.GetFromJsonAsync<T>($"{Prefix}/{endpoint}/{id}", _serializerOptions, cancellationToken);
 
     public async Task<List<T>> Get<T>(string endpoint, CancellationToken cancellationToken) where T : new()
     {
-        var result = await _client.GetFromJsonAsync<List<T>>($"{_prefix}/{endpoint}", _serializerOptions, cancellationToken);
+        var result = await _client.GetFromJsonAsync<List<T>>($"{Prefix}/{endpoint}", _serializerOptions, cancellationToken);
         return result ?? new List<T>();
     }
 
     public async Task<List<T>> Get<T>(string endpoint, IFilter? filter, CancellationToken cancellationToken) where T : new()
     {
-        var route = $"{_prefix}/{endpoint}";
+        var route = $"{Prefix}/{endpoint}";
 
         var parameter = filter?.GetParameter()
                 .Select(x => $"{x.Name}={x.Value}")

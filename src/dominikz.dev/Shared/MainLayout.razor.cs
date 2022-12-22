@@ -2,11 +2,11 @@
 
 public partial class MainLayout
 {
-    public bool IsMenuOpen { get; set; }
+    private bool _isMenuOpen;
     private string _classByUrl = string.Empty;
 
     private void OnExpandClicked()
-        => IsMenuOpen = !IsMenuOpen;
+        => _isMenuOpen = !_isMenuOpen;
 
     private void OnClassByUrlChanged(string value)
         => _classByUrl = value;

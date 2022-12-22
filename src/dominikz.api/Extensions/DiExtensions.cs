@@ -15,7 +15,10 @@ public static class DiExtensions
     {
         // Add Options
         builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
-        builder.Services.Configure<ExternalUrls>(builder.Configuration.GetSection(nameof(ExternalUrls)));
+        builder.Services.Configure<MedlanOptions>(builder.Configuration.GetSection(nameof(MedlanOptions)));
+        builder.Services.Configure<NoobitOptions>(builder.Configuration.GetSection(nameof(NoobitOptions)));
+        builder.Services.Configure<ImdbOptions>(builder.Configuration.GetSection(nameof(ImdbOptions)));
+        builder.Services.Configure<DominikZOptions>(builder.Configuration.GetSection(nameof(DominikZOptions)));
         
         // Add Context
         builder.Services.AddDbContext<DatabaseContext>(options =>
@@ -36,29 +39,19 @@ public static class DiExtensions
         //  Add Provider
         builder.Services.AddScoped<ILinkCreator, LinkCreator>();
         builder.Services.AddScoped<IStorageProvider, StorageProvider>();
-        builder.Services.AddScoped<MedlanClient>()
-            .AddHttpClient("Medlan", (sp, client) =>
-            {
-                var url = sp.GetRequiredService<IOptions<ExternalUrls>>().Value.Medlan;
-                client.BaseAddress = new Uri(url);
-            }).Services
-            .AddHttpClient("ProjectMedlan", (sp, client) =>
-            {
-                var url = sp.GetRequiredService<IOptions<ExternalUrls>>().Value.ProjectMedlan;
-                client.BaseAddress = new Uri(url);
-            });
+        builder.Services.AddScoped<MedlanClient>();
         builder.Services.AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
             {
-                var options = sp.GetRequiredService<IOptions<ExternalUrls>>();
-                client.BaseAddress = new Uri(options.Value.NoobitDev);
+                var options = sp.GetRequiredService<IOptions<NoobitOptions>>();
+                client.BaseAddress = new Uri(options.Value.Url);
             });
 
         builder.Services.AddScoped<ImdbClient>()
             .AddHttpClient<ImdbClient>((sp, client) =>
             {
-                var options = sp.GetRequiredService<IOptions<ExternalUrls>>();
-                client.BaseAddress = new Uri(options.Value.ImdbCrawler);
+                var options = sp.GetRequiredService<IOptions<ImdbOptions>>();
+                client.BaseAddress = new Uri(options.Value.Url);
             });
 
         //  Add Mediatr

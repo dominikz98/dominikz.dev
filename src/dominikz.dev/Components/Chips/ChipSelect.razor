@@ -1,4 +1,4 @@
-﻿@typeparam T
+@typeparam T
 
 <Panel Gap="8">
 
@@ -11,12 +11,12 @@
 
     @if (AllowExpand && !IsExpanded && _values.Count > ExpandLimiter)
     {
-        <span class="chip-selection-expand" @onclick="() => CallOnExpand(string.Empty)">Show more ...</span>
+        <span class="chip-selection-expand" @onclick="CallOnExpand">Show more ...</span>
     }
 
     @if (AllowExpand && IsExpanded && _values.Count > ExpandLimiter)
     {
-        <span class="chip-selection-expand" @onclick="() => CallOnExpand(string.Empty)">Show less ...</span>
+        <span class="chip-selection-expand" @onclick="CallOnExpand">Show less ...</span>
     }
 
 </Panel>

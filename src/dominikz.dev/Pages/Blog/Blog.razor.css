@@ -11,6 +11,12 @@
     justify-content: space-between;
 }
 
+.blog-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .blog-card-author {
     display: flex;
     flex-direction: column;
@@ -22,11 +28,21 @@
     border-radius: 50px;
 }
 
-.blog-menue-container {
+.blog-gap
+{
+    gap: 12px;
+}
+
+.blog-menu-container  {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.blog-menu-container-element  {
+    display: flex;
+    align-items: center;
+    font-size: large;
     background-color: var(--theme-surface);
-    border-radius: 5px;
-    gap: 16px;
-    padding: 4px;
+    border-radius: 4px;
+    padding: 6px;
 }

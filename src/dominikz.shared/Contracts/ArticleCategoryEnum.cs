@@ -2,12 +2,13 @@
 
 public enum ArticleCategoryEnum
 {
-    ALL = 0,
-    Coding = 1,
-    Movie = 2,
-    Project = 3,
-    Gaming = 4,
-    Travel = 5,
-    Birds = 6,
-    Thoughts = 7
+    Coding = 0,
+    Movie = 1,
+    Project = 2,
+    Gaming = 3,
+    Travel = 4,
+    Birds = 5,
+    Thoughts = 6,
+    Music = 7,
+    Unknown = 999
 }

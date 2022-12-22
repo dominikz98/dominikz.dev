@@ -5,7 +5,7 @@ namespace dominikz.dev.Components.Tables;
 public partial class Table<T>
 {
     [Parameter]
-    public List<T> Values { get; set; } = new List<T>();
+    public List<T> Values { get; set; } = new();
 
     [Parameter]
     public IReadOnlyCollection<ColumnDefinition<T>> Columns { get; set; } = new List<ColumnDefinition<T>>();

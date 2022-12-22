@@ -2,7 +2,7 @@ namespace dominikz.shared.Contracts;
 
 public enum ArticleSource
 {
-    DZ,
-    Noobit,
-    Medlan
+    Dz = 0,
+    Noobit = 1,
+    Medlan = 2
 }

@@ -1,21 +1,28 @@
-﻿using dominikz.shared.Filter;
+﻿using dominikz.dev.Models;
+using dominikz.shared.Filter;
 using dominikz.shared.ViewModels;
+using Microsoft.Extensions.Options;
 
 namespace dominikz.dev.Endpoints;
 
 public class BlogEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string _endpoint = "blog";
+    private readonly IOptions<ExternalUrls> _options;
+    private const string Endpoint = "blog";
 
-    public BlogEndpoints(ApiClient client)
+    public BlogEndpoints(ApiClient client, IOptions<ExternalUrls> options)
     {
         _client = client;
+        _options = options;
     }
-
+    
+    public string GetRssFeedUrl()
+        => $"{_options.Value.Api}{ApiClient.Prefix}/{Endpoint}/rss";
+    
     public async Task<ArticleDetailVm?> GetById(Guid id, CancellationToken cancellationToken = default)
-        => await _client.Get<ArticleDetailVm>(_endpoint, id, cancellationToken);
+        => await _client.Get<ArticleDetailVm>(Endpoint, id, cancellationToken);
 
     public async Task<List<ArticleListVm>> Search(ArticleFilter filter, CancellationToken cancellationToken = default)
-        => await _client.Get<ArticleListVm>($"{_endpoint}/search", filter, cancellationToken);
+        => await _client.Get<ArticleListVm>($"{Endpoint}/search", filter, cancellationToken);
 }

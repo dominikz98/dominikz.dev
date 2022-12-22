@@ -2,14 +2,13 @@
 
 namespace dominikz.dev.Utils;
 
-public class EnumConverter
+public static class EnumConverter
 {
-    public const string ALL = "All";
-    public const string Default = "Unknown";
+    private const string Default = "Unknown";
     // https://emojipedia.org/
 
     public static string ToString<TEnum>(IReadOnlyCollection<TEnum> values) where TEnum : struct, Enum
-        => string.Join(", ", values.Select(x => ToString(x)));
+        => string.Join(", ", values.Select(ToString));
 
     public static string ToString<TEnum>(TEnum value) where TEnum : struct, Enum
     {
@@ -22,6 +21,9 @@ public class EnumConverter
         else if (value is ArticleCategoryEnum articleCategory)
             return ToString(articleCategory);
 
+        else if (value is ArticleSource articleSource)
+            return ToString(articleSource);
+        
         else if (value is FoodUnitEnum foodUnit)
             return ToString(foodUnit);
 
@@ -53,7 +55,7 @@ public class EnumConverter
     private static string ToString(MediaCategoryEnum category)
         => category switch
         {
-            MediaCategoryEnum.ALL => ALL,
+            MediaCategoryEnum.ALL => string.Empty,
             //MediaCategoryEnum.Series => "🍿 Series",
             MediaCategoryEnum.Movie => "🎞 Movie",
             MediaCategoryEnum.Book => "📖 Book",
@@ -64,6 +66,7 @@ public class EnumConverter
     private static string ToString(MovieGenresFlags genre)
         => genre switch
         {
+            MovieGenresFlags.ALL => string.Empty,
             MovieGenresFlags.Horror => "👻 Horror",
             MovieGenresFlags.Drama => "🎭 Drama",
             MovieGenresFlags.Mystery => "🔮 Mystery",
@@ -82,20 +85,20 @@ public class EnumConverter
             MovieGenresFlags.Biography => "🎩 Biography",
             MovieGenresFlags.History => "📙 History",
             MovieGenresFlags.Family => "👪 Family",
-            MovieGenresFlags.ALL or _ => Default
+            _ => Default
         };
 
     private static string ToString(ArticleCategoryEnum category)
         => category switch
         {
-            ArticleCategoryEnum.ALL => ALL,
-            ArticleCategoryEnum.Coding => "💡 Coding",
+            ArticleCategoryEnum.Coding => "💾 Coding",
             ArticleCategoryEnum.Movie => "🎞 Movie",
             ArticleCategoryEnum.Project => "🚀 Project",
             ArticleCategoryEnum.Gaming => "🎮 Gaming",
             ArticleCategoryEnum.Travel => "✈ Travel",
             ArticleCategoryEnum.Birds => "🐤 Birds",
             ArticleCategoryEnum.Thoughts => "💡 Thoughts",
+            ArticleCategoryEnum.Music => "🎸 Music",
             _ => Default
         };
 
@@ -111,7 +114,7 @@ public class EnumConverter
     private static string ToString(GameGenresFlags genre)
         => genre switch
         {
-            GameGenresFlags.ALL => ALL,
+            GameGenresFlags.ALL => string.Empty,
             GameGenresFlags.VirtualReality => "👓 VR",
             GameGenresFlags.Indie => "🕹 Indie",
             GameGenresFlags.Survival => "🎒 Survival",
@@ -141,7 +144,7 @@ public class EnumConverter
     private static string ToString(BookGenresFlags genre)
         => genre switch
         {
-            BookGenresFlags.ALL => ALL,
+            BookGenresFlags.ALL => string.Empty,
             BookGenresFlags.Crime => "🎈 Crime",
             BookGenresFlags.Fantasy => "🦄 Fantasy",
             BookGenresFlags.Adventure => "🗺 Adventure",
@@ -162,6 +165,15 @@ public class EnumConverter
         {
             BookLanguageEnum.German => "German",
             BookLanguageEnum.English => "English",
+            _ => Default
+        };
+    
+    private static string ToString(ArticleSource source)
+        => source switch
+        {
+            ArticleSource.Dz => "Dominik",
+            ArticleSource.Medlan => "Medlan",
+            ArticleSource.Noobit => "Noobit",
             _ => Default
         };
 }

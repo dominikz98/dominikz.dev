@@ -5,6 +5,8 @@ namespace dominikz.api.Utils;
 
 public interface ILinkCreator
 {
+    Uri? CreateRssUrl();
+    Uri? CreateBlogUrl(Guid articleId);
     Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size);
 }
 
@@ -19,6 +21,12 @@ public class LinkCreator : ILinkCreator
         _urlHelper = urlHelper;
     }
 
+    public Uri? CreateRssUrl()
+        => GetUri($"~/blog/rss");
+    
+    public Uri? CreateBlogUrl(Guid articleId)
+        => GetUri($"~/blog/{articleId}");
+    
     public Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size)
         => GetUri($"~/download/image/{fileId}/{(int)size}");
 

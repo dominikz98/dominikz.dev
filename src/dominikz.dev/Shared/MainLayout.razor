@@ -1,9 +1,13 @@
 ﻿@using dominikz.dev.Theme
+@using dominikz.dev.Components.Toast
+
 @inherits LayoutComponentBase
 
 <PageTitle>dominikz.dev</PageTitle>
 
 <ThemeProvider ClassByUrlChanged="OnClassByUrlChanged" />
+
+<Toast />
 
 <div class="page @_classByUrl">
 
@@ -11,7 +15,7 @@
 
     <div class="content">
 
-        <AppMenue IsExpanded="IsMenuOpen" />
+        <AppMenue IsExpanded="_isMenuOpen" />
 
         <div class="main">
             @Body

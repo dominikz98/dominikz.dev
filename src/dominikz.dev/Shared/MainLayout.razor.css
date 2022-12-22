@@ -19,6 +19,12 @@
     left: 0;
 }
 
+.scroll-to-top-button {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+}
+
 @media (min-width: 641px) {
 
     .main {

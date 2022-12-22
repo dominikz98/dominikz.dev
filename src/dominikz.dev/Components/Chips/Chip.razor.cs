@@ -25,6 +25,6 @@ public partial class Chip<T>
         await OnChanged.InvokeAsync(this);
     }
 
-    public bool Select()
-        => IsSelected = true;
+    public bool ToggleSelect()
+        => IsSelected = !IsSelected;
 }

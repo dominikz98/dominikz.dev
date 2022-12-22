@@ -4,7 +4,7 @@ namespace dominikz.shared.ViewModels;
 
 public class PersonVM : IViewModel
 {
-    public Guid Id { get; set; }
-    public FileVM? Image { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public Guid Id { get; init; }
+    public FileVM? Image { get; init; }
+    public string Name { get; init; } = string.Empty;
 }

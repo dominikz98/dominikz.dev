@@ -4,9 +4,9 @@ namespace dominikz.shared.Filter;
 
 public class GamesFilter : IFilter
 {
-    public string? Text { get; set; }
-    public GamePlatformEnum? Platform { get; set; }
-    public GameGenresFlags Genres { get; set; }
+    public string? Text { get; init; }
+    public GamePlatformEnum? Platform { get; init; }
+    public GameGenresFlags? Genres { get; init; }
 
     public IReadOnlyCollection<FilterParam> GetParameter()
     {
@@ -15,7 +15,7 @@ public class GamesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres != GameGenresFlags.ALL)
+        if (Genres is null || Genres != GameGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
 
         if (Platform is not null)

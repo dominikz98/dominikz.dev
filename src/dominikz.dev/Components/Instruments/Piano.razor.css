@@ -1,0 +1,6 @@
+﻿
+.piano-key-container {
+    position: relative;
+    display:flex;
+    gap: 1px;
+}

@@ -4,18 +4,18 @@ namespace dominikz.shared.ViewModels;
 
 public class RecipeVM : IViewModel
 {
-    public Guid Id { get; set; }
-    public FileVM? Image { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public int Portions { get; set; }
-    public decimal PricePerPortion { get; set; }
-    public int FoodCount { get; set; }
-    public TimeSpan Duration { get; set; }
-    public RecipeCategoryFlags Categories { get; set; } = new();
+    public Guid Id { get; init; }
+    public FileVM? Image { get; init; }
+    public string Title { get; init; } = string.Empty;
+    public int Portions { get; init; }
+    public decimal PricePerPortion { get; init; }
+    public int FoodCount { get; init; }
+    public TimeSpan Duration { get; init; }
+    public RecipeCategoryFlags Categories { get; init; } = new();
 }
 
 public class RecipeDetailVM : RecipeVM
 {
-    public string Text { get; set; } = string.Empty;
-    public List<FoodDetailVM> Foods { get; set; } = new();
+    public string Text { get; init; } = string.Empty;
+    public List<FoodDetailVM> Foods { get; init; } = new();
 }

@@ -10,7 +10,9 @@ public partial class ComboBox
     private string _selected = string.Empty;
 
     [Parameter]
+#pragma warning disable BL0007
     public string Selected
+#pragma warning restore BL0007
     {
         get => _selected;
         set { 

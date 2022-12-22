@@ -2,18 +2,26 @@
 @using dominikz.dev.Components
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Utils
+@using dominikz.shared.Contracts
 
 @if (_article is not null)
 {
     <h2>@_article.Title</h2>
 
     <Panel Gap="8">
-        <Lable Icon="fa-solid fa-calendar" Text="@_article.Timestamp.ToString("yyyy-MM-dd")" />
-        <Lable Icon="fa-solid fa-at" Text="@_article.Author!.Name" />
-        <Lable Icon="category" Text="@(EnumConverter.ToString(_article.Category))" />
+        <Lable Text="@($"🕑 {_article.Timestamp:yyyy-MM-dd}")"/>
+        <Lable Text="@($"✏️ {_article.Author!.Name}")"/>
+        @if (_article.Category != ArticleCategoryEnum.Unknown)
+        {
+            <Lable Text="@EnumConverter.ToString(_article.Category)"/>
+        }
+        else
+        {
+            <Lable Text="@($"💬 {_article.AltCategories}")"/>
+        }
     </Panel>
 
-    <hr />
+    <hr/>
 
     <Panel>
         @foreach (var tag in _article.Tags)
@@ -24,7 +32,7 @@
         }
     </Panel>
 
-    <hr />
+    <hr/>
 
     <div class="blogdetail-text">
         @((MarkupString)(_article.Text ?? string.Empty))

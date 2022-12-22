@@ -1,9 +1,11 @@
 ﻿@page "/blog"
 @using dominikz.dev.Components
+@using dominikz.dev.Components.Buttons
 @using dominikz.dev.Components.Cards
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Components.Tables
 @using dominikz.dev.Definitions
+@using dominikz.dev.Models
 @using dominikz.dev.Utils
 @using dominikz.shared.Contracts
 @using dominikz.shared.ViewModels
@@ -11,29 +13,44 @@
 <PageTitle>Blog</PageTitle>
 
 <div class="blog">
-    <Searchbox ValueChanged="@OnSearchChanged" />
 
-    <ChipSelection T="ArticleCategoryEnum"
+    <Searchbox @ref="_searchbox" QueryBinding="search"/>
+
+    <ChipSelect T="ArticleCategoryEnum"
+                   @ref="_categorySelect"
+                   QueryBinding="category"
                    Title="Category"
-                   Values="Enum.GetValues<ArticleCategoryEnum>()[1..].ToList()"
-                   TextFormatter="(x) => EnumConverter.ToString(x)"
-                   SelectedChanged="@OnCategoryChanged" />
+                   Values="Enum.GetValues<ArticleCategoryEnum>()[1..^1].ToList()"/>
 
-    <div class="blog-menue-container">
+    <ChipSelect T="ArticleSource"
+                   @ref="_sourceSelect"
+                   QueryBinding="source"
+                   Title="Source"
+                   Values="Enum.GetValues<ArticleSource>().ToList()"/>
 
-        <ViewSelector @bind-Selected="_view" />
+    <div class="blog-menu-container blog-gap">
+        <div class="blog-menu-container-element blog-gap">
+            <i class="fa-solid fa-border-top-left"></i>
+            <Switch @bind-State="_view"/>
+            <i class="fa-solid fa-bars-staggered"></i>
+        </div>
 
-        <OrderSelector OrderKeys="@ArticleTableDefinition.OrderKeys" ValueChanged="OnOrderChanged" />
+        <div class="blog-menu-container-element">
+            <IconButton OnClick="OnRssFeedClicked" Icon="fa-solid fa-square-rss"/>
+            <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+            <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+        </div>
 
     </div>
 
-    @if (_view == CollectionView.Table)
+    @if (_view == (int)CollectionView.Table)
     {
         <Table T="ArticleListVm"
-           Values="@_articles"
-           Columns="@ArticleTableDefinition.Columns"
-           OnRowClicked="(article) => NavigateToDetail(article.Id)"
-           ShowIndex=true />
+               Values="@_articles"
+               Columns="@ArticleTableDefinition.Columns"
+               OnRowClicked="(article) => NavigateToDetail(article.Id)"
+               ShowIndex="true">
+        </Table>
     }
     else
     {
@@ -41,20 +58,26 @@
             @foreach (var article in _articles)
             {
                 <VerticalCard Highlight=@article.Featured
-                      Title="@article.Title"
-                      ImageUrl="@article.Image!.Url"
-                      OnClick="() => NavigateToDetail(article.Id)">
+                              Title="@article.Title"
+                              ImageUrl="@article.Image!.Url"
+                              OnClick="() => NavigateToDetail(article.Id)">
 
                     <div class="blog-card">
 
                         <div class="blog-card-content">
-                            <Lable Icon="fa-solid fa-calendar" Text="@article.Timestamp.ToString("yyyy-MM-dd")" />
-                            <Lable Text="@EnumConverter.ToString(article.Category)" />
+                            @if (article.Category != ArticleCategoryEnum.Unknown)
+                            {
+                                <Lable Text="@EnumConverter.ToString(article.Category)"/>
+                            }
+                            else
+                            {
+                                <Lable Text="@($"💬 {article.AltCategories}")"/>
+                            }
+                            <Lable Text="@article.Timestamp.ToString("yyyy-MM-dd")"/>
                         </div>
 
                         <div class="blog-card-author">
-                            <img src="@article.Author!.Image!.Url" />
-                            <Lable Icon="fa-solid fa-at" Text="@GetInitials(article.Author!.Name)" />
+                            <img src="@article.Author!.Image!.Url" alt="Image of article author"/>
                         </div>
 
                     </div>

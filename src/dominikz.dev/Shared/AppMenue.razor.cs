@@ -11,15 +11,14 @@ public partial class AppMenue
     [Inject]
     protected NavigationManager? Navigation { get; set; }
 
-    private static List<MenueEntry> _pages => new()
+    private static List<MenueEntry> _pages = new()
         {
-            new MenueEntry("fa-compass", "Blog", "/blog"),
+            new MenueEntry("fa-rss", "Blog", "/blog"),
             new MenueEntry("fa-film", "Media", "/media"),
-            new MenueEntry("fa-pizza-slice", "Cookbook", "/cookbook"),
         };
 
     protected override void OnInitialized()
-        => Navigation!.LocationChanged += (sender, args) => LocationChanged(sender, args);
+        => Navigation!.LocationChanged += LocationChanged;
 
     private void LocationChanged(object? sender, LocationChangedEventArgs e)
     {

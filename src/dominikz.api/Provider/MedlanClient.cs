@@ -2,25 +2,43 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using dominikz.api.Mapper;
 using dominikz.api.Models.Options;
+using dominikz.shared.Contracts;
 using dominikz.shared.ViewModels;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace dominikz.api.Provider;
 
 public class MedlanClient
 {
-    private readonly IOptions<ExternalUrls> _options;
+    private readonly IOptions<MedlanOptions> _options;
+    private readonly IMemoryCache _cache;
+    private const string CacheKey = "Medlan_Project_Articles";
 
-    public MedlanClient(IOptions<ExternalUrls> options)
+    public MedlanClient(IOptions<MedlanOptions> options, IMemoryCache cache)
     {
         _options = options;
+        _cache = cache;
     }
 
-    public IReadOnlyCollection<ArticleListVm> GetArticlesByCategory()
+    public async Task<IReadOnlyCollection<ArticleListVm>> GetArticlesByCategory(ArticleCategoryEnum? category)
     {
-        var medlanArticles = ParseRssFeed($"{_options.Value.Medlan}?feed=rss2");
-        var projectMedlanArticles = ParseRssFeed($"{_options.Value.ProjectMedlan}?feed=rss2");
-        return medlanArticles.Union(projectMedlanArticles).MapToVm().ToList();
+        var articles = await _cache.GetOrCreateAsync<List<ArticleListVm>>(CacheKey, options =>
+        {
+            options.AbsoluteExpiration = DateTimeOffset.UtcNow.AddHours(_options.Value.CacheDurationInH);
+            var medlanArticles = ParseRssFeed($"{_options.Value.Url}?feed=rss2");
+            var projectMedlanArticles = ParseRssFeed($"{_options.Value.ProjectUrl}?feed=rss2");
+            var articles = medlanArticles.Union(projectMedlanArticles)
+                .MapToVm()
+                .ToList();
+
+            return Task.FromResult(articles);
+        }) ?? new List<ArticleListVm>();
+
+        if (category is null)
+            return articles;
+        
+        return articles.Where(x => x.Category == category).ToList();
     }
 
     private IReadOnlyCollection<SyndicationItem> ParseRssFeed(string url)

@@ -4,7 +4,7 @@ namespace dominikz.shared.ViewModels;
 
 public class FileVM
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public string Url { get; set; } = string.Empty;
     public FileCategoryEnum Category { get; set; }
     public FileExtensionEnum Extension { get; set; }

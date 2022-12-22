@@ -10,14 +10,14 @@ input[type="text"], textarea :active {
     border: none;
     outline: none !important;
     padding: 12px;
-    border-radius: 25px;
+    border-radius: 4px;
 }
 
 .searchbox {
     display: flex;
     align-items: center;
     background-color: var(--theme-surface);
-    border-radius: 25px;
+    border-radius: 0 4px 4px 0;
     width: 100%;
 }
 

@@ -10,6 +10,7 @@
         <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     </ItemGroup>
 
@@ -28,12 +29,18 @@
       <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.woff" />
       <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\ICON-LICENSE" />
       <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\README.md" />
+      <_ContentIncludedByDefault Remove="Pages\Cookbook\Cookbook.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Cookbook\CookbookDetail.razor" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Update="wwwroot\appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Components\TabControl" />
     </ItemGroup>
 
 </Project>

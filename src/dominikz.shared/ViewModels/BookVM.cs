@@ -4,8 +4,8 @@ namespace dominikz.shared.ViewModels;
 
 public class BookVM : MediaVM
 {
-    public int Year { get; set; }
-    public string Author { get; set; } = string.Empty;
-    public BookLanguageEnum Language { get; set; }
-    public BookGenresFlags Genres { get; set; }
+    public int Year { get; init; }
+    public string Author { get; init; } = string.Empty;
+    public BookLanguageEnum Language { get; init; }
+    public BookGenresFlags Genres { get; init; }
 }

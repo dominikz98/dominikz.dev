@@ -4,9 +4,9 @@ namespace dominikz.shared.Filter;
 
 public class RecipesFilter : IFilter
 {
-    public string? Text { get; set; }
-    public RecipeCategoryFlags Category { get; set; }
-    public List<Guid> FoodIds { get; set; } = new();
+    public string? Text { get; init; }
+    public RecipeCategoryFlags Category { get; init; }
+    public List<Guid> FoodIds { get; init; } = new();
 
     public IReadOnlyCollection<FilterParam> GetParameter()
     {

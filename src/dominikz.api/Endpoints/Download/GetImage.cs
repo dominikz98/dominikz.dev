@@ -17,8 +17,9 @@ public class GetImage : ControllerBase
     {
         _mediator = mediator;
     }
-
+    
     [HttpGet("image/{id:guid}/{size}")]
+    [ResponseCache(Duration = 604800)]
     public async Task<IActionResult> Execute(Guid id, ImageSizeEnum size, CancellationToken cancellationToken)
     {
         var file = await _mediator.Send(new GetImageQuery(id, size), cancellationToken);

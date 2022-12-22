@@ -4,8 +4,8 @@ namespace dominikz.shared.Filter;
 
 public class MoviesFilter : IFilter
 {
-    public string? Text { get; set; }
-    public MovieGenresFlags Genres { get; set; }
+    public string? Text { get; init; }
+    public MovieGenresFlags? Genres { get; init; }
 
     public IReadOnlyCollection<FilterParam> GetParameter()
     {
@@ -14,7 +14,7 @@ public class MoviesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres != MovieGenresFlags.ALL)
+        if (Genres is null || Genres != MovieGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
 
         return result;

@@ -59,8 +59,8 @@ public class SearchGamesQueryHandler : IRequestHandler<SearchGamesQuery, IReadOn
         if (!string.IsNullOrWhiteSpace(request.Text))
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
 
-        if (request.Genres != GameGenresFlags.ALL)
-            foreach (var genre in request.Genres.GetFlags())
+        if (request.Genres is not null or  GameGenresFlags.ALL)
+            foreach (var genre in request.Genres.Value.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));
 
         if (request.Platform is not null)

@@ -1,4 +1,5 @@
 ﻿using dominikz.api.Models;
+using dominikz.api.Models.Structs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -55,13 +56,31 @@ public class DatabaseContext : DbContext
         var file = builder.Entity<StorageFile>();
         file.ToTable("files");
         file.HasKey(x => x.Id);
+        
+        var song = builder.Entity<Song>();
+        song.ToTable("songs");
+        file.HasKey(x => x.Id);
+
+        var songSegment = builder.Entity<SongSegment>();
+        songSegment.ToTable("songs_segments");
+        songSegment.HasKey(x => new { x.Index, x.SongId });
+        songSegment.Property(x => x.TopNotes).HasConversion<NoteCollectionConverter>();
+        songSegment.Property(x => x.BottomNotes).HasConversion<NoteCollectionConverter>();
     }
+}
+
+class NoteCollectionConverter : ValueConverter<NoteCollection, string>
+{
+    public NoteCollectionConverter()
+        :base (x => x.ToString(),
+            x => new NoteCollection(x))
+    { }
 }
 
 class TagsConverter : ValueConverter<List<string>, string>
 {
     public TagsConverter()
-        : base(x => string.Join(';', x.Select(x => x.ToLower().Trim())),
+        : base(x => string.Join(';', x.Select(y => y.ToLower().Trim())),
             x => x.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList())
     { }
 }

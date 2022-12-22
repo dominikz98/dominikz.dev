@@ -15,6 +15,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
 builder.AddServices();
 
 var app = builder.Build();
@@ -26,6 +28,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseResponseCaching();
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthorization();

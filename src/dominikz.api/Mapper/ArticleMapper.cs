@@ -32,7 +32,7 @@ public static class ArticleMapper
             Title = article.Title,
             Timestamp = article.Timestamp,
             Category = article.Category,
-            Source = ArticleSource.Dz
+            SourceEnum = ArticleSourceEnum.Dz
         });
 
     public static IEnumerable<ArticleListVm> MapToVm(this IEnumerable<NoobitArticleVm> query)
@@ -61,7 +61,7 @@ public static class ArticleMapper
                 Extension = FileExtensionEnum.WEBP,
                 Url = article.ImageUrl
             },
-            Source = ArticleSource.Noobit
+            SourceEnum = ArticleSourceEnum.Noobit
         });
 
     public static IEnumerable<ArticleListVm> MapToVm(this IEnumerable<SyndicationItem> query)
@@ -98,7 +98,7 @@ public static class ArticleMapper
                     Category = FileCategoryEnum.IMAGE,
                     Extension = FileExtensionEnum.JPG
                 },
-                Source = ArticleSource.Medlan
+                SourceEnum = ArticleSourceEnum.Medlan
             };
 
             result.Add(article);

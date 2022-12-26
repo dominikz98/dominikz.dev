@@ -1,0 +1,29 @@
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.avatar img {
+    width: 50px;
+    border-radius: 50px;
+}
+
+.gap
+{
+    gap: 12px;
+}
+
+.menu-element  {
+    display: flex;
+    align-items: center;
+    font-size: large;
+    background-color: var(--theme-surface);
+    border-radius: 4px;
+    padding: 6px;
+}

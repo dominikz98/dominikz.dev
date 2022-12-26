@@ -20,7 +20,7 @@ public partial class ChipSelect<T> where T : struct, Enum
         set => _values = value;
     }
 
-    [Parameter] public Func<T, string> TextFormatter { get; set; } = EnumConverter.ToString;
+    [Parameter] public Func<T, string> TextFormatter { get; set; } = EnumFormatter.ToString;
 
     [Parameter] public bool IsExpanded { get; set; }
 
@@ -28,11 +28,7 @@ public partial class ChipSelect<T> where T : struct, Enum
 
     [Parameter] public T? Selected { get; set; }
 
-    [Parameter] public EventCallback<T?> SelectedChanged { get; set; }
-
-    [Parameter] public string? QueryBinding { get; set; }
-
-    [Inject] protected NavigationManager? NavManager { get; set; }
+    [Parameter] public EventCallback<T?> OnSelectedChanged { get; set; }
 
     private readonly List<Chip<T>> _refs = new();
 
@@ -41,22 +37,20 @@ public partial class ChipSelect<T> where T : struct, Enum
         set => _refs.Add(value!);
     }
 
-    protected override void OnInitialized()
+    public void Select(T? value)
     {
-        NavManager!.LocationChanged += (_, _) => Refresh();
+        Selected = value;
         
-        if (string.IsNullOrWhiteSpace(QueryBinding))
-            return;
-        
-        if (NavManager.TryGetQueryByKey<T>(QueryBinding, out var selected))
-            Selected = selected;
-    }
+        // Check if expand is required
+        if (value is not null
+            && IsExpanded == false
+            && AllowExpand
+            && Values.Contains(value.Value) == false)
+        {
+            CallOnExpand();
+            StateHasChanged();
+        }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender == false)
-            return;
-        
         Refresh();
     }
 
@@ -72,35 +66,23 @@ public partial class ChipSelect<T> where T : struct, Enum
 
         // un-/select chips
         Refresh();
-        
-        // handle query binding
-        if (string.IsNullOrWhiteSpace(QueryBinding) == false)
-        {
-            NavManager!.AttachOrUpdateQuery(QueryBinding, Selected?.ToString());
-            return;
-        }
 
-        // handle data binding
-        await SelectedChanged.InvokeAsync(Selected); ;
+        await OnSelectedChanged.InvokeAsync(Selected);
     }
 
     private void Refresh()
     {
-        // deselect all
-        foreach (var chip in _refs)
-            if (chip.IsSelected)
-                chip.ToggleSelect();
-
-        if (Selected is null)
-            return;
-
         // select current value
-        foreach (var chip in _refs)
-        {
-            if (chip.Value.Equals(Selected.Value) == false)
-                continue;
-            
+        var toSelect = _refs.FirstOrDefault(x => x.Value.Equals(Selected));
+        if (toSelect is not null && toSelect?.IsSelected == false)
+            toSelect.ToggleSelect();
+
+        // deselect all
+        var toDeselect = _refs.Where(x => x.Equals(toSelect) == false)
+            .Where(x => x.IsSelected)
+            .ToList();
+
+        foreach (var chip in toDeselect)
             chip.ToggleSelect();
-        }
     }
 }

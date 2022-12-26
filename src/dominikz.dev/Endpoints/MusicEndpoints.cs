@@ -5,7 +5,7 @@ namespace dominikz.dev.Endpoints;
 public class MusicEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string Endpoint = "music";
+    private const string Endpoint = "music";
 
     public MusicEndpoints(ApiClient client)
     {

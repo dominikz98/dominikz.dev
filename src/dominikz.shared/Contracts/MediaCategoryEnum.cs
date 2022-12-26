@@ -2,9 +2,7 @@
 
 public enum MediaCategoryEnum
 {
-    ALL = 0,
-    Movie = 1,
-    //Series = 2,
-    Book = 3,
-    Game = 4
+    Movie = 0,
+    Book = 1,
+    Game = 2
 }

@@ -15,7 +15,7 @@ public class BooksFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres is null || Genres != BookGenresFlags.ALL)
+        if (Genres is not null && Genres != BookGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
 
         if (Language is not null)

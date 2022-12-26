@@ -2,7 +2,7 @@
 
 namespace dominikz.dev.Utils;
 
-public static class EnumConverter
+public static class EnumFormatter
 {
     private const string Default = "Unknown";
     // https://emojipedia.org/
@@ -21,7 +21,7 @@ public static class EnumConverter
         else if (value is ArticleCategoryEnum articleCategory)
             return ToString(articleCategory);
 
-        else if (value is ArticleSource articleSource)
+        else if (value is ArticleSourceEnum articleSource)
             return ToString(articleSource);
         
         else if (value is FoodUnitEnum foodUnit)
@@ -55,9 +55,7 @@ public static class EnumConverter
     private static string ToString(MediaCategoryEnum category)
         => category switch
         {
-            MediaCategoryEnum.ALL => string.Empty,
-            //MediaCategoryEnum.Series => "🍿 Series",
-            MediaCategoryEnum.Movie => "🎞 Movie",
+            MediaCategoryEnum.Movie => "🍿 Movie",
             MediaCategoryEnum.Book => "📖 Book",
             MediaCategoryEnum.Game => "🎮 Game",
             _ => Default
@@ -168,12 +166,12 @@ public static class EnumConverter
             _ => Default
         };
     
-    private static string ToString(ArticleSource source)
-        => source switch
+    private static string ToString(ArticleSourceEnum sourceEnum)
+        => sourceEnum switch
         {
-            ArticleSource.Dz => "Dominik",
-            ArticleSource.Medlan => "Medlan",
-            ArticleSource.Noobit => "Noobit",
+            ArticleSourceEnum.Dz => "Dominik",
+            ArticleSourceEnum.Medlan => "Medlan",
+            ArticleSourceEnum.Noobit => "Noobit",
             _ => Default
         };
 }

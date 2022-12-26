@@ -19,7 +19,7 @@
 
                 @foreach (var genre in _movie.Genres.GetFlags().ToArray()[1..])
                 {
-                    <span>@EnumConverter.ToString(genre)</span>
+                    <span>@EnumFormatter.ToString(genre)</span>
                 }
             </Panel>
 

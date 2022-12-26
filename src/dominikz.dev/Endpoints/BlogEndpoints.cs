@@ -25,4 +25,7 @@ public class BlogEndpoints
 
     public async Task<List<ArticleListVm>> Search(ArticleFilter filter, CancellationToken cancellationToken = default)
         => await _client.Get<ArticleListVm>($"{Endpoint}/search", filter, cancellationToken);
+
+    public string CurlSearch(ArticleFilter filter)
+        => _client.Curl($"{Endpoint}/search", filter);
 }

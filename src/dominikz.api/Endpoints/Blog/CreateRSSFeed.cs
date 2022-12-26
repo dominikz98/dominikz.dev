@@ -50,11 +50,11 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
         var feed = new SyndicationFeed("dominikzettl.dev", "Blog Feed", uri);
 
         // add persons
-        var authors = new Dictionary<ArticleSource, SyndicationPerson>()
+        var authors = new Dictionary<ArticleSourceEnum, SyndicationPerson>()
         {
-            { ArticleSource.Dz, new SyndicationPerson("dominikzettl@gmx.net", "Dominik Zettl", "https://dominikzettl.dev/") },
-            { ArticleSource.Medlan, new SyndicationPerson("projectmedlan@gmail.com", "Markus Liebl", "https://www.medlan.de/") },
-            { ArticleSource.Noobit, new SyndicationPerson("th.cmxl@gmail.com", "Tobias Haimerl", "https://www.noobit.dev/") }
+            { ArticleSourceEnum.Dz, new SyndicationPerson("dominikzettl@gmx.net", "Dominik Zettl", "https://dominikzettl.dev/") },
+            { ArticleSourceEnum.Medlan, new SyndicationPerson("projectmedlan@gmail.com", "Markus Liebl", "https://www.medlan.de/") },
+            { ArticleSourceEnum.Noobit, new SyndicationPerson("th.cmxl@gmail.com", "Tobias Haimerl", "https://www.noobit.dev/") }
         };
 
         foreach (var author in authors)
@@ -70,7 +70,7 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
             Title = new TextSyndicationContent(x.Title),
             Links = { new SyndicationLink(new Uri(x.Path)) },
             Copyright = new TextSyndicationContent($"Copyright {x.Timestamp.Year}"),
-            Authors = { authors[x.Source] }
+            Authors = { authors[x.SourceEnum] }
         }).ToList();
         feed.Items = items;
 

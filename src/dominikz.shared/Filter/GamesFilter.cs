@@ -15,7 +15,7 @@ public class GamesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres is null || Genres != GameGenresFlags.ALL)
+        if (Genres is not null && Genres != GameGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
 
         if (Platform is not null)

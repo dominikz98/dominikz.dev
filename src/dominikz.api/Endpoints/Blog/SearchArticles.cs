@@ -61,19 +61,19 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     {
         // load articles from sources
         var articles = new List<ArticleListVm>();
-        if (request.Sources is null or  ArticleSource.Dz)
+        if (request.Sources is null or  ArticleSourceEnum.Dz)
         {
             var dzArticles = await LoadFromDatabase(request, cancellationToken);
             articles.AddRange(dzArticles);
         }
 
-        if (request.Sources is null or ArticleSource.Noobit)
+        if (request.Sources is null or ArticleSourceEnum.Noobit)
         {
             var noobitArticles = await _noobitClient.GetArticlesByCategory(request.Category, cancellationToken);
             articles.AddRange(noobitArticles);
         }
 
-        if (request.Sources is null or ArticleSource.Medlan)
+        if (request.Sources is null or ArticleSourceEnum.Medlan)
         {
             var medlanArticles = await _medlanClient.GetArticlesByCategory(request.Category);
             articles.AddRange(medlanArticles);
@@ -121,13 +121,13 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     private void SetFeaturedFlags(IReadOnlyCollection<ArticleListVm> articles)
     {
         // feature first 2 articles of every source
-        foreach (var feature in articles.Where(x => x.Source == ArticleSource.Dz).Take(2))
+        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Dz).Take(2))
             feature.Featured = true;
 
-        foreach (var feature in articles.Where(x => x.Source == ArticleSource.Noobit).Take(2))
+        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Noobit).Take(2))
             feature.Featured = true;
 
-        foreach (var feature in articles.Where(x => x.Source == ArticleSource.Medlan).Take(2))
+        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Medlan).Take(2))
             feature.Featured = true;
     }
 

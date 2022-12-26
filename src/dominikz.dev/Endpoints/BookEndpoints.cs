@@ -6,7 +6,7 @@ namespace dominikz.dev.Endpoints;
 public class BookEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string _endpoint = "medias/books";
+    private const string Endpoint = "medias/books";
 
     public BookEndpoints(ApiClient client)
     {
@@ -14,5 +14,8 @@ public class BookEndpoints
     }
 
     public async Task<List<BookVM>> Search(BooksFilter filter, CancellationToken cancellationToken = default)
-        => await _client.Get<BookVM>($"{_endpoint}/search", filter, cancellationToken);
+        => await _client.Get<BookVM>($"{Endpoint}/search", filter, cancellationToken);
+    
+    public string CurlSearch(BooksFilter filter)
+        =>  _client.Curl($"{Endpoint}/search", filter);
 }

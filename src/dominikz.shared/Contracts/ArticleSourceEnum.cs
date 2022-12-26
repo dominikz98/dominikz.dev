@@ -1,6 +1,6 @@
 namespace dominikz.shared.Contracts;
 
-public enum ArticleSource
+public enum ArticleSourceEnum
 {
     Dz = 0,
     Noobit = 1,

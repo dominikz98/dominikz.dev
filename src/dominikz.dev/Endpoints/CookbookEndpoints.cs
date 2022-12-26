@@ -6,7 +6,7 @@ namespace dominikz.dev.Endpoints;
 public class CookbookEndpoints
 {
     private readonly ApiClient _client;
-    private static readonly string _endpoint = "cookbook";
+    private const string Endpoint = "cookbook";
 
     public CookbookEndpoints(ApiClient client)
     {
@@ -14,11 +14,11 @@ public class CookbookEndpoints
     }
 
     public async Task<List<FoodVM>> GetFoods(CancellationToken cancellationToken = default)
-        => await _client.Get<FoodVM>($"{_endpoint}/foods", cancellationToken);
+        => await _client.Get<FoodVM>($"{Endpoint}/foods", cancellationToken);
 
     public async Task<RecipeDetailVM?> GetById(Guid id, CancellationToken cancellationToken = default)
-        => await _client.Get<RecipeDetailVM?>($"{_endpoint}/recipes", id, cancellationToken);
+        => await _client.Get<RecipeDetailVM?>($"{Endpoint}/recipes", id, cancellationToken);
     public async Task<List<RecipeVM>> SearchRecipes(RecipesFilter filter, CancellationToken cancellationToken = default)
-        => await _client.Get<RecipeVM>($"{_endpoint}/recipes/search", filter, cancellationToken);
+        => await _client.Get<RecipeVM>($"{Endpoint}/recipes/search", filter, cancellationToken);
 }
 

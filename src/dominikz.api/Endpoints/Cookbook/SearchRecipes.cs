@@ -56,7 +56,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, IRe
             .AsNoTracking();
 
         // apply filter
-        if (request.Category != RecipeCategoryFlags.ALL)
+        if (request.Category != null && request.Category != RecipeCategoryFlags.ALL)
             query = query.Where(x => x.Categories.HasFlag(request.Category));
 
         if (!string.IsNullOrWhiteSpace(request.Text))

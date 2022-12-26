@@ -1,5 +1,5 @@
 ﻿@typeparam T
 
-<div class="chip" @onclick=@(() => CallOnChange())>
+<div class="chip" @onclick=@(CallOnChange)>
     <span>@(AllowSelect && IsSelected ? "✓ " : string.Empty)@Title</span>
 </div>

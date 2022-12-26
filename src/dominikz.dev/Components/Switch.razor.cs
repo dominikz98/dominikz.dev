@@ -11,11 +11,16 @@ public partial class Switch
 
     private async Task OnStateChanged(ChangeEventArgs e)
     {
-        var valueRaw = e?.Value?.ToString();
+        SetState(e?.Value);
+        await StateChanged.InvokeAsync(State);
+    }
+
+    public void SetState(object? state)
+    {
+        var valueRaw = state?.ToString();
         if (bool.TryParse(valueRaw, out var value) == false)
             return;
-
+        
         State = value ? 1 : 0;
-        await StateChanged.InvokeAsync(State);
     }
 }

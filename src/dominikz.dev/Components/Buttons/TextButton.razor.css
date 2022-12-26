@@ -3,8 +3,8 @@
     padding: 8px;
     border-radius: 5px;
     text-align: center;
-    background-color: var(--theme-primary);
-    color: black;
+    background-color: var(--theme-surface);
+    color: whitesmoke;
 }
 
     .text-button:hover {

@@ -29,7 +29,9 @@ public class GetPreview : ControllerBase
     }
 }
 
-public class GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVM>> { }
+public class GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVM>>
+{
+}
 
 public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCollection<MediaVM>>
 {
@@ -46,28 +48,27 @@ public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCo
     {
         var previews = new List<MediaPreviewVM>();
 
-        foreach (var category in Enum.GetValues<MediaCategoryEnum>()[1..])
+        foreach (var category in Enum.GetValues<MediaCategoryEnum>())
         {
-            var preview = await GetNewestPreview(category, cancellationToken);
+            var previewsByCategory = await GetNewestPreviews(category, cancellationToken);
 
-            if (preview is null)
-                continue;
+            foreach (var preview in previewsByCategory)
+                if (preview.Image is not null)
+                    preview.Image.Url = _linkCreator.CreateImageUrl(preview.Image.Id, ImageSizeEnum.Carousel)?.ToString() ?? string.Empty;
 
-            if (preview.Image is not null)
-                preview.Image.Url = _linkCreator.CreateImageUrl(preview.Image.Id, ImageSizeEnum.Carousel)?.ToString() ?? string.Empty;
-
-            previews.Add(preview);
+            previews.AddRange(previewsByCategory);
         }
 
-        return previews;
+        return previews.OrderByDescending(x => x.Timestamp).ToList();
     }
 
-    private async Task<MediaPreviewVM?> GetNewestPreview(MediaCategoryEnum category, CancellationToken cancellationToken)
+    private async Task<IReadOnlyCollection<MediaPreviewVM>> GetNewestPreviews(MediaCategoryEnum category, CancellationToken cancellationToken)
         => await _database.From<Models.Media>()
             .Include(x => x.File)
             .AsNoTracking()
             .Where(x => x.Category == category)
             .OrderByDescending(x => x.Timestamp)
+            .Take(3)
             .MapToPreviewVm()
-            .FirstOrDefaultAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 }

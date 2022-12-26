@@ -12,35 +12,34 @@
 
 <PageTitle>Blog</PageTitle>
 
-<div class="blog">
+<div class="flex-column gap">
 
-    <Searchbox @ref="_searchbox" QueryBinding="search"/>
+    <Searchbox @ref="_searchbox" OnValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QuerySearch, value))"/>
 
     <ChipSelect T="ArticleCategoryEnum"
-                   @ref="_categorySelect"
-                   QueryBinding="category"
-                   Title="Category"
-                   Values="Enum.GetValues<ArticleCategoryEnum>()[1..^1].ToList()"/>
+                Title="Category"
+                @ref="_categorySelect"
+                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryCategory, value))"
+                Values="Enum.GetValues<ArticleCategoryEnum>()[1..^1].ToList()"/>
 
-    <ChipSelect T="ArticleSource"
-                   @ref="_sourceSelect"
-                   QueryBinding="source"
-                   Title="Source"
-                   Values="Enum.GetValues<ArticleSource>().ToList()"/>
+    <ChipSelect T="ArticleSourceEnum"
+                Title="Source"
+                @ref="_sourceSelect"
+                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QuerySource, value))"
+                Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
-    <div class="blog-menu-container blog-gap">
-        <div class="blog-menu-container-element blog-gap">
+    <div class="flex-row gap">
+        <div class="menu-element gap">
             <i class="fa-solid fa-border-top-left"></i>
             <Switch @bind-State="_view"/>
             <i class="fa-solid fa-bars-staggered"></i>
         </div>
 
-        <div class="blog-menu-container-element">
+        <div class="menu-element">
             <IconButton OnClick="OnRssFeedClicked" Icon="fa-solid fa-square-rss"/>
             <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
             <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
         </div>
-
     </div>
 
     @if (_view == (int)CollectionView.Table)
@@ -64,10 +63,10 @@
 
                     <div class="blog-card">
 
-                        <div class="blog-card-content">
+                        <div class="flex-column gap">
                             @if (article.Category != ArticleCategoryEnum.Unknown)
                             {
-                                <Lable Text="@EnumConverter.ToString(article.Category)"/>
+                                <Lable Text="@EnumFormatter.ToString(article.Category)"/>
                             }
                             else
                             {
@@ -76,7 +75,7 @@
                             <Lable Text="@article.Timestamp.ToString("yyyy-MM-dd")"/>
                         </div>
 
-                        <div class="blog-card-author">
+                        <div class="blog-card-author avatar">
                             <img src="@article.Author!.Image!.Url" alt="Image of article author"/>
                         </div>
 

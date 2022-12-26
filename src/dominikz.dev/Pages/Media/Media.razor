@@ -1,5 +1,7 @@
 ﻿@page "/media"
 @using dominikz.dev.Components
+@using dominikz.dev.Components.Buttons
+@using dominikz.dev.Components.TabControl
 @using dominikz.dev.Components.Cards
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Components.Tables
@@ -17,61 +19,33 @@
 
     <MediaCarousel Data="_previews"/>
 
-    <Searchbox @ref="_searchbox" QueryBinding="search"/>
+    <Searchbox @ref="_searchbox" OnValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QuerySearch, value))"/>
 
-    <ChipSelect T="MediaCategoryEnum"
-                   @ref="_categorySelect"
-                   QueryBinding="category"
-                   Title="Category"
-                   Values="Enum.GetValues<MediaCategoryEnum>()[1..].ToList()"/>
+    <TabControl @ref="_categoryTabCtrl" OnPageChanged="OnPageChanged">
 
-    @switch (Category)
-    {
-        case MediaCategoryEnum.Movie:
+        <TabPage Id="@((int)MediaCategoryEnum.Movie)" Text="@(EnumFormatter.ToString(MediaCategoryEnum.Movie))">
+
             <ChipSelect T="MovieGenresFlags"
-                           @ref="_movieGenresSelect"
-                           QueryBinding="g_genres"
-                           AllowExpand=true
-                           Title="Genres"
-                           Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
-            break;
+                        AllowExpand=true
+                        Title="Genres"
+                        @ref="_movieGenreSelect"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryMovieGenre, value))"
+                        Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
-        case MediaCategoryEnum.Book:
-            <ChipSelect T="BookGenresFlags"
-                           @ref="_bookGenresSelect"
-                           QueryBinding="b_genres"
-                           AllowExpand=true
-                           Title="Genres"
-                           Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
+            <div class="flex-row gap">
+                <div class="menu-element gap">
+                    <i class="fa-solid fa-border-top-left"></i>
+                    <Switch @bind-State="_view"/>
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </div>
 
-            <ChipSelect T="BookLanguageEnum"
-                           @ref="_bookLanguageSelect"
-                           QueryBinding="b_language"
-                           Title="Genres"
-                           Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
-            break;
+                <div class="menu-element">
+                    <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+                    <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+                </div>
+            </div>
 
-        case MediaCategoryEnum.Game:
-            <ChipSelect T="GameGenresFlags"
-                           @ref="_gameGenresSelect"
-                           QueryBinding="g_genres"
-                           AllowExpand=true
-                           Title="Genres"
-                           Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
-
-            <ChipSelect T="GamePlatformEnum"
-                           @ref="_gamePlatformSelect"
-                           QueryBinding="g_platforms"
-                           Title="Genres"
-                           Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
-            break;
-    }
-
-    @switch (Category)
-    {
-        case MediaCategoryEnum.Movie:
-
-            @if (_view == CollectionView.Table)
+            @if (_view == (int)CollectionView.Table)
             {
                 <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex="true"></Table>
             }
@@ -86,11 +60,11 @@
 
                             <Panel Gap="8" FlexAlignment="CssFlexAlignment.Column" ItemAlignment="CssItemAlignment.Start">
                                 <span>@movie.Year</span>
-                                <Rating Value=@movie.Rating />
+                                <Rating Value="@movie.Rating"/>
                                 <Panel>
                                     @foreach (var genre in movie.Genres.GetFlags().ToArray()[1..])
                                     {
-                                        <span>@EnumConverter.ToString(genre)&nbsp;</span>
+                                        <span>@EnumFormatter.ToString(genre)&nbsp;</span>
                                     }
                                 </Panel>
                             </Panel>
@@ -99,37 +73,38 @@
                     }
                 </div>
             }
-            break;
 
-        case MediaCategoryEnum.Game:
+        </TabPage>
 
-            @if (_view == CollectionView.Table)
-            {
-                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
-            }
-            else
-            {
-                <div class="media-grid">
-                    @foreach (var game in _games)
-                    {
-                        <HorizontalCard ImageUrl="@game.Image!.Url" Title="@game.Title">
-                            <span>@game.Year</span>
-                            <span>@EnumConverter.ToString(game.Platform)</span>
-                            <Panel>
-                                @foreach (var genre in game.Genres.GetFlags().ToArray()[1..])
-                                {
-                                    <span>@EnumConverter.ToString(genre)&nbsp;</span>
-                                }
-                            </Panel>
-                        </HorizontalCard>
-                    }
+        <TabPage Id="@((int)MediaCategoryEnum.Book)" Text="@(EnumFormatter.ToString(MediaCategoryEnum.Book))">
+
+            <ChipSelect T="BookGenresFlags"
+                        AllowExpand=true
+                        Title="Genres"
+                        @ref="_bookGenreSelect"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryBookGenre, value))"
+                        Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
+
+            <ChipSelect T="BookLanguageEnum"
+                        Title="Genres"
+                        @ref="_bookLanguageSelect"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryBookLanguage, value))"
+                        Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
+
+            <div class="flex-row gap">
+                <div class="menu-element gap">
+                    <i class="fa-solid fa-border-top-left"></i>
+                    <Switch @bind-State="_view"/>
+                    <i class="fa-solid fa-bars-staggered"></i>
                 </div>
-            }
-            break;
 
-        case MediaCategoryEnum.Book:
+                <div class="menu-element">
+                    <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+                    <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+                </div>
+            </div>
 
-            @if (_view == CollectionView.Table)
+            @if (_view == (int)CollectionView.Table)
             {
                 <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex="true"></Table>
             }
@@ -141,17 +116,73 @@
                         <HorizontalCard ImageUrl="@book.Image!.Url" Title="@book.Title">
                             <span>@book.Year</span>
                             <span>@book.Author</span>
-                            <span>@EnumConverter.ToString(book.Language)</span>
+                            <span>@EnumFormatter.ToString(book.Language)</span>
                             <Panel>
                                 @foreach (var genre in book.Genres.GetFlags().ToArray()[1..])
                                 {
-                                    <span>@EnumConverter.ToString(genre)&nbsp;</span>
+                                    <span>@EnumFormatter.ToString(genre)&nbsp;</span>
                                 }
                             </Panel>
                         </HorizontalCard>
                     }
                 </div>
             }
-            break;
-    }
+
+        </TabPage>
+
+        <TabPage Id="@((int)MediaCategoryEnum.Game)" Text="@(EnumFormatter.ToString(MediaCategoryEnum.Game))">
+
+            <ChipSelect T="GameGenresFlags"
+                        AllowExpand=true
+                        Title="Genres"
+                        @ref="_gameGenreSelect"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryGameGenre, value))"
+                        Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
+
+            <ChipSelect T="GamePlatformEnum"
+                        Title="Genres"
+                        @ref="_gamePlatformSelect"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryGamePlatform, value))"
+                        Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
+
+            <div class="flex-row gap">
+                <div class="menu-element gap">
+                    <i class="fa-solid fa-border-top-left"></i>
+                    <Switch @bind-State="_view"/>
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </div>
+
+                <div class="menu-element">
+                    <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+                    <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+                </div>
+            </div>
+
+            @if (_view == (int)CollectionView.Table)
+            {
+                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
+            }
+            else
+            {
+                <div class="media-grid">
+                    @foreach (var game in _games)
+                    {
+                        <HorizontalCard ImageUrl="@game.Image!.Url" Title="@game.Title">
+                            <span>@game.Year</span>
+                            <span>@EnumFormatter.ToString(game.Platform)</span>
+                            <Panel>
+                                @foreach (var genre in game.Genres.GetFlags().ToArray()[1..])
+                                {
+                                    <span>@EnumFormatter.ToString(genre)&nbsp;</span>
+                                }
+                            </Panel>
+                        </HorizontalCard>
+                    }
+                </div>
+            }
+
+        </TabPage>
+
+    </TabControl>
+
 </div>

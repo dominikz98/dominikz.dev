@@ -11,7 +11,7 @@ public abstract class ArticleVm : IViewModel
     public DateTime Timestamp { get; init; }
     public ArticleCategoryEnum Category { get; init; }
     public string AltCategories { get; set; } = string.Empty;
-    public ArticleSource Source { get; init; }
+    public ArticleSourceEnum SourceEnum { get; init; }
 }
 
 public class ArticleListVm : ArticleVm

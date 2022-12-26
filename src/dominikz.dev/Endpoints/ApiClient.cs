@@ -23,18 +23,28 @@ public class ApiClient
         => await _client.GetFromJsonAsync<T>($"{Prefix}/{endpoint}/{id}", _serializerOptions, cancellationToken);
 
     public async Task<List<T>> Get<T>(string endpoint, CancellationToken cancellationToken) where T : new()
+        => await Get<T>(endpoint, null, cancellationToken);
+
+    public async Task<List<T>> Get<T>(string endpoint, IFilter? filter, CancellationToken cancellationToken) where T : new()
     {
-        var result = await _client.GetFromJsonAsync<List<T>>($"{Prefix}/{endpoint}", _serializerOptions, cancellationToken);
+        var route = CreateEndpointUrl(endpoint, filter);
+        var result = await _client.GetFromJsonAsync<List<T>>(route, _serializerOptions, cancellationToken);
         return result ?? new List<T>();
     }
 
-    public async Task<List<T>> Get<T>(string endpoint, IFilter? filter, CancellationToken cancellationToken) where T : new()
+    public string Curl(string endpoint, IFilter? filter)
+    {
+        var route = CreateEndpointUrl(endpoint, filter);
+        return $"curl {_client.BaseAddress}{route}";
+    }
+
+    private static string CreateEndpointUrl(string endpoint, IFilter? filter)
     {
         var route = $"{Prefix}/{endpoint}";
 
         var parameter = filter?.GetParameter()
-                .Select(x => $"{x.Name}={x.Value}")
-                .ToList() ?? new List<string>();
+            .Select(x => $"{x.Name}={x.Value}")
+            .ToList() ?? new List<string>();
 
         if (parameter.Count > 0)
         {
@@ -42,7 +52,6 @@ public class ApiClient
             route += $"?{query}";
         }
 
-        var result = await _client.GetFromJsonAsync<List<T>>(route, _serializerOptions, cancellationToken);
-        return result ?? new List<T>();
+        return route;
     }
 }

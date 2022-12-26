@@ -14,7 +14,7 @@ public class MoviesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Genres is null || Genres != MovieGenresFlags.ALL)
+        if (Genres is not null && Genres != MovieGenresFlags.ALL)
             result.Add(new(nameof(Genres), Genres.ToString()!));
 
         return result;

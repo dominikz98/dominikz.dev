@@ -36,7 +36,7 @@
 .toast-visible {
     display: flex;
     flex-direction: row;
-    animation: fadein 1.5s;
+    animation: fadein 1s;
 }
 
 .bg-success {

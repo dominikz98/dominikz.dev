@@ -13,7 +13,7 @@
         <Lable Text="@($"✏️ {_article.Author!.Name}")"/>
         @if (_article.Category != ArticleCategoryEnum.Unknown)
         {
-            <Lable Text="@EnumConverter.ToString(_article.Category)"/>
+            <Lable Text="@EnumFormatter.ToString(_article.Category)"/>
         }
         else
         {

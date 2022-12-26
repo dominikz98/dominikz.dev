@@ -5,7 +5,7 @@ namespace dominikz.shared.Filter;
 public class RecipesFilter : IFilter
 {
     public string? Text { get; init; }
-    public RecipeCategoryFlags Category { get; init; }
+    public RecipeCategoryFlags? Category { get; init; }
     public List<Guid> FoodIds { get; init; } = new();
 
     public IReadOnlyCollection<FilterParam> GetParameter()
@@ -15,7 +15,7 @@ public class RecipesFilter : IFilter
         if (Text is not null)
             result.Add(new(nameof(Text), Text));
 
-        if (Category != RecipeCategoryFlags.ALL)
+        if (Category is not null && Category != RecipeCategoryFlags.ALL)
             result.Add(new(nameof(Category), Category.ToString()!));
 
         foreach (var foodId in FoodIds)

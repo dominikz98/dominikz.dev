@@ -1,0 +1,11 @@
+
+.tab-control {
+    background-color: var(--theme-surface);
+    display: flex;
+    border-radius: 4px;
+    gap: 5px;
+}
+
+.tab-control-page {
+    flex: 1;
+}

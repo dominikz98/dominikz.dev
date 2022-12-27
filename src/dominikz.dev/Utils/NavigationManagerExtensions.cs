@@ -53,8 +53,9 @@ public static class NavigationManagerExtensions
 
     public static string AttachOrUpdateRawQueryParam(this NavigationManager navigationManager, string key, string? value, bool handleDefaultAsNull = true, bool navigate = true)
     {
-        var url = navigationManager.ToAbsoluteUri(navigationManager.Uri).GetLeftPart(UriPartial.Path);
-        var query = navigationManager.ToAbsoluteUri(navigationManager.Uri).Query;
+        var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
+        var url = uri.GetLeftPart(UriPartial.Path);
+        var query = uri.Query;
         var qParams = QueryHelpers.ParseQuery(query);
 
         if (qParams.TryGetValue(key, out _) == false)

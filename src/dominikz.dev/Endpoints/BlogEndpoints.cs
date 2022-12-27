@@ -21,7 +21,7 @@ public class BlogEndpoints
         => $"{_options.Value.Api}{ApiClient.Prefix}/{Endpoint}/rss";
     
     public async Task<ArticleDetailVm?> GetById(Guid id, CancellationToken cancellationToken = default)
-        => await _client.Get<ArticleDetailVm>(Endpoint, id, cancellationToken);
+        => await _client.GetSingle<ArticleDetailVm>($"{Endpoint}/{id}", cancellationToken);
 
     public async Task<List<ArticleListVm>> Search(ArticleFilter filter, CancellationToken cancellationToken = default)
         => await _client.Get<ArticleListVm>($"{Endpoint}/search", filter, cancellationToken);

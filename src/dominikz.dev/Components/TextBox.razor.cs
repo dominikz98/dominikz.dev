@@ -4,24 +4,25 @@ using Timer = System.Timers.Timer;
 
 namespace dominikz.dev.Components;
 
-public partial class Searchbox
+public partial class TextBox
 {
+    [Parameter] public string? Icon { get; set; }
     [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    [Parameter] public bool DelayInputTrigger { get; set; }
+    [Parameter] public bool IsPassword { get; set; }
 
-    [Parameter] public EventCallback<string?> OnValueChanged { get; set; }
+    private readonly Timer _inputTimer = new(TimeSpan.FromSeconds(0.3));
 
-    [Parameter] public bool DelayInputTrigger { get; set; } = true;
-
-    private Timer _inputTimer = new(TimeSpan.FromSeconds(0.3));
-
-    public Searchbox()
+    public TextBox()
     {
         _inputTimer.Elapsed += async (_, _) =>
         {
             _inputTimer.Stop();
 
             // handle data binding
-            await OnValueChanged.InvokeAsync(Value);
+            await ValueChanged.InvokeAsync(Value);
         };
     }
 
@@ -32,7 +33,7 @@ public partial class Searchbox
     {
         if (DelayInputTrigger == false)
         {
-            await OnValueChanged.InvokeAsync(Value);
+            await ValueChanged.InvokeAsync(Value);
             return;
         }
 

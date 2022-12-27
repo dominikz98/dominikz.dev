@@ -1,0 +1,7 @@
+﻿<div class="textbox">
+    @if (string.IsNullOrWhiteSpace(Icon) == false)
+    {
+        <i class="textbox-icon @(Icon)"></i>
+    }
+    <input type="@(IsPassword ? "password" : "text")" placeholder="@Placeholder" @bind="Value" @bind:event="oninput" @onkeyup="CallOnChanged"/>
+</div>

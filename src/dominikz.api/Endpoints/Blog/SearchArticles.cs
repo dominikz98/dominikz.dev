@@ -30,7 +30,7 @@ public class SearchArticles : ControllerBase
         {
             Text = filter.Text,
             Category = filter.Category,
-            Sources = filter.Sources
+            Source = filter.Source
         };
         var vms = await _mediator.Send(query, cancellationToken);
         return Ok(vms);
@@ -61,19 +61,19 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     {
         // load articles from sources
         var articles = new List<ArticleListVm>();
-        if (request.Sources is null or  ArticleSourceEnum.Dz)
+        if (request.Source is null or  ArticleSourceEnum.Dz)
         {
             var dzArticles = await LoadFromDatabase(request, cancellationToken);
             articles.AddRange(dzArticles);
         }
 
-        if (request.Sources is null or ArticleSourceEnum.Noobit)
+        if (request.Source is null or ArticleSourceEnum.Noobit)
         {
             var noobitArticles = await _noobitClient.GetArticlesByCategory(request.Category, cancellationToken);
             articles.AddRange(noobitArticles);
         }
 
-        if (request.Sources is null or ArticleSourceEnum.Medlan)
+        if (request.Source is null or ArticleSourceEnum.Medlan)
         {
             var medlanArticles = await _medlanClient.GetArticlesByCategory(request.Category);
             articles.AddRange(medlanArticles);

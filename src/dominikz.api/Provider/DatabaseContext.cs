@@ -15,6 +15,10 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        var account = builder.Entity<Account>();
+        account.ToTable("accounts");
+        account.HasKey(x => x.Id);
+        
         var article = builder.Entity<Article>();
         article.ToTable("articles");
         article.HasKey(x => x.Id);
@@ -40,18 +44,6 @@ public class DatabaseContext : DbContext
         var author = builder.Entity<Person>();
         author.ToTable("persons");
         author.HasKey(x => x.Id);
-
-        var recipesFoodsMapping = builder.Entity<RecipesFoodsMapping>();
-        recipesFoodsMapping.ToTable("recipes_foods_mapping");
-        recipesFoodsMapping.HasKey(x => new { x.RecipeId, x.FoodId });
-
-        var foods = builder.Entity<Food>();
-        foods.ToTable("foods");
-        foods.HasKey(x => x.Id);
-
-        var recipes = builder.Entity<Recipe>();
-        recipes.ToTable("recipes");
-        recipes.HasKey(x => x.Id);
 
         var file = builder.Entity<StorageFile>();
         file.ToTable("files");

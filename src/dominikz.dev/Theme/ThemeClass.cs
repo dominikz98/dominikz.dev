@@ -66,7 +66,15 @@ public class ThemeClass
 
 public enum CssColor
 {
-    Surface
+    Surface,
+    Background,
+    Primary,
+    OnPrimary,
+    Secondary,
+    OnSecondary,
+    Success,
+    Warning,
+    Error,
 }
 
 public enum CssFlexAlignment

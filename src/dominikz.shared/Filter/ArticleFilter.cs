@@ -5,7 +5,7 @@ namespace dominikz.shared.Filter;
 public class ArticleFilter : IFilter
 {
     public string? Text { get; init; }
-    public ArticleSourceEnum? Sources { get; init; }
+    public ArticleSourceEnum? Source { get; init; }
     public ArticleCategoryEnum? Category { get; init; }
 
     public IReadOnlyCollection<FilterParam> GetParameter()
@@ -18,8 +18,8 @@ public class ArticleFilter : IFilter
         if (Category != null)
             result.Add(new(nameof(Category), Category.ToString()!));
 
-        if (Sources != null)
-            result.Add(new (nameof(Sources), Sources.ToString()!));
+        if (Source != null)
+            result.Add(new (nameof(Source), Source.ToString()!));
             
         return result;
     }

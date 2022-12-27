@@ -1,3 +1,5 @@
+using dominikz.dev.Components.Toast;
+using dominikz.dev.Endpoints;
 using dominikz.dev.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Options;
@@ -16,4 +18,24 @@ public static class ServiceCollectionExtensions
         builder.Services.AddSingleton(Options.Create(externalUrls));
         return builder;
     }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+        => services.AddSingleton<AuthService>()
+            .AddScoped<BrowserService>()
+            .AddSingleton<ToastService>();
+    
+    public static IServiceCollection AddEndpoints(this IServiceCollection services)
+        => services.AddScoped<BlogEndpoints>()
+            .AddScoped<MediaEndpoints>()
+            .AddScoped<MovieEndpoints>()
+            .AddScoped<GameEndpoints>()
+            .AddScoped<BookEndpoints>()
+            .AddSingleton<AuthEndpoints>()
+            .AddScoped<MusicEndpoints>()
+            .AddHttpClient<ApiClient>((sp, client) =>
+            {
+                var url = sp.GetRequiredService<IOptions<ExternalUrls>>().Value.Api;
+                client.BaseAddress = new Uri(url!);
+            })
+            .Services;
 }

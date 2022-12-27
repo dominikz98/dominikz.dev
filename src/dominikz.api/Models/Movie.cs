@@ -6,7 +6,7 @@ public class Movie : Media
 {
     public string? MdText { get; set; }
     public Guid? AuthorId { get; set; }
-    public MovieGenresFlags Genres { get; set; } = new();
+    public MovieGenresFlags Genres { get; set; }
     public int Rating { get; set; }
     public int Year { get; set; }
     public string Plot { get; set; } = string.Empty;

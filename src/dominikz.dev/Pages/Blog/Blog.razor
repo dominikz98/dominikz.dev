@@ -14,18 +14,22 @@
 
 <div class="flex-column gap">
 
-    <Searchbox @ref="_searchbox" OnValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QuerySearch, value))"/>
+    <TextBox @ref="_searchbox"
+             DelayInputTrigger="true"
+             Placeholder="Search ..."
+             Icon="fa-solid fa-magnifying-glass" 
+             ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Blog.Search, value))"/>
 
     <ChipSelect T="ArticleCategoryEnum"
                 Title="Category"
                 @ref="_categorySelect"
-                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryCategory, value))"
+                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Category, value))"
                 Values="Enum.GetValues<ArticleCategoryEnum>()[1..^1].ToList()"/>
 
     <ChipSelect T="ArticleSourceEnum"
                 Title="Source"
                 @ref="_sourceSelect"
-                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QuerySource, value))"
+                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Source, value))"
                 Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
     <div class="flex-row gap">

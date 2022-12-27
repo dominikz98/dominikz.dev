@@ -52,7 +52,7 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
         // add persons
         var authors = new Dictionary<ArticleSourceEnum, SyndicationPerson>()
         {
-            { ArticleSourceEnum.Dz, new SyndicationPerson("dominikzettl@gmx.net", "Dominik Zettl", "https://dominikzettl.dev/") },
+            { ArticleSourceEnum.Dz, new SyndicationPerson("info@dominikzettl.dev", "Dominik Zettl", "https://dominikzettl.dev/") },
             { ArticleSourceEnum.Medlan, new SyndicationPerson("projectmedlan@gmail.com", "Markus Liebl", "https://www.medlan.de/") },
             { ArticleSourceEnum.Noobit, new SyndicationPerson("th.cmxl@gmail.com", "Tobias Haimerl", "https://www.noobit.dev/") }
         };
@@ -78,9 +78,9 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
         foreach (var category in Enum.GetValues<ArticleCategoryEnum>())
             feed.Categories.Add(new SyndicationCategory((category.ToString())));
 
-        feed.Copyright = new TextSyndicationContent($"Copyright {DateTime.Now.Year}");
+        feed.Copyright = new TextSyndicationContent($"Copyright {DateTime.UtcNow.Year}");
         feed.Generator = "dominikzettl.dev";
-        feed.LastUpdatedTime = DateTime.Now;
+        feed.LastUpdatedTime = DateTime.UtcNow;
         feed.Id = Guid.NewGuid().ToString();
 
         // write stream

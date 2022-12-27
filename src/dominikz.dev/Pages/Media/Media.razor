@@ -19,7 +19,11 @@
 
     <MediaCarousel Data="_previews"/>
 
-    <Searchbox @ref="_searchbox" OnValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QuerySearch, value))"/>
+    <TextBox @ref="_searchbox"
+             DelayInputTrigger="true"
+             Placeholder="Search ..."
+             Icon="fa-solid fa-magnifying-glass"
+             ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Media.Search, value))"/>
 
     <TabControl @ref="_categoryTabCtrl" OnPageChanged="OnPageChanged">
 
@@ -29,7 +33,7 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_movieGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryMovieGenre, value))"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Movie.Genre, value))"
                         Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
             <div class="flex-row gap">
@@ -82,13 +86,13 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_bookGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryBookGenre, value))"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Genre, value))"
                         Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="BookLanguageEnum"
                         Title="Genres"
                         @ref="_bookLanguageSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryBookLanguage, value))"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Language, value))"
                         Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
 
             <div class="flex-row gap">
@@ -136,13 +140,13 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_gameGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryGameGenre, value))"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Genre, value))"
                         Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="GamePlatformEnum"
                         Title="Genres"
                         @ref="_gamePlatformSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryGamePlatform, value))"
+                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Platform, value))"
                         Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
 
             <div class="flex-row gap">

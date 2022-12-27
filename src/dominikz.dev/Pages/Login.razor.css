@@ -1,0 +1,19 @@
+
+.login {
+    margin: auto;
+}
+
+.login-error {
+    color: var(--theme-error);
+}
+
+.login-button {
+    width: 25%;
+}
+
+@media (min-width: 641px) {
+
+    .login {
+        width: 50%;
+    }
+}

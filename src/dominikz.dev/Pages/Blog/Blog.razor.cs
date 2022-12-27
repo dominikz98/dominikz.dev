@@ -1,6 +1,7 @@
 ﻿using dominikz.dev.Components;
 using dominikz.dev.Components.Chips;
 using dominikz.dev.Components.Toast;
+using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
 using dominikz.dev.Models;
 using dominikz.dev.Utils;
@@ -21,11 +22,7 @@ public partial class Blog
     private List<ArticleListVm> _articles = new();
     private int _view = (int)CollectionView.Grid;
 
-    private const string QuerySearch = "search";
-    private const string QueryCategory = "category";
-    private const string QuerySource = "source";
-
-    private Searchbox? _searchbox;
+    private TextBox? _searchbox;
     private ChipSelect<ArticleCategoryEnum>? _categorySelect;
     private ChipSelect<ArticleSourceEnum>? _sourceSelect;
 
@@ -34,14 +31,10 @@ public partial class Blog
         NavManager!.LocationChanged += async (_, _) => await SearchArticles();
         await SearchArticles();
 
-        var search = NavManager.GetQueryParamByKey(QuerySearch);
-        _searchbox?.SetValue(search);
-
-        var category = NavManager.GetQueryParamByKey<ArticleCategoryEnum>(QueryCategory);
-        _categorySelect?.Select(category);
-
-        var source = NavManager.GetQueryParamByKey<ArticleSourceEnum>(QuerySource);
-        _sourceSelect?.Select(source);
+        var filter = CreateFilter();
+        _searchbox?.SetValue(filter.Text);
+        _categorySelect?.Select(filter.Category);
+        _sourceSelect?.Select(filter.Source);
     }
 
     private async Task SearchArticles()
@@ -54,9 +47,9 @@ public partial class Blog
     private ArticleFilter CreateFilter()
         => new()
         {
-            Category = NavManager!.GetQueryParamByKey<ArticleCategoryEnum>(QueryCategory),
-            Sources = NavManager!.GetQueryParamByKey<ArticleSourceEnum>(QuerySource),
-            Text = NavManager!.GetQueryParamByKey(QuerySearch)
+            Category = NavManager!.GetQueryParamByKey<ArticleCategoryEnum>(QueryNames.Blog.Category),
+            Source = NavManager!.GetQueryParamByKey<ArticleSourceEnum>(QueryNames.Blog.Source),
+            Text = NavManager!.GetQueryParamByKey(QueryNames.Blog.Search)
         };
 
     private async Task OnRssFeedClicked()

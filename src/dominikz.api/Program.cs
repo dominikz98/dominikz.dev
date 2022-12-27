@@ -17,7 +17,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
+builder.AddOptions();
+builder.AddClients();
 builder.AddServices();
+builder.AddJwtAuth();
 
 var app = builder.Build();
 

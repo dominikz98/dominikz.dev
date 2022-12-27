@@ -1,6 +1,4 @@
 ﻿
-<div class="text-button @(IsSelected ? "text-button-selected" : string.Empty)" @onclick="(CallOnClick)">
-
-    <spanc>@Text</spanc>
-
-</div>
+<button type="submit" class="@(IsSelected ? "selected" : string.Empty)" @onclick="@CallOnClick">
+    @Text
+</button>

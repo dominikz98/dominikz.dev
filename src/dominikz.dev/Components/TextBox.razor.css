@@ -1,8 +1,8 @@
 ﻿
-input[type="text"], textarea,
-input[type="text"], textarea :hover,
-input[type="text"], textarea :focus,
-input[type="text"], textarea :active {
+input, textarea,
+input, textarea :hover,
+input, textarea :focus,
+input, textarea :active {
     width: 100%;
     background-color: var(--theme-surface);
     color: white;
@@ -13,7 +13,7 @@ input[type="text"], textarea :active {
     border-radius: 4px;
 }
 
-.searchbox {
+.textbox {
     display: flex;
     align-items: center;
     background-color: var(--theme-surface);
@@ -21,7 +21,7 @@ input[type="text"], textarea :active {
     width: 100%;
 }
 
-.serachbox-icon {
+.textbox-icon {
     display: flex;
     align-items: center;
     padding-right: 8px;

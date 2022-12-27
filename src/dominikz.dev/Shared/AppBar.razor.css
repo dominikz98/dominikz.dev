@@ -2,14 +2,21 @@
 .appbar {
     background-color: var(--theme-surface);
     padding: 8px;
-    font-size: x-large;
     position: fixed;
     z-index: 999;
     height: 60px;
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+}
+
+.appbar-title {
+    font-size: x-large;
+}
+
+.appbar-buttons {
+    font-size: large;
 }
 
 .appbar-menu {

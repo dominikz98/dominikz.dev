@@ -2,6 +2,7 @@
 using dominikz.dev.Components.Chips;
 using dominikz.dev.Components.TabControl;
 using dominikz.dev.Components.Toast;
+using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
 using dominikz.dev.Models;
 using dominikz.dev.Utils;
@@ -28,18 +29,8 @@ public partial class Media
     private List<GameVM> _games = new();
     private List<BookVM> _books = new();
 
-    private const string QueryView = "view";
-    private const string QuerySearch = "search";
-    private const string QueryCategory = "category";
-    private const string QueryMovieGenre = "m_genre";
-    private const string QueryBookGenre = "b_genre";
-    private const string QueryBookLanguage = "b_language";
-    private const string QueryGameGenre = "g_genre";
-    private const string QueryGamePlatform = "g_platform";
-
     private int _view = (int)CollectionView.Grid;
-
-    private Searchbox? _searchbox;
+    private TextBox? _searchbox;
     private TabControl? _categoryTabCtrl;
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;
     private ChipSelect<BookGenresFlags>? _bookGenreSelect;
@@ -53,26 +44,26 @@ public partial class Media
         NavManager!.LocationChanged += async (_, _) => await SearchByCategory();
         await SearchByCategory();
 
-        var search = NavManager.GetQueryParamByKey(QuerySearch);
-        _searchbox?.SetValue(search);
-
-        var category = NavManager.GetQueryParamByKey<MediaCategoryEnum>(QueryCategory) ?? MediaCategoryEnum.Movie;
+        var category = NavManager.GetQueryParamByKey<MediaCategoryEnum>(QueryNames.Media.Category) ?? MediaCategoryEnum.Movie;
         _categoryTabCtrl?.ShowPage((int)category);
 
-        var movieGenre = NavManager.GetQueryParamByKey<MovieGenresFlags>(QueryMovieGenre);
-        _movieGenreSelect?.Select(movieGenre);
+        var search = NavManager.GetQueryParamByKey(QueryNames.Media.Search);
+        _searchbox?.SetValue(search);
 
-        var bookGenre = NavManager.GetQueryParamByKey<BookGenresFlags>(QueryBookGenre);
-        _bookGenreSelect?.Select(bookGenre);
+        var filter = CreateFilterByCategory(category);
+        if (filter is MoviesFilter mFilter)
+            _movieGenreSelect?.Select(mFilter.Genres);
 
-        var bookLanguage = NavManager.GetQueryParamByKey<BookLanguageEnum>(QueryBookLanguage);
-        _bookLanguageSelect?.Select(bookLanguage);
-
-        var gameGenre = NavManager.GetQueryParamByKey<GameGenresFlags>(QueryGameGenre);
-        _gameGenreSelect?.Select(gameGenre);
-
-        var gamePlatform = NavManager.GetQueryParamByKey<GamePlatformEnum>(QueryGamePlatform);
-        _gamePlatformSelect?.Select(gamePlatform);
+        else if (filter is BooksFilter bFilter)
+        {
+            _bookGenreSelect?.Select(bFilter.Genres);
+            _bookLanguageSelect?.Select(bFilter.Language);    
+        }
+        else if (filter is GamesFilter gFilter)
+        {
+            _gameGenreSelect?.Select(gFilter.Genres);
+            _gamePlatformSelect?.Select(gFilter.Platform);    
+        }
     }
 
     private void OnPageChanged(int pageId)
@@ -83,11 +74,11 @@ public partial class Media
         // remove filter and change category
         var parameter = new Dictionary<string, string>();
         if (category != MediaCategoryEnum.Movie)
-            parameter.Add(QueryCategory, category.ToString().ToLower());
+            parameter.Add(QueryNames.Media.Category, category.ToString().ToLower());
 
-        var search = NavManager!.GetQueryParamByKey(QuerySearch);
+        var search = NavManager!.GetQueryParamByKey(QueryNames.Media.Search);
         if (string.IsNullOrWhiteSpace(search) == false)
-            parameter.Add(QuerySearch, search);
+            parameter.Add(QueryNames.Media.Search, search);
 
         // navigate to updated url
         var url = NavManager!.ToAbsoluteUri(NavManager.Uri).GetLeftPart(UriPartial.Path);
@@ -103,7 +94,7 @@ public partial class Media
 
     private async Task OnCreateCURLClicked()
     {
-        var category = NavManager!.GetQueryParamByKey<MediaCategoryEnum>(QueryCategory) ?? MediaCategoryEnum.Movie;
+        var category = NavManager!.GetQueryParamByKey<MediaCategoryEnum>(QueryNames.Media.Category) ?? MediaCategoryEnum.Movie;
         var filter = CreateFilterByCategory(category);
         var curl = category switch
         {
@@ -130,22 +121,22 @@ public partial class Media
             case MediaCategoryEnum.Movie:
                 return new MoviesFilter()
                 {
-                    Text = NavManager!.GetQueryParamByKey(QuerySearch),
-                    Genres = NavManager!.GetQueryParamByKey<MovieGenresFlags>(QueryMovieGenre)
+                    Text = NavManager!.GetQueryParamByKey(QueryNames.Media.Search),
+                    Genres = NavManager!.GetQueryParamByKey<MovieGenresFlags>(QueryNames.Media.Movie.Genre)
                 };
             case MediaCategoryEnum.Book:
                 return new BooksFilter()
                 {
-                    Text = NavManager!.GetQueryParamByKey(QuerySearch),
-                    Genres = NavManager!.GetQueryParamByKey<BookGenresFlags>(QueryBookGenre),
-                    Language = NavManager!.GetQueryParamByKey<BookLanguageEnum>(QueryBookLanguage)
+                    Text = NavManager!.GetQueryParamByKey(QueryNames.Media.Search),
+                    Genres = NavManager!.GetQueryParamByKey<BookGenresFlags>(QueryNames.Media.Book.Genre),
+                    Language = NavManager!.GetQueryParamByKey<BookLanguageEnum>(QueryNames.Media.Book.Language)
                 };
             case MediaCategoryEnum.Game:
                 return new GamesFilter()
                 {
-                    Text = NavManager!.GetQueryParamByKey(QuerySearch),
-                    Genres = NavManager!.GetQueryParamByKey<GameGenresFlags>(QueryGameGenre),
-                    Platform = NavManager!.GetQueryParamByKey<GamePlatformEnum>(QueryGamePlatform)
+                    Text = NavManager!.GetQueryParamByKey(QueryNames.Media.Search),
+                    Genres = NavManager!.GetQueryParamByKey<GameGenresFlags>(QueryNames.Media.Game.Genre),
+                    Platform = NavManager!.GetQueryParamByKey<GamePlatformEnum>(QueryNames.Media.Game.Platform)
                 };
         }
 
@@ -154,7 +145,7 @@ public partial class Media
 
     private async Task SearchByCategory()
     {
-        var category = NavManager!.GetQueryParamByKey<MediaCategoryEnum>(QueryCategory) ?? MediaCategoryEnum.Movie;
+        var category = NavManager!.GetQueryParamByKey<MediaCategoryEnum>(QueryNames.Media.Category) ?? MediaCategoryEnum.Movie;
         var filter = CreateFilterByCategory(category);
         switch (category)
         {

@@ -23,14 +23,3 @@ public class BrowserService
     public async Task StopAudio(string id)
         => await _jsRuntime.InvokeVoidAsync("stopAudio", id);
 }
-
-public class WindowDimension
-{
-    public int Width { get; set; }
-    public int Height { get; set; }
-
-    public bool IsMobile
-    {
-        get => Width <= 600;
-    }
-}

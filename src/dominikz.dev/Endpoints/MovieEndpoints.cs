@@ -14,7 +14,7 @@ public class MovieEndpoints
     }
 
     public async Task<MovieDetailVM?> GetById(Guid id, CancellationToken cancellationToken = default)
-        => await _client.Get<MovieDetailVM>($"{Endpoint}", id, cancellationToken);
+        => await _client.GetSingle<MovieDetailVM>($"{Endpoint}/{id}", cancellationToken);
 
     public async Task<List<MovieVM>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
         => await _client.Get<MovieVM>($"{Endpoint}/search", filter, cancellationToken);

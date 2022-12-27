@@ -13,5 +13,5 @@ public class MusicEndpoints
     }
 
     public async Task<SongVm?> GetSongById(Guid id, CancellationToken cancellationToken = default)
-        => await _client.Get<SongVm>($"{Endpoint}/songs", id, cancellationToken);
+        => await _client.GetSingle<SongVm>($"{Endpoint}/songs/{id}", cancellationToken);
 }

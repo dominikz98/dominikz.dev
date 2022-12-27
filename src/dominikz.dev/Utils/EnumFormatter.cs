@@ -23,10 +23,7 @@ public static class EnumFormatter
 
         else if (value is ArticleSourceEnum articleSource)
             return ToString(articleSource);
-        
-        else if (value is FoodUnitEnum foodUnit)
-            return ToString(foodUnit);
-
+    
         else if (value is GamePlatformEnum platform)
             return ToString(platform);
 
@@ -40,17 +37,8 @@ public static class EnumFormatter
             return ToString(bookGenre);
 
         else
-            return value.ToString()!;
+            return value.ToString();
     }
-
-    private static string ToString(FoodUnitEnum unit)
-       => unit switch
-       {
-           FoodUnitEnum.Pieces => "pc.",
-           FoodUnitEnum.Grams => "g",
-           FoodUnitEnum.Liter => "l",
-           _ => Default
-       };
 
     private static string ToString(MediaCategoryEnum category)
         => category switch

@@ -8,6 +8,13 @@
 
     <div class="appbar-buttons">
         <IconButton OnClick="@(() => NavigationManager!.NavigateTo("/imprint"))" Icon="fa-solid fa-scale-balanced"/>
-        <IconButton OnClick="@(OnLoginClicked)" Icon="fa-solid fa-right-to-bracket"/>
+        @if (_isLoggedIn == false)
+        {
+            <IconButton OnClick="@(OnLoginClicked)" Icon="fa-solid fa-lock"/>
+        }
+        else
+        {
+            <IconButton OnClick="@(OnLogoutClicked)" Icon="fa-solid fa-lock-open"/>
+        }
     </div>
 </div>

@@ -10,6 +10,8 @@ namespace dominikz.api.Utils;
 
 public static class JwtHelper
 {
+    public const string ClaimPermissions = "Permissions";
+    
     public static JwtInfo CreateToken(Account account, JwtOptions options)
     {
         var key = Encoding.UTF8.GetBytes(options.IssuerSigningKey);
@@ -19,7 +21,8 @@ public static class JwtHelper
             new(ClaimTypes.Name, account.Username),
             new(ClaimTypes.Email, account.Email),
             new(ClaimTypes.NameIdentifier, account.Id.ToString()),
-            new(ClaimTypes.Expiration, expiration.ToString("yyyy-MM-dd HH:mm:ss tt"))
+            new(ClaimTypes.Expiration, expiration.ToString("yyyy-MM-dd HH:mm:ss tt")),
+            new (ClaimPermissions, account.Permissions.ToString())
         };
 
         var token = new JwtSecurityToken(options.ValidIssuer,

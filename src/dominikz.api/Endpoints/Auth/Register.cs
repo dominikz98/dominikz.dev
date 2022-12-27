@@ -6,13 +6,18 @@ using dominikz.shared.ViewModels.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace dominikz.api.Endpoints.Auth;
 
 [Tags("auth")]
+[ApiKey(RequiresMasterKey = true)]
+[Authorize(Policy = Policies.Account)]
+[Authorize(Policy = Policies.CreateOrUpdate)]
 [ApiController]
+[EnableRateLimiting(Policies.RateLimit)]
 [Route("api/auth/register")]
 public class Register : ControllerBase
 {
@@ -24,7 +29,6 @@ public class Register : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Execute([FromBody] RegisterVm request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new RegisterRequest(request.Username, request.Email, request.Password), cancellationToken);
@@ -99,7 +103,7 @@ public class RegisterRequestHandler : IRequestHandler<RegisterRequest, AuthVm>
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
-            Rights = account.Rights
+            Permissions = account.Permissions
         };
     }
 }

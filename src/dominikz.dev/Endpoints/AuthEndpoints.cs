@@ -1,5 +1,3 @@
-using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
 using dominikz.shared.ViewModels.Auth;
 
 namespace dominikz.dev.Endpoints;
@@ -16,8 +14,4 @@ public class AuthEndpoints
 
     public async Task<AuthVm?> Login(LoginVm vm, CancellationToken cancellationToken)
         => await _client.Post<LoginVm, AuthVm>($"{Endpoint}/login", vm, true, cancellationToken);
-    
-    public async Task<RightFlags> GetRights(CancellationToken cancellationToken)
-        => await _client.GetSingle<RightFlags>($"{Endpoint}/rights", cancellationToken);
-    
-    }
+}

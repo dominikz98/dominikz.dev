@@ -9,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.api.Endpoints.Piano;
 
 [Tags("music")]
-[ApiController]
 [Route("api/music")]
-public class GetSong : ControllerBase
+public class GetSong : EndpointController
 {
     private readonly IMediator _mediator;
 

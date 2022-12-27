@@ -9,13 +9,13 @@ namespace dominikz.dev.Utils;
 public static class ServiceCollectionExtensions
 {
     public static WebAssemblyHostBuilder AddOptions(this WebAssemblyHostBuilder builder)
-    {
-        var externalUrls = new ExternalUrls()
-        {
-            Api = builder.Configuration.GetValue<string>($"{nameof(ExternalUrls)}:{nameof(ExternalUrls.Api)}") ?? string.Empty
-        };
+        => builder.AddOption<ApiOptions>();
 
-        builder.Services.AddSingleton(Options.Create(externalUrls));
+    private static WebAssemblyHostBuilder AddOption<T>(this WebAssemblyHostBuilder builder) where T : class, new()
+    {
+        var options = new T();
+        builder.Configuration.GetSection(typeof(T).Name).Bind(options);
+        builder.Services.AddSingleton(Options.Create(options));
         return builder;
     }
 
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         => services.AddSingleton<AuthService>()
             .AddScoped<BrowserService>()
             .AddSingleton<ToastService>();
-    
+
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
         => services.AddScoped<BlogEndpoints>()
             .AddScoped<MediaEndpoints>()
@@ -34,8 +34,9 @@ public static class ServiceCollectionExtensions
             .AddScoped<MusicEndpoints>()
             .AddHttpClient<ApiClient>((sp, client) =>
             {
-                var url = sp.GetRequiredService<IOptions<ExternalUrls>>().Value.Api;
-                client.BaseAddress = new Uri(url!);
+                var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
+                client.BaseAddress = new Uri(options.Url);
+                client.DefaultRequestHeaders.Add(ApiClient.ApiKeyHeaderName, options.Key);
             })
             .Services;
 }

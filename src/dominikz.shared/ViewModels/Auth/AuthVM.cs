@@ -11,6 +11,6 @@ public class AuthVm
     public DateTime TokenExpiration { get; set; }
     public string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiration { get; set; }
-    public RightFlags Rights { get; set; } = RightFlags.None;
+    public PermissionFlags Permissions { get; set; } = PermissionFlags.None;
     public string? Info { get; set; }
 }

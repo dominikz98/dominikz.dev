@@ -13,5 +13,5 @@ public class Account
     public DateTime LastLogin { get; set; }
     public string RefreshToken { get; set; } = string.Empty;
     public DateTime RefreshExpiration { get; set; }
-    public RightFlags Rights { get; set; }
+    public PermissionFlags Permissions { get; set; }
 }

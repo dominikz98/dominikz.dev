@@ -18,9 +18,11 @@ public partial class Blog
     [Inject] protected NavigationManager? NavManager { get; set; }
     [Inject] protected BrowserService? Browser { get; set; }
     [Inject] protected ToastService? Toast { get; set; }
+    [Inject] protected AuthService? AuthService { get; set; }
 
     private List<ArticleListVm> _articles = new();
     private int _view = (int)CollectionView.Grid;
+    private bool _hasCreatePermission;
 
     private TextBox? _searchbox;
     private ChipSelect<ArticleCategoryEnum>? _categorySelect;
@@ -28,6 +30,7 @@ public partial class Blog
 
     protected override async Task OnInitializedAsync()
     {
+        _hasCreatePermission = await AuthService!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
         NavManager!.LocationChanged += async (_, _) => await SearchArticles();
         await SearchArticles();
 
@@ -79,7 +82,7 @@ public partial class Blog
         if (article is null)
             return;
 
-        if (article.SourceEnum != ArticleSourceEnum.Dz)
+        if (article.Source != ArticleSourceEnum.Dz)
         {
             NavManager!.NavigateTo(article.Path);
             return;

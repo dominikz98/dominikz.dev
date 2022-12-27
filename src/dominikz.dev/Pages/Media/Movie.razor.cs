@@ -1,5 +1,5 @@
 ﻿using dominikz.dev.Endpoints;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Media;

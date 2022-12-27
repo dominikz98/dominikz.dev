@@ -17,7 +17,7 @@
     <TextBox @ref="_searchbox"
              DelayInputTrigger="true"
              Placeholder="Search ..."
-             Icon="fa-solid fa-magnifying-glass" 
+             Icon="fa-solid fa-magnifying-glass"
              ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Blog.Search, value))"/>
 
     <ChipSelect T="ArticleCategoryEnum"
@@ -33,6 +33,14 @@
                 Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
     <div class="flex-row gap">
+
+        @if (_hasCreatePermission)
+        {
+            <div class="menu-element gap">
+                <IconButton OnClick="OnRssFeedClicked" Icon="fa-solid fa-circle-plus"/>
+            </div>    
+        }
+        
         <div class="menu-element gap">
             <i class="fa-solid fa-border-top-left"></i>
             <Switch @bind-State="_view"/>

@@ -1,3 +1,4 @@
+using dominikz.api.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -5,9 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
-[ApiController]
+[Authorize(Policy = Policies.Blog)]
+[Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/blog")]
-public class AddArticle : ControllerBase
+public class AddArticle : EndpointController
 {
     private readonly IMediator _mediator;
 
@@ -17,7 +19,6 @@ public class AddArticle : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Execute(CancellationToken cancellationToken)
     {
         var vm = await _mediator.Send(new AddArticleRequest(), cancellationToken);

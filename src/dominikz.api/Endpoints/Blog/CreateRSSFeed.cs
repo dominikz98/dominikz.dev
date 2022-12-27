@@ -8,9 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
-[ApiController]
 [Route("api/blog/rss")]
-public class CreateRssFeed : ControllerBase
+public class CreateRssFeed : EndpointController
 {
     private readonly IMediator _mediator;
 
@@ -70,7 +69,7 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
             Title = new TextSyndicationContent(x.Title),
             Links = { new SyndicationLink(new Uri(x.Path)) },
             Copyright = new TextSyndicationContent($"Copyright {x.Timestamp.Year}"),
-            Authors = { authors[x.SourceEnum] }
+            Authors = { authors[x.Source] }
         }).ToList();
         feed.Items = items;
 

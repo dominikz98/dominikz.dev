@@ -1,5 +1,5 @@
 ﻿using dominikz.api.Models;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 
 namespace dominikz.api.Mapper;
 

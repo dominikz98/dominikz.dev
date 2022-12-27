@@ -1,7 +1,7 @@
 ﻿using dominikz.api.Models;
 using dominikz.api.Utils;
 using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 
 namespace dominikz.api.Mapper;
 

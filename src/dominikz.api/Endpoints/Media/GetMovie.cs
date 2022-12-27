@@ -3,7 +3,7 @@ using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.api.Endpoints.Media;
 
 [Tags("medias/movies")]
-[ApiController]
 [Route("api/medias/movies")]
-public class GetMovie : ControllerBase
+public class GetMovie : EndpointController
 {
     private readonly IMediator _mediator;
 

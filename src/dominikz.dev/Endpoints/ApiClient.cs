@@ -10,6 +10,7 @@ public class ApiClient
     private readonly HttpClient _client;
     private readonly ToastService _toast;
 
+    public const string ApiKeyHeaderName = "x-api-key";
     public const string Prefix = "api";
 
     private readonly JsonSerializerOptions _serializerOptions;
@@ -25,7 +26,8 @@ public class ApiClient
     {
         try
         {
-            return await _client.GetFromJsonAsync<T>($"{Prefix}/{endpoint}", _serializerOptions, cancellationToken);
+            var route = CreateEndpointUrl(endpoint);
+            return await _client.GetFromJsonAsync<T>(route, _serializerOptions, cancellationToken);
         }
         catch (Exception)
         {
@@ -56,7 +58,8 @@ public class ApiClient
     {
         try
         {
-            var result = await _client.PostAsJsonAsync(endpoint, data, _serializerOptions, cancellationToken);
+            var route = CreateEndpointUrl(endpoint);
+            var result = await _client.PostAsJsonAsync(route, data, _serializerOptions, cancellationToken);
             result.EnsureSuccessStatusCode();
             return await result.Content.ReadFromJsonAsync<TResponse>(_serializerOptions, cancellationToken);
         }
@@ -71,13 +74,16 @@ public class ApiClient
     public void SetAuthHeader(string token)
         => _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
+    public void RemoveAuthHeader()
+        => _client.DefaultRequestHeaders.Remove("Authorization");
+    
     public string Curl(string endpoint, IFilter? filter)
     {
         var route = CreateEndpointUrl(endpoint, filter);
         return $"curl {_client.BaseAddress}{route}";
     }
 
-    private static string CreateEndpointUrl(string endpoint, IFilter? filter)
+    private static string CreateEndpointUrl(string endpoint, IFilter? filter = null)
     {
         var route = $"{Prefix}/{endpoint}";
 

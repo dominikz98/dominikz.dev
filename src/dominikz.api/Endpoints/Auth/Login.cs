@@ -2,7 +2,6 @@ using dominikz.api.Models;
 using dominikz.api.Models.Options;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.ViewModels;
 using dominikz.shared.ViewModels.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,8 @@ using Microsoft.Extensions.Options;
 namespace dominikz.api.Endpoints.Auth;
 
 [Tags("auth")]
-[ApiController]
 [Route("api/auth/login")]
-public class Login : ControllerBase
+public class Login : EndpointController
 {
     private readonly IMediator _mediator;
 
@@ -22,7 +20,7 @@ public class Login : ControllerBase
     {
         _mediator = mediator;
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Execute([FromBody] LoginVm request, CancellationToken cancellationToken)
     {
@@ -89,7 +87,7 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, AuthVm>
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
-            Rights = account.Rights
+            Permissions = account.Permissions
         };
     }
 }

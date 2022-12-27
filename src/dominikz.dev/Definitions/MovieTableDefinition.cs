@@ -2,7 +2,7 @@
 using dominikz.dev.Utils;
 using dominikz.shared;
 using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 
 namespace dominikz.dev.Definitions;
 

@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace dominikz.api.Endpoints.Download;
 
 [Tags("download")]
-[ApiController]
 [Route("api/download")]
-public class GetImage : ControllerBase
+public class GetImage : EndpointController
 {
     private readonly IMediator _mediator;
 

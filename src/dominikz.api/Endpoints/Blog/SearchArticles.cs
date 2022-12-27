@@ -12,9 +12,8 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
-[ApiController]
 [Route("api/blog")]
-public class SearchArticles : ControllerBase
+public class SearchArticles : EndpointController
 {
     private readonly IMediator _mediator;
 
@@ -121,13 +120,13 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     private void SetFeaturedFlags(IReadOnlyCollection<ArticleListVm> articles)
     {
         // feature first 2 articles of every source
-        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Dz).Take(2))
+        foreach (var feature in articles.Where(x => x.Source == ArticleSourceEnum.Dz).Take(2))
             feature.Featured = true;
 
-        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Noobit).Take(2))
+        foreach (var feature in articles.Where(x => x.Source == ArticleSourceEnum.Noobit).Take(2))
             feature.Featured = true;
 
-        foreach (var feature in articles.Where(x => x.SourceEnum == ArticleSourceEnum.Medlan).Take(2))
+        foreach (var feature in articles.Where(x => x.Source == ArticleSourceEnum.Medlan).Take(2))
             feature.Featured = true;
     }
 

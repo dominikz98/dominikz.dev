@@ -1,7 +1,5 @@
 using System.Web;
-using Blazored.LocalStorage;
 using dominikz.dev.Utils;
-using dominikz.shared.ViewModels;
 using dominikz.shared.ViewModels.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;

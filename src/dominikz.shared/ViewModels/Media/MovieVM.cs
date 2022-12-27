@@ -1,6 +1,6 @@
 ﻿using dominikz.shared.Contracts;
 
-namespace dominikz.shared.ViewModels;
+namespace dominikz.shared.ViewModels.Media;
 
 public class MovieVM : MediaVM
 {

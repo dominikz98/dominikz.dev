@@ -8,7 +8,7 @@ using dominikz.dev.Models;
 using dominikz.dev.Utils;
 using dominikz.shared.Contracts;
 using dominikz.shared.Filter;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Media;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 

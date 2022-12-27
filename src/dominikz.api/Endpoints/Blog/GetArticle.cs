@@ -11,9 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
-[ApiController]
 [Route("api/blog")]
-public class GetArticle : ControllerBase
+public class GetArticle : EndpointController
 {
     private readonly IMediator _mediator;
 

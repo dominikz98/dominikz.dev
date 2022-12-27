@@ -2,7 +2,6 @@ using dominikz.api.Models;
 using dominikz.api.Models.Options;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.ViewModels;
 using dominikz.shared.ViewModels.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,8 @@ using Microsoft.Extensions.Options;
 namespace dominikz.api.Endpoints.Auth;
 
 [Tags("auth")]
-[ApiController]
 [Route("api/auth/refresh")]
-public class Refresh : ControllerBase
+public class Refresh : EndpointController
 {
     private readonly IMediator _mediator;
 
@@ -49,20 +47,16 @@ public class RefreshRequest : IRequest<AuthVm>
 public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
 {
     private readonly DatabaseContext _database;
-    private readonly PasswordHasher _hasher;
     private readonly IOptions<JwtOptions> _options;
 
-    public RefreshRequestHandler(DatabaseContext database, PasswordHasher hasher, IOptions<JwtOptions> options)
+    public RefreshRequestHandler(DatabaseContext database, IOptions<JwtOptions> options)
     {
         _database = database;
-        _hasher = hasher;
         _options = options;
     }
 
     public async Task<AuthVm> Handle(RefreshRequest request, CancellationToken cancellationToken)
     {
-        // https://code-maze.com/using-refresh-tokens-in-asp-net-core-authentication/
-
         // parse principals
         var principal = JwtHelper.GetPrincipalFromExpiredToken(request.ExpiredToken, _options.Value);
         var username = principal?.Identity?.Name;
@@ -94,7 +88,7 @@ public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
-            Rights = account.Rights
+            Permissions = account.Permissions
         };
     }
 }

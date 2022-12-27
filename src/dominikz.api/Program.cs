@@ -17,7 +17,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
+builder.Services.AddAuthPolicies();
 builder.AddOptions();
+builder.AddRateLimit();
 builder.AddClients();
 builder.AddServices();
 builder.AddJwtAuth();
@@ -34,6 +36,7 @@ if (app.Environment.IsDevelopment())
 app.UseResponseCaching();
 app.UseCors();
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseAuthorization();
 app.MapControllers();
 

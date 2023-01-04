@@ -2,29 +2,32 @@
 
 namespace dominikz.dev.Components.Chips;
 
-public partial class Chip<T>
+public partial class Chip<T> where T : struct
 {
-    [Parameter]
-    public string? Title { get; set; }
+    [Parameter] public string? Title { get; set; }
 
-    [Parameter]
-    public T? Value { get; set; }
+    [Parameter] public T? Value { get; set; }
 
-    [Parameter]
-    public bool AllowSelect { get; set; } = true;
+    [Parameter] public bool AllowSelect { get; set; } = true;
 
-    [Parameter]
-    public EventCallback<object> OnChanged { get; set; }
+    [Parameter] public EventCallback<T?> Clicked { get; set; }
 
-    [Parameter]
-    public bool IsSelected { get; set; }
+    [Parameter] public bool IsSelected { get; set; }
 
     private async void CallOnChange()
     {
-        IsSelected = !IsSelected;
-        await OnChanged.InvokeAsync(this);
+        T? value;
+        if (AllowSelect)
+        {
+            IsSelected = !IsSelected;
+            value = IsSelected ? Value : null;
+        }
+        else
+            value = Value;
+         
+        await Clicked.InvokeAsync(value);
     }
 
-    public bool ToggleSelect()
+    public void ToggleSelect()
         => IsSelected = !IsSelected;
 }

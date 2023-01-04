@@ -2,6 +2,7 @@
 using System.Threading.RateLimiting;
 using dominikz.api.Models.Options;
 using dominikz.api.Provider;
+using dominikz.api.Provider.Noobit;
 using dominikz.api.Utils;
 using dominikz.shared.Contracts;
 using MediatR;
@@ -29,11 +30,7 @@ public static class DiExtensions
 
     private static bool HasPermission(AuthorizationHandlerContext context, PermissionFlags required)
     {
-        var claim = context.User.Claims.FirstOrDefault(x => x.Type.Equals(JwtHelper.ClaimPermissions, StringComparison.OrdinalIgnoreCase));
-        if (claim is null)
-            return false;
-
-        if (Enum.TryParse<PermissionFlags>(claim.Value, out var permissions) == false)
+        if (context.User.TryGetFromClaim<PermissionFlags>(JwtHelper.ClaimPermissions, out var permissions) == false)
             return false;
 
         return permissions.HasFlag(required);
@@ -54,8 +51,7 @@ public static class DiExtensions
 
     public static WebApplicationBuilder AddClients(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IStorageProvider, StorageProvider>()
-            .AddScoped<MedlanClient>()
+        builder.Services.AddScoped<MedlanClient>()
             .AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
             {
@@ -110,7 +106,7 @@ public static class DiExtensions
 
         builder.Services.AddRateLimiter(limiter =>
         {
-            limiter.OnRejected = (context, cancellationToken) =>
+            limiter.OnRejected = (context, _) =>
             {
                 if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
                     context.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
@@ -142,6 +138,7 @@ public static class DiExtensions
         // Add Url-Helper
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+        builder.Services.AddScoped<CredentialsProvider>();
         builder.Services.AddScoped((services) =>
         {
             var accessor = services.GetRequiredService<IActionContextAccessor>();
@@ -151,6 +148,7 @@ public static class DiExtensions
 
         // Add Services
         builder.Services.AddSingleton<PasswordHasher>()
+            .AddSingleton<IStorageProvider, IoStorageProvider>()
             .AddScoped<ILinkCreator, LinkCreator>();
 
         //  Add Mediatr

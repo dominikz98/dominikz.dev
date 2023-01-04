@@ -5,10 +5,10 @@
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Components.Tables
 @using dominikz.dev.Definitions
-@using dominikz.dev.Models
+@using dominikz.dev.Extensions
 @using dominikz.dev.Utils
 @using dominikz.shared.Contracts
-@using dominikz.shared.ViewModels
+@using dominikz.shared.ViewModels.Blog
 
 <PageTitle>Blog</PageTitle>
 
@@ -23,27 +23,27 @@
     <ChipSelect T="ArticleCategoryEnum"
                 Title="Category"
                 @ref="_categorySelect"
-                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Category, value))"
-                Values="Enum.GetValues<ArticleCategoryEnum>()[1..^1].ToList()"/>
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Category, value))"
+                Values="Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList()"/>
 
     <ChipSelect T="ArticleSourceEnum"
                 Title="Source"
                 @ref="_sourceSelect"
-                OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Source, value))"
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Source, value))"
                 Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
     <div class="flex-row gap">
 
         @if (_hasCreatePermission)
         {
-            <div class="menu-element gap">
-                <IconButton OnClick="OnRssFeedClicked" Icon="fa-solid fa-circle-plus"/>
+            <div class="admin-menu-element gap">
+                <IconButton OnClick="@(() => NavManager!.NavigateTo("/blog/edit"))" Icon="fa-solid fa-circle-plus"/>
             </div>    
         }
         
         <div class="menu-element gap">
             <i class="fa-solid fa-border-top-left"></i>
-            <Switch @bind-State="_view"/>
+            <Switch @bind-State="_isTableView"/>
             <i class="fa-solid fa-bars-staggered"></i>
         </div>
 
@@ -54,9 +54,9 @@
         </div>
     </div>
 
-    @if (_view == (int)CollectionView.Table)
+    @if (_isTableView)
     {
-        <Table T="ArticleListVm"
+        <Table T="ArticleVm"
                Values="@_articles"
                Columns="@ArticleTableDefinition.Columns"
                OnRowClicked="(article) => NavigateToDetail(article.Id)"
@@ -70,7 +70,7 @@
             {
                 <VerticalCard Highlight=@article.Featured
                               Title="@article.Title"
-                              ImageUrl="@article.Image!.Url"
+                              ImageUrl="@article.ImageUrl"
                               OnClick="() => NavigateToDetail(article.Id)">
 
                     <div class="blog-card">
@@ -78,17 +78,26 @@
                         <div class="flex-column gap">
                             @if (article.Category != ArticleCategoryEnum.Unknown)
                             {
-                                <Lable Text="@EnumFormatter.ToString(article.Category)"/>
+                                <span>@EnumFormatter.ToString(article.Category)</span>
                             }
                             else
                             {
-                                <Lable Text="@($"💬 {article.AltCategories}")"/>
+                                <span>@($"💬 {article.AltCategories}")</span>
                             }
-                            <Lable Text="@article.Timestamp.ToString("yyyy-MM-dd")"/>
+                            
+                            @if (article.PublishDate != null)
+                            {
+                                <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>    
+                            }
+                            else
+                            {
+                                <span>DRAFT</span>
+                            }
+                            
                         </div>
 
                         <div class="blog-card-author avatar">
-                            <img src="@article.Author!.Image!.Url" alt="Image of article author"/>
+                            <img src="@article.Author!.ImageUrl" alt="Image of article author"/>
                         </div>
 
                     </div>

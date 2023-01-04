@@ -52,8 +52,7 @@ public partial class Piano
         // create and log note key
         var key = CreateNoteKey(args);
         var audioId = _audioAssignments[key];
-        Console.WriteLine($"[{DateTime.Now}] Remove: Channel={audioId}; Key={key}");
-
+        
         // deselect piano key
         var pianoKey = _keyRefs.First(x => x.Tone == Tone.FromNote(args.Note));
         pianoKey.DeSelect();
@@ -72,8 +71,7 @@ public partial class Piano
 
         // create and log note key
         var noteKey = CreateNoteKey(args);
-        Console.WriteLine($"[{DateTime.Now}] Add: Channel={audioId}; Key={noteKey}");
-
+        
         // select piano key
         var pianoKey = _keyRefs.First(x => x.Tone == Tone.FromNote(args.Note));
         pianoKey.Select();

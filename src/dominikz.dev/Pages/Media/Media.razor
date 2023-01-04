@@ -6,8 +6,7 @@
 @using dominikz.dev.Components.Chips
 @using dominikz.dev.Components.Tables
 @using dominikz.dev.Definitions
-@using dominikz.dev.Models
-@using dominikz.dev.Theme
+@using dominikz.dev.Extensions
 @using dominikz.dev.Utils
 @using dominikz.shared
 @using dominikz.shared.Contracts
@@ -33,13 +32,13 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_movieGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Movie.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Movie.Genre, value))"
                         Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
             <div class="flex-row gap">
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
-                    <Switch @bind-State="_view"/>
+                    <Switch @bind-State="_isTableView"/>
                     <i class="fa-solid fa-bars-staggered"></i>
                 </div>
 
@@ -49,7 +48,7 @@
                 </div>
             </div>
 
-            @if (_view == (int)CollectionView.Table)
+            @if (_isTableView)
             {
                 <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex="true"></Table>
             }
@@ -58,20 +57,20 @@
                 <div class="media-grid">
                     @foreach (var movie in _movies)
                     {
-                        <HorizontalCard ImageUrl="@movie.Image!.Url"
+                        <HorizontalCard ImageUrl="@movie.ImageUrl"
                                         Title="@movie.Title"
                                         OnClick="() => NavigateToMovie(movie.Id)">
 
-                            <Panel Gap="8" FlexAlignment="CssFlexAlignment.Column" ItemAlignment="CssItemAlignment.Start">
+                            <div class="flex-column gap">
                                 <span>@movie.Year</span>
                                 <Rating Value="@movie.Rating"/>
-                                <Panel>
+                                <div class="flex-row gap">
                                     @foreach (var genre in movie.Genres.GetFlags().ToArray()[1..])
                                     {
                                         <span>@EnumFormatter.ToString(genre)&nbsp;</span>
                                     }
-                                </Panel>
-                            </Panel>
+                                </div>
+                            </div>
 
                         </HorizontalCard>
                     }
@@ -86,19 +85,19 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_bookGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Genre, value))"
                         Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="BookLanguageEnum"
                         Title="Genres"
                         @ref="_bookLanguageSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Language, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Language, value))"
                         Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
 
             <div class="flex-row gap">
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
-                    <Switch @bind-State="_view"/>
+                    <Switch @bind-State="_isTableView"/>
                     <i class="fa-solid fa-bars-staggered"></i>
                 </div>
 
@@ -108,7 +107,7 @@
                 </div>
             </div>
 
-            @if (_view == (int)CollectionView.Table)
+            @if (_isTableView)
             {
                 <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex="true"></Table>
             }
@@ -117,16 +116,16 @@
                 <div class="media-grid">
                     @foreach (var book in _books)
                     {
-                        <HorizontalCard ImageUrl="@book.Image!.Url" Title="@book.Title">
+                        <HorizontalCard ImageUrl="@book.ImageUrl" Title="@book.Title">
                             <span>@book.Year</span>
                             <span>@book.Author</span>
                             <span>@EnumFormatter.ToString(book.Language)</span>
-                            <Panel>
+                            <div class="flex-row gap">
                                 @foreach (var genre in book.Genres.GetFlags().ToArray()[1..])
                                 {
                                     <span>@EnumFormatter.ToString(genre)&nbsp;</span>
                                 }
-                            </Panel>
+                            </div>
                         </HorizontalCard>
                     }
                 </div>
@@ -140,19 +139,19 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_gameGenreSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Genre, value))"
                         Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="GamePlatformEnum"
                         Title="Genres"
                         @ref="_gamePlatformSelect"
-                        OnSelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Platform, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Platform, value))"
                         Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
 
             <div class="flex-row gap">
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
-                    <Switch @bind-State="_view"/>
+                    <Switch @bind-State="_isTableView"/>
                     <i class="fa-solid fa-bars-staggered"></i>
                 </div>
 
@@ -162,7 +161,7 @@
                 </div>
             </div>
 
-            @if (_view == (int)CollectionView.Table)
+            @if (_isTableView)
             {
                 <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
             }
@@ -171,15 +170,15 @@
                 <div class="media-grid">
                     @foreach (var game in _games)
                     {
-                        <HorizontalCard ImageUrl="@game.Image!.Url" Title="@game.Title">
+                        <HorizontalCard ImageUrl="@game.ImageUrl" Title="@game.Title">
                             <span>@game.Year</span>
                             <span>@EnumFormatter.ToString(game.Platform)</span>
-                            <Panel>
+                            <div class="flex-row gap">
                                 @foreach (var genre in game.Genres.GetFlags().ToArray()[1..])
                                 {
                                     <span>@EnumFormatter.ToString(genre)&nbsp;</span>
                                 }
-                            </Panel>
+                            </div>
                         </HorizontalCard>
                     }
                 </div>

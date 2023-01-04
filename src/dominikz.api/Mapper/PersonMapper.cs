@@ -13,7 +13,7 @@ public static class PersonMapper
         {
             Id = person.Id,
             Name = person.Name,
-            Image = person.File!.MapToVm()
+            ImageUrl = person.File!.Id.ToString()
         };
 
     public static IEnumerable<PersonVM> MapToVm(this IEnumerable<MoviesPersonsMapping> query)
@@ -21,6 +21,6 @@ public static class PersonMapper
         {
             Id = mapping.Person!.Id,
             Name = mapping.Person!.Name,
-            Image = mapping.Person!.File!.MapToVm()
+            ImageUrl = mapping.Person!.File!.Id.ToString()
         });
 }

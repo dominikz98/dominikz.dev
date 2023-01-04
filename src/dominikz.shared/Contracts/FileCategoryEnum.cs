@@ -2,5 +2,6 @@
 
 public enum FileCategoryEnum
 {
-    IMAGE
+    Image,
+    Unknown = 999
 }

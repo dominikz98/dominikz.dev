@@ -10,7 +10,7 @@
         <div>
             <h2>@_movie.Title</h2>
 
-            <Panel Gap="12">
+            <div class="flex-row gap">
 
                 <span>@($"🕑 {_movie.Year}")</span>
                 <span>@($"🗓 {_movie.Runtime.Hours}h {_movie.Runtime.Minutes}m")</span>
@@ -21,14 +21,14 @@
                 {
                     <span>@EnumFormatter.ToString(genre)</span>
                 }
-            </Panel>
+            </div>
 
             <hr />
         </div>
 
         <div class="movie-preview">
-            <img src="@_movie.Image!.Url" />
-            <iframe width="587" height="330" frameBorder="0" src="@($"https://www.youtube.com/embed/{_movie.YoutubeId}?autoplay=1&mute=1&controls=0")" />
+            <img src="@_movie.ImageUrl"  alt="Movie Poster"/>
+            <iframe class="trailer" src="@($"https://www.youtube.com/embed/{_movie.YoutubeId}?autoplay=1&mute=1&controls=0")"></iframe>
         </div>
 
         @((MarkupString)_movie.Plot)
@@ -36,7 +36,7 @@
         @if (!string.IsNullOrWhiteSpace(_movie.Comment))
         {
             <div class="movie-comment">
-                <img src="@_movie.Author!.Image!.Url" />
+                <img src="@_movie.Author!.ImageUrl"  alt="Author Image"/>
                 @((MarkupString)_movie.Comment)
             </div>
         }

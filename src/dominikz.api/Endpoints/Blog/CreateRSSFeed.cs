@@ -28,9 +28,7 @@ public class CreateRssFeed : EndpointController
     }
 }
 
-public class CreateRssFeedRequest : IRequest<Stream>
-{
-}
+public record CreateRssFeedRequest : IRequest<Stream>;
 
 public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest, Stream>
 {
@@ -65,10 +63,10 @@ public class CreateRssFeedRequestHandler : IRequestHandler<CreateRssFeedRequest,
         {
             Id = x.Id.ToString(),
             Categories = { new SyndicationCategory(x.Category.ToString()) },
-            PublishDate = x.Timestamp,
+            PublishDate = x.PublishDate ?? DateTime.UtcNow,
             Title = new TextSyndicationContent(x.Title),
             Links = { new SyndicationLink(new Uri(x.Path)) },
-            Copyright = new TextSyndicationContent($"Copyright {x.Timestamp.Year}"),
+            Copyright = new TextSyndicationContent($"Copyright {(x.PublishDate ?? DateTime.UtcNow).Year}"),
             Authors = { authors[x.Source] }
         }).ToList();
         feed.Items = items;

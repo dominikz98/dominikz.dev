@@ -8,16 +8,16 @@ namespace dominikz.api.Mapper;
 public static class MovieMapper
 {
     public static IQueryable<MovieVM> MapToVm(this IQueryable<Movie> query)
-    => query.Select(movie => new MovieVM()
-    {
-        Id = movie.Id,
-        Title = movie.Title,
-        Timestamp = movie.Timestamp,
-        Image = movie.File!.MapToVm(),
-        Genres = movie.Genres,
-        Rating = movie.Rating,
-        Year = movie.Year
-    });
+        => query.Select(movie => new MovieVM()
+        {
+            Id = movie.Id,
+            Title = movie.Title,
+            Timestamp = movie.Timestamp,
+            ImageUrl = movie.File!.Id.ToString(),
+            Genres = movie.Genres,
+            Rating = movie.Rating,
+            Year = movie.Year
+        });
 
     public static MovieDetailVM MapToDetailVm(this Movie movie)
         => new()
@@ -25,7 +25,7 @@ public static class MovieMapper
             Id = movie.Id,
             Title = movie.Title,
             Timestamp = movie.Timestamp,
-            Image = movie.File!.MapToVm(),
+            ImageUrl = movie.File!.Id.ToString(),
             Genres = movie.Genres,
             Rating = movie.Rating,
             Author = movie.Author?.MapToVm(),

@@ -30,15 +30,7 @@ public class GetSong : EndpointController
     }
 }
 
-public class GetSongQuery : IRequest<SongVm?>
-{
-    public GetSongQuery(Guid id)
-    {
-        Id = id;
-    }
-
-    public Guid Id { get; }
-}
+public record GetSongQuery(Guid Id) : IRequest<SongVm?>;
 
 public class GetSongQueryHandler : IRequestHandler<GetSongQuery, SongVm?>
 {

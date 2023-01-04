@@ -1,4 +1,5 @@
-﻿using dominikz.dev.Models;
+﻿using dominikz.dev.Extensions;
+using dominikz.dev.Models;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using Microsoft.Extensions.Options;
@@ -20,8 +21,7 @@ public class GameEndpoints
     public async Task<List<GameVM>> Search(GamesFilter filter, CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<GameVM>($"{Endpoint}/search", filter, cancellationToken);
-        foreach (var vm in vmList)
-            MediaEndpoints.AttachApiKey(vm, _options);
+        vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }
 

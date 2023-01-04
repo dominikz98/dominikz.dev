@@ -2,12 +2,12 @@
 
 namespace dominikz.shared.ViewModels.Media;
 
-public abstract class MediaVM : IViewModel
+public abstract class MediaVM : IViewModel, IHasImageUrl
 {
     public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public DateTime Timestamp { get; init; }
-    public FileVM? Image { get; init; }
+    public string ImageUrl { get; set; } = string.Empty;
 }
 
 public class MediaPreviewVM : MediaVM

@@ -1,8 +1,9 @@
 ﻿
 button {
     width: 100%;
-    background-color: var(--theme-surface);
-    color: whitesmoke;
+    background-color: var(--theme-onsecondary);
+    transition: ease-in-out 0.1s;
+    color: black;
     border: none;
     border-radius: 5px;
     padding: 8px;
@@ -14,7 +15,7 @@ button {
 
 
 button:hover {
-    background-color: var(--theme-onprimary);
+    background-color: var(--theme-secondary);
     transition: ease-in-out 0.1s;
 }
 

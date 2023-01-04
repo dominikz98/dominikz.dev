@@ -3,25 +3,25 @@ using dominikz.dev.Components.Chips;
 using dominikz.dev.Components.Toast;
 using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
-using dominikz.dev.Models;
+using dominikz.dev.Extensions;
 using dominikz.dev.Utils;
 using dominikz.shared.Contracts;
 using dominikz.shared.Filter;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Blog;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Pages.Blog;
 
 public partial class Blog
 {
-    [Inject] public BlogEndpoints? Endpoints { get; set; }
+    [Inject] internal BlogEndpoints? Endpoints { get; set; }
     [Inject] protected NavigationManager? NavManager { get; set; }
-    [Inject] protected BrowserService? Browser { get; set; }
+    [Inject] internal BrowserService? Browser { get; set; }
     [Inject] protected ToastService? Toast { get; set; }
-    [Inject] protected AuthService? AuthService { get; set; }
+    [Inject] protected CredentialStorage? Credentials { get; set; }
 
-    private List<ArticleListVm> _articles = new();
-    private int _view = (int)CollectionView.Grid;
+    private List<ArticleVm> _articles = new();
+    private bool _isTableView;
     private bool _hasCreatePermission;
 
     private TextBox? _searchbox;
@@ -30,7 +30,7 @@ public partial class Blog
 
     protected override async Task OnInitializedAsync()
     {
-        _hasCreatePermission = await AuthService!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
+        _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
         NavManager!.LocationChanged += async (_, _) => await SearchArticles();
         await SearchArticles();
 
@@ -50,8 +50,8 @@ public partial class Blog
     private ArticleFilter CreateFilter()
         => new()
         {
-            Category = NavManager!.GetQueryParamByKey<ArticleCategoryEnum>(QueryNames.Blog.Category),
-            Source = NavManager!.GetQueryParamByKey<ArticleSourceEnum>(QueryNames.Blog.Source),
+            Category = NavManager!.GetQueryParamByKey<ArticleCategoryEnum>(QueryNames.Blog.Category, false),
+            Source = NavManager!.GetQueryParamByKey<ArticleSourceEnum>(QueryNames.Blog.Source, false),
             Text = NavManager!.GetQueryParamByKey(QueryNames.Blog.Search)
         };
 

@@ -1,9 +1,6 @@
 ﻿
 .chip {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 4px 16px;
     color: black;
     background-color: var(--theme-onsecondary);
     transition: ease-in-out 0.1s;

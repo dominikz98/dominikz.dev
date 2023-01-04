@@ -28,9 +28,7 @@ public class GetPreview : EndpointController
     }
 }
 
-public class GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVM>>
-{
-}
+public record GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVM>>;
 
 public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCollection<MediaVM>>
 {
@@ -52,8 +50,8 @@ public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCo
             var previewsByCategory = await GetNewestPreviews(category, cancellationToken);
 
             foreach (var preview in previewsByCategory)
-                if (preview.Image is not null)
-                    preview.Image.Url = _linkCreator.CreateImageUrl(preview.Image.Id, ImageSizeEnum.Carousel)?.ToString() ?? string.Empty;
+                if (preview.ImageUrl != string.Empty)
+                    preview.ImageUrl = _linkCreator.CreateImageUrl(preview.ImageUrl, ImageSizeEnum.Carousel);
 
             previews.AddRange(previewsByCategory);
         }

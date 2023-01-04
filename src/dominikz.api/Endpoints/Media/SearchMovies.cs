@@ -37,9 +37,7 @@ public class SearchMovies : EndpointController
     }
 }
 
-public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVM>>
-{
-}
+public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVM>> { }
 
 public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IReadOnlyCollection<MovieVM>>
 {
@@ -69,8 +67,8 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
 
         // attach image url
         foreach (var movie in movies)
-            if (movie.Image is not null)
-                movie.Image.Url = _linkCreator.CreateImageUrl(movie.Image.Id, ImageSizeEnum.Vertical)?.ToString() ?? string.Empty;
+            if (movie.ImageUrl != string.Empty)
+                movie.ImageUrl = _linkCreator.CreateImageUrl(movie.ImageUrl, ImageSizeEnum.Vertical);
 
         return movies;
     }

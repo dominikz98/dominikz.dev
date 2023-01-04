@@ -3,7 +3,7 @@ using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Blog;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,17 +32,9 @@ public class GetArticle : EndpointController
     }
 }
 
-public class GetArticleQuery : IRequest<ArticleDetailVm?>
-{
-    public Guid Id { get; set; }
+public record GetArticleQuery(Guid Id) : IRequest<ArticleViewVm?>;
 
-    public GetArticleQuery(Guid id)
-    {
-        Id = id;
-    }
-}
-
-public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleDetailVm?>
+public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleViewVm?>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
@@ -53,22 +45,21 @@ public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleDe
         _linkCreator = linkCreator;
     }
 
-    public async Task<ArticleDetailVm?> Handle(GetArticleQuery request, CancellationToken cancellationToken)
+    public async Task<ArticleViewVm?> Handle(GetArticleQuery request, CancellationToken cancellationToken)
     {
         var article = await _database.From<Article>()
             .Include(x => x.Author!.File)
+            .Include(x => x.File)
             .AsNoTracking()
             .Where(x => x.Id == request.Id)
-            .MapToDetailVm()
+            .MapToViewVm()
             .FirstOrDefaultAsync(cancellationToken);
 
         if (article is null)
             return null;
 
-        article.Image!.Url = _linkCreator.CreateImageUrl(article.Image.Id, ImageSizeEnum.Horizontal)?.ToString() ?? string.Empty;
-        article.Author!.Image!.Url = _linkCreator.CreateImageUrl(article.Author.Image.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
-
-        article.Text = article.Text.ToHtml5();
+        article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
+        article.Author!.ImageUrl = _linkCreator.CreateImageUrl(article.Author.ImageUrl, ImageSizeEnum.Avatar);
         return article;
     }
 }

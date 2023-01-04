@@ -1,4 +1,10 @@
 ﻿
+.trailer {
+    border: 0;
+    width: 587px;
+    height: 330px;
+}
+
 .movie {
     display: flex;
     flex-direction: column;
@@ -15,10 +21,10 @@
     background-color: var(--theme-surface);
 }
 
-    .movie-comment img {
-        width: 50px;
-        border-radius: 50px;
-    }
+.movie-comment img {
+    width: 50px;
+    border-radius: 50px;
+}
 
 .movie-stars {
     padding: 10px;
@@ -30,9 +36,9 @@
     background-color: var(--theme-surface);
 }
 
-    .movie-stars span {
-        font-weight: bold;
-    }
+.movie-stars span {
+    font-weight: bold;
+}
 
 
 @media (max-width: 640.98px) {

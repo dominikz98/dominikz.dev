@@ -1,23 +1,22 @@
 ﻿
-input, textarea,
-input, textarea :hover,
-input, textarea :focus,
-input, textarea :active {
+input,
+input:hover,
+input:focus,
+input:active {
     width: 100%;
     background-color: var(--theme-surface);
-    color: white;
+    color: whitesmoke;
     box-shadow: none;
     border: none;
     outline: none !important;
     padding: 12px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .textbox {
     display: flex;
     align-items: center;
-    background-color: var(--theme-surface);
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 5px 5px 0;
     width: 100%;
 }
 

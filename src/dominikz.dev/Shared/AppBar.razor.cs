@@ -9,16 +9,12 @@ public partial class AppBar
 {
     [Parameter] public EventCallback OnExpandClicked { get; set; }
     [Inject] protected NavigationManager? NavigationManager { get; set; }
-    [Inject] protected AuthService? AuthService { get; set; }
+    [Inject] protected CredentialStorage? Credentials { get; set; }
 
     private bool _isLoggedIn;
 
     protected override async Task OnInitializedAsync()
-    {
-        _isLoggedIn = await AuthService!.CheckIsLoggedIn();
-        AuthService.LoggedOut += () => _isLoggedIn = false;
-        AuthService.LoggedIn += () => _isLoggedIn = true;
-    }
+        => _isLoggedIn = await Credentials!.IsLoggedIn();
 
     private async Task CallOnExpandClicked()
         => await OnExpandClicked.InvokeAsync();
@@ -34,7 +30,7 @@ public partial class AppBar
 
     private async Task OnLogoutClicked()
     {
-        await AuthService!.Logout();
+        await Credentials!.Clear();
         _isLoggedIn = false;
     }
 }

@@ -1,5 +1,6 @@
 using dominikz.api.Models;
 using dominikz.api.Models.Options;
+using dominikz.api.Models.ViewModels;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared.ViewModels.Auth;
@@ -20,31 +21,21 @@ public class Login : EndpointController
     {
         _mediator = mediator;
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Execute([FromBody] LoginVm request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new LoginRequest(request.Username, request.Password), cancellationToken);
-        if (string.IsNullOrWhiteSpace(response.Info) == false)
-            return BadRequest(response);
+        if (response.IsValid == false)
+            return BadRequest(response.ToErrorList());
 
-        return Ok(response);
+        return Ok(response.ViewModel);
     }
 }
 
-public class LoginRequest : IRequest<AuthVm>
-{
-    public LoginRequest(string username, string password)
-    {
-        Username = username;
-        Password = password;
-    }
+public record LoginRequest(string Username, string Password) : IRequest<ActionWrapper<AuthVm>>;
 
-    public string Username { get; set; }
-    public string Password { get; set; }
-}
-
-public class LoginRequestHandler : IRequestHandler<LoginRequest, AuthVm>
+public class LoginRequestHandler : IRequestHandler<LoginRequest, ActionWrapper<AuthVm>>
 {
     private readonly DatabaseContext _database;
     private readonly PasswordHasher _hasher;
@@ -57,7 +48,7 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, AuthVm>
         _options = options;
     }
 
-    public async Task<AuthVm> Handle(LoginRequest request, CancellationToken cancellationToken)
+    public async Task<ActionWrapper<AuthVm>> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
         // get account from database
         var account = await _database.From<Account>()
@@ -65,12 +56,12 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, AuthVm>
             .FirstOrDefaultAsync(cancellationToken);
 
         if (account is null)
-            return new AuthVm() { Info = "Invalid credentials!" };
+            return new ActionWrapper<AuthVm>("Invalid credentials!");
 
         // validate password hash
         var success = _hasher.Validate(account.Password, request.Password);
         if (success == false)
-            return new AuthVm() { Info = "Invalid credentials!" };
+            return new ActionWrapper<AuthVm>("Invalid credentials!");
 
         // update last login
         var refreshToken = JwtHelper.CreateRefreshToken(_options.Value);
@@ -78,16 +69,16 @@ public class LoginRequestHandler : IRequestHandler<LoginRequest, AuthVm>
         account.RefreshToken = refreshToken.Value;
         account.RefreshExpiration = refreshToken.Expiration;
         await _database.SaveChangesAsync(cancellationToken);
-        
+
         // create token
         var token = JwtHelper.CreateToken(account, _options.Value);
-        return new AuthVm()
+        return new ActionWrapper<AuthVm>(new AuthVm()
         {
             Token = token.Value,
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
             Permissions = account.Permissions
-        };
+        });
     }
 }

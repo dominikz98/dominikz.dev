@@ -1,4 +1,5 @@
-﻿using dominikz.dev.Models;
+﻿using dominikz.dev.Extensions;
+using dominikz.dev.Models;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using Microsoft.Extensions.Options;
@@ -20,15 +21,23 @@ public class MovieEndpoints
     public async Task<MovieDetailVM?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var vm = await _client.GetSingle<MovieDetailVM>($"{Endpoint}/{id}", cancellationToken);
-        MediaEndpoints.AttachApiKey(vm, _options);
+        if (vm is null)
+            return null;
+
+        // attach image api keys
+        vm.AttachApiKey(_options.Value.Key);
+        vm.Author?.AttachApiKey(_options.Value.Key);
+        vm.Writers.AttachApiKey(_options.Value.Key);
+        vm.Stars.AttachApiKey(_options.Value.Key);
+        vm.Directors.AttachApiKey(_options.Value.Key);
+
         return vm;
     }
 
     public async Task<List<MovieVM>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<MovieVM>($"{Endpoint}/search", filter, cancellationToken);
-        foreach (var vm in vmList)
-            MediaEndpoints.AttachApiKey(vm, _options);
+        vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }
 

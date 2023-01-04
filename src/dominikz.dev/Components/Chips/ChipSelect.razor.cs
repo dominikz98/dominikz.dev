@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Components.Chips;
 
-public partial class ChipSelect<T> where T : struct, Enum
+public partial class ChipSelect<T> where T : struct
 {
     private const int ExpandLimiter = 5;
 
@@ -20,15 +20,12 @@ public partial class ChipSelect<T> where T : struct, Enum
         set => _values = value;
     }
 
-    [Parameter] public Func<T, string> TextFormatter { get; set; } = EnumFormatter.ToString;
-
+    [Parameter] public Func<T?, string> TextFormatter { get; set; } = (value) => value == null ? string.Empty : EnumFormatter.ToString(value.Value);
     [Parameter] public bool IsExpanded { get; set; }
-
     [Parameter] public bool AllowExpand { get; set; }
-
+    [Parameter] public bool AllowSelect { get; set; } = true;
     [Parameter] public T? Selected { get; set; }
-
-    [Parameter] public EventCallback<T?> OnSelectedChanged { get; set; }
+    [Parameter] public EventCallback<T?> SelectedChanged { get; set; }
 
     private readonly List<Chip<T>> _refs = new();
 
@@ -39,8 +36,11 @@ public partial class ChipSelect<T> where T : struct, Enum
 
     public void Select(T? value)
     {
-        Selected = value;
+        if (AllowSelect == false)
+            return;
         
+        Selected = value;
+
         // Check if expand is required
         if (value is not null
             && IsExpanded == false
@@ -57,24 +57,26 @@ public partial class ChipSelect<T> where T : struct, Enum
     private void CallOnExpand()
         => IsExpanded = !IsExpanded;
 
-    private async Task CallOnChanged(object sender)
+    private async Task OnChipClicked(T? value)
     {
-        Selected = _refs
-            .Where(x => x == sender)
-            .FirstOrDefault(x => x.IsSelected)
+        var selected = _refs
+            .FirstOrDefault(x => x.Value.Equals(value))
             ?.Value;
 
-        // un-/select chips
-        Refresh();
+        if (AllowSelect)
+        {
+            Selected = selected;
+            Refresh();            
+        }
 
-        await OnSelectedChanged.InvokeAsync(Selected);
+        await SelectedChanged.InvokeAsync(selected);
     }
 
     private void Refresh()
     {
         // select current value
         var toSelect = _refs.FirstOrDefault(x => x.Value.Equals(Selected));
-        if (toSelect is not null && toSelect?.IsSelected == false)
+        if (toSelect is not null && toSelect.IsSelected == false)
             toSelect.ToggleSelect();
 
         // deselect all

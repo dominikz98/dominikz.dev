@@ -71,8 +71,8 @@ public class SearchBooksQueryHandler : IRequestHandler<SearchBooksQuery, IReadOn
 
         // attach image url
         foreach (var book in books)
-            if (book.Image is not null)
-                book.Image.Url = _linkCreator.CreateImageUrl(book.Image.Id, ImageSizeEnum.Vertical)?.ToString() ?? string.Empty;
+            if (book.ImageUrl != string.Empty)
+                book.ImageUrl = _linkCreator.CreateImageUrl(book.ImageUrl, ImageSizeEnum.Vertical);
 
         return books;
     }

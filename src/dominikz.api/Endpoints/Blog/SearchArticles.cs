@@ -1,10 +1,11 @@
 ﻿using dominikz.api.Mapper;
 using dominikz.api.Models;
 using dominikz.api.Provider;
+using dominikz.api.Provider.Noobit;
 using dominikz.api.Utils;
 using dominikz.shared.Contracts;
 using dominikz.shared.Filter;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Blog;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,31 +37,36 @@ public class SearchArticles : EndpointController
     }
 }
 
-public class SearchArticlesQuery : ArticleFilter, IRequest<IReadOnlyCollection<ArticleListVm>>
+public class SearchArticlesQuery : ArticleFilter, IRequest<IReadOnlyCollection<ArticleVm>>
 {
 }
 
-public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, IReadOnlyCollection<ArticleListVm>>
+public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, IReadOnlyCollection<ArticleVm>>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
     private readonly NoobitClient _noobitClient;
     private readonly MedlanClient _medlanClient;
+    private readonly CredentialsProvider _credentials;
 
-    public SearchArticlesQueryHandler(DatabaseContext database, ILinkCreator linkCreator, NoobitClient noobitClient,
-        MedlanClient medlanClient)
+    public SearchArticlesQueryHandler(DatabaseContext database,
+        ILinkCreator linkCreator,
+        NoobitClient noobitClient,
+        MedlanClient medlanClient,
+        CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
         _noobitClient = noobitClient;
         _medlanClient = medlanClient;
+        _credentials = credentials;
     }
 
-    public async Task<IReadOnlyCollection<ArticleListVm>> Handle(SearchArticlesQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<ArticleVm>> Handle(SearchArticlesQuery request, CancellationToken cancellationToken)
     {
         // load articles from sources
-        var articles = new List<ArticleListVm>();
-        if (request.Source is null or  ArticleSourceEnum.Dz)
+        var articles = new List<ArticleVm>();
+        if (request.Source is null or ArticleSourceEnum.Dz)
         {
             var dzArticles = await LoadFromDatabase(request, cancellationToken);
             articles.AddRange(dzArticles);
@@ -85,9 +91,9 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         return articles;
     }
 
-    private IReadOnlyCollection<ArticleListVm> PostFilterAndOrderArticles(SearchArticlesQuery request, IReadOnlyCollection<ArticleListVm> articles)
+    private IReadOnlyCollection<ArticleVm> PostFilterAndOrderArticles(SearchArticlesQuery request, IReadOnlyCollection<ArticleVm> articles)
     {
-        var clone = new List<ArticleListVm>(articles);
+        var clone = new List<ArticleVm>(articles);
 
         // filter
         if (!string.IsNullOrWhiteSpace(request.Text))
@@ -97,27 +103,28 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
                 .ToList();
 
         // order 
-        return clone.OrderByDescending(x => x.Timestamp)
+        return clone.OrderByDescending(x => x.PublishDate)
             .ThenByDescending(x => x.Featured)
             .ThenBy(x => x.Title)
             .ToList();
     }
 
-    private void AttachMissingLinks(IReadOnlyCollection<ArticleListVm> articles)
+    private void AttachMissingLinks(IReadOnlyCollection<ArticleVm> articles)
     {
         foreach (var article in articles)
         {
-            if (article.Author?.Image?.Url is not null and "")
-                article.Author!.Image!.Url =
-                    _linkCreator.CreateImageUrl(article.Author.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
+            if (article.Author != null
+                && article.Author.ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false
+                && Guid.TryParse(article.Author.ImageUrl, out _))
+                article.Author!.ImageUrl = _linkCreator.CreateImageUrl(article.Author.ImageUrl, ImageSizeEnum.Avatar);
 
-            if (article.Image?.Url is not null and "")
-                article.Image!.Url =
-                    _linkCreator.CreateImageUrl(article.Image.Id, ImageSizeEnum.Horizontal)?.ToString() ?? string.Empty;
+            if (article.ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false
+                && Guid.TryParse(article.ImageUrl, out _))
+                article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
         }
     }
 
-    private void SetFeaturedFlags(IReadOnlyCollection<ArticleListVm> articles)
+    private void SetFeaturedFlags(IReadOnlyCollection<ArticleVm> articles)
     {
         // feature first 2 articles of every source
         foreach (var feature in articles.Where(x => x.Source == ArticleSourceEnum.Dz).Take(2))
@@ -130,7 +137,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             feature.Featured = true;
     }
 
-    private async Task<IReadOnlyCollection<ArticleListVm>> LoadFromDatabase(SearchArticlesQuery request,
+    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromDatabase(SearchArticlesQuery request,
         CancellationToken cancellationToken)
     {
         var query = _database.From<Article>()
@@ -138,6 +145,9 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             .AsNoTracking();
 
         // pre filter
+        if (_credentials.HasPermission(PermissionFlags.Blog) == false)
+            query = query.Where(x => x.PublishDate != null);
+
         if (request.Category is not null)
             query = query.Where(x => x.Category == request.Category);
 
@@ -145,13 +155,13 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%")
                                      || EF.Functions.Like(x.Author!.Name, $"%{request.Text}%"));
 
-        var articles = await query.OrderByDescending(x => x.Timestamp)
+        var articles = await query.OrderByDescending(x => x.PublishDate)
             .ThenBy(x => x.Title)
             .MapToVm()
             .ToListAsync(cancellationToken);
 
         foreach (var article in articles)
-            article.Path = _linkCreator.CreateBlogUrl(article.Id)?.ToString() ?? string.Empty;
+            article.Path = _linkCreator.CreateBlogUrl(article.Id);
 
         return articles;
     }

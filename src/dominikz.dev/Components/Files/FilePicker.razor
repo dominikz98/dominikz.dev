@@ -1,0 +1,34 @@
+<div class="flex-row gap">
+    <div>
+        <div class="label-wrapper">
+
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Upload</span>
+            <InputFile class="input-hide" OnChange="@LoadFiles" multiple/>
+
+            <style>
+            .input-hide {
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: 999;
+            }
+        </style>
+        </div>
+
+        @if (string.IsNullOrWhiteSpace(_error) == false)
+        {
+            <span class="error-label">@_error</span>
+        }
+    </div>
+    <div class="flex-row gap">
+        @foreach (var file in Files)
+        {
+            <FilePreview File="@file"/>
+        }
+    </div>
+</div>

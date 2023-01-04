@@ -6,8 +6,8 @@ namespace dominikz.api.Utils;
 public interface ILinkCreator
 {
     Uri? CreateRssUrl();
-    Uri? CreateBlogUrl(Guid articleId);
-    Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size);
+    string CreateBlogUrl(Guid articleId);
+    string CreateImageUrl(string fileId, ImageSizeEnum size);
 }
 
 public class LinkCreator : ILinkCreator
@@ -22,19 +22,25 @@ public class LinkCreator : ILinkCreator
     }
 
     public Uri? CreateRssUrl()
-        => GetUri($"~/blog/rss");
-    
-    public Uri? CreateBlogUrl(Guid articleId)
+    {
+        var url = GetUri($"~/blog/rss");
+        if (string.IsNullOrWhiteSpace(url))
+            return null;
+
+        return new(url);
+    }
+
+    public string CreateBlogUrl(Guid articleId)
         => GetUri($"~/blog/{articleId}");
-    
-    public Uri? CreateImageUrl(Guid fileId, ImageSizeEnum size)
+
+    public string CreateImageUrl(string fileId, ImageSizeEnum size)
         => GetUri($"~/download/image/{fileId}/{(int)size}");
 
-    private Uri? GetUri(string relativePath)
+    private string GetUri(string relativePath)
     {
         var request = _contextAccessor.HttpContext?.Request;
         if (request is null)
-            return null;
+            return string.Empty;
 
         var url = string.Concat(
             request.Scheme,
@@ -44,8 +50,8 @@ public class LinkCreator : ILinkCreator
             _urlHelper.Content(relativePath));
 
         if (string.IsNullOrWhiteSpace(url))
-            return null;
+            return string.Empty;
 
-        return new Uri(url);
+        return url;
     }
 }

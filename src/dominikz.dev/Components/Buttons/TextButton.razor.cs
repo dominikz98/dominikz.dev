@@ -11,6 +11,7 @@ public partial class TextButton
     [Parameter] public bool IsSelected { get; set; }
     [Parameter] public CssColor Color { get; set; } = CssColor.Surface;
     [Parameter] public EventCallback<TextButton> OnClick { get; set; }
+    [Parameter] public bool Disabled { get; set; }
 
     private async Task CallOnClick()
     {

@@ -11,7 +11,7 @@ public static class GameMapper
             Id = game.Id,
             Title = game.Title,
             Timestamp = game.Timestamp,
-            Image = game.File!.MapToVm(),
+            ImageUrl = game.File!.Id.ToString(),
             Genres = game.Genres,
             Platform = game.Platform,
             Year = game.Year

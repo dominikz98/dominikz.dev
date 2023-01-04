@@ -1,34 +1,27 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using dominikz.dev.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace dominikz.dev.Components;
 
-public partial class ComboBox
+public partial class ComboBox<T> where T : struct, Enum
 {
-    [Parameter]
-    public List<string> Values { get; set; } = new();
+    [Parameter] public T? Selected { get; set; }
+    [Parameter] public EventCallback<T> SelectedChanged { get; set; }
+    [Parameter] public List<T> Values { get; set; } = new();
+    [Parameter] public Func<T, string> TextAccessor { get; set; } = EnumFormatter.ToString;
+    [Parameter] public string? Placeholder { get; set; }
 
-    private string _selected = string.Empty;
-
-    [Parameter]
-#pragma warning disable BL0007
-    public string Selected
-#pragma warning restore BL0007
+    public async Task CallSelectedChanged(ChangeEventArgs args)
     {
-        get => _selected;
-        set { 
-            _selected = value; 
-            CallOnChanged();
-        }
+        var selectedAsString = args?.Value?.ToString();
+        if (Enum.TryParse<T>(selectedAsString, out var parsed) == false)
+            return;
+
+        Select(parsed);
+        if (Selected != null)
+            await SelectedChanged.InvokeAsync(Selected.Value);
     }
 
-    [Parameter]
-    public EventCallback<string> SelectedChange { get; set; }
-
-    protected override void OnInitialized()
-    {
-        Selected = Values.FirstOrDefault() ?? string.Empty;
-    }
-
-    private async void CallOnChanged()
-        => await SelectedChange.InvokeAsync(Selected);
+    public void Select(T value)
+        => Selected = value;
 }

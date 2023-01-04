@@ -1,0 +1,60 @@
+﻿@page "/blog/{articleid:guid}"
+@using dominikz.dev.Components.Buttons
+@using dominikz.dev.Components.Chips
+@using dominikz.dev.Models
+@using dominikz.dev.Utils
+@using dominikz.shared.Contracts
+
+@if (_article is not null)
+{
+    <h2>@_article.Title</h2>
+
+    @if (_hasCreatePermission)
+    {
+        <div class="flex-row">
+            <div class="admin-menu-element gap">
+                <IconButton OnClick="@(() => NavManager!.NavigateTo($"/blog/edit/{_article.Id}"))" Icon="fa-solid fa-pen-to-square"/>
+            </div>
+        </div>
+        <hr/>
+    }
+
+    <div class="flex-row gap">
+        @if (_article.PublishDate != null)
+        {
+            <span>@($"🕑 {_article.PublishDate:yyyy-MM-dd}")</span>
+        }
+        else
+        {
+            <span>DRAFT</span>
+        }
+
+        <span>@($"✏️ {_article.Author!.Name}")</span>
+
+        @if (_article.Category != ArticleCategoryEnum.Unknown)
+        {
+            <span>@EnumFormatter.ToString(_article.Category)</span>
+        }
+        else
+        {
+            <span>@($"💬 {_article.AltCategories}")</span>
+        }
+    </div>
+
+    <hr/>
+
+    <div class="flex-row gap">
+        @foreach (var tag in _article.Tags)
+        {
+            <div class="blogdetail-tag">
+                <Chip T="TextStruct" Title="@tag" Value="@(new TextStruct(tag))" AllowSelect=false></Chip>
+            </div>
+        }
+    </div>
+
+    <hr/>
+
+    <div class="blogdetail-text">
+        @((MarkupString)_article.Text)
+    </div>
+}

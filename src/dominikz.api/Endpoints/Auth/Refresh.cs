@@ -1,5 +1,6 @@
 using dominikz.api.Models;
 using dominikz.api.Models.Options;
+using dominikz.api.Models.ViewModels;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared.ViewModels.Auth;
@@ -25,26 +26,16 @@ public class Refresh : EndpointController
     public async Task<IActionResult> Execute([FromBody] RefreshVm request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new RefreshRequest(request.RefreshToken, request.ExpiredToken), cancellationToken);
-        if (string.IsNullOrWhiteSpace(response.Info) == false)
-            return BadRequest(response);
+        if (response.IsValid == false)
+            return BadRequest(response.ToErrorList());
 
-        return Ok(response);
+        return Ok(response.ViewModel);
     }
 }
 
-public class RefreshRequest : IRequest<AuthVm>
-{
-    public RefreshRequest(string refreshToken, string expiredToken)
-    {
-        RefreshToken = refreshToken;
-        ExpiredToken = expiredToken;
-    }
+public record RefreshRequest(string ExpiredToken, string RefreshToken) : IRequest<ActionWrapper<AuthVm>>;
 
-    public string ExpiredToken { get; set; }
-    public string RefreshToken { get; set; }
-}
-
-public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
+public class RefreshRequestHandler : IRequestHandler<RefreshRequest, ActionWrapper<AuthVm>>
 {
     private readonly DatabaseContext _database;
     private readonly IOptions<JwtOptions> _options;
@@ -55,13 +46,13 @@ public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
         _options = options;
     }
 
-    public async Task<AuthVm> Handle(RefreshRequest request, CancellationToken cancellationToken)
+    public async Task<ActionWrapper<AuthVm>> Handle(RefreshRequest request, CancellationToken cancellationToken)
     {
         // parse principals
         var principal = JwtHelper.GetPrincipalFromExpiredToken(request.ExpiredToken, _options.Value);
         var username = principal?.Identity?.Name;
         if (username is null)
-            return new AuthVm() { Info = "Invalid credentials!" };
+            return new ActionWrapper<AuthVm>("Invalid credentials!");
 
         // get account from database
         var account = await _database.From<Account>()
@@ -71,7 +62,7 @@ public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
         if (account is null
             || account.RefreshExpiration < DateTime.UtcNow
             || account.RefreshToken != request.RefreshToken)
-            return new AuthVm() { Info = "Invalid credentials!" };
+            return new ActionWrapper<AuthVm>("Invalid credentials!");
 
         // update last login
         var refreshToken = JwtHelper.CreateRefreshToken(_options.Value);
@@ -82,13 +73,13 @@ public class RefreshRequestHandler : IRequestHandler<RefreshRequest, AuthVm>
 
         // create token
         var token = JwtHelper.CreateToken(account, _options.Value);
-        return new AuthVm()
+        return new ActionWrapper<AuthVm>(new AuthVm()
         {
             Token = token.Value,
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
             Permissions = account.Permissions
-        };
+        });
     }
 }

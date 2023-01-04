@@ -5,12 +5,11 @@ namespace dominikz.dev.Utils;
 public static class EnumFormatter
 {
     private const string Default = "Unknown";
-    // https://emojipedia.org/
-
-    public static string ToString<TEnum>(IReadOnlyCollection<TEnum> values) where TEnum : struct, Enum
+ 
+    public static string ToString<TEnum>(IReadOnlyCollection<TEnum> values) where TEnum : struct
         => string.Join(", ", values.Select(ToString));
 
-    public static string ToString<TEnum>(TEnum value) where TEnum : struct, Enum
+    public static string ToString<TEnum>(TEnum value) where TEnum : struct
     {
         if (value is MediaCategoryEnum mediaCategory)
             return ToString(mediaCategory);
@@ -37,7 +36,7 @@ public static class EnumFormatter
             return ToString(bookGenre);
 
         else
-            return value.ToString();
+            return value.ToString()!;
     }
 
     private static string ToString(MediaCategoryEnum category)

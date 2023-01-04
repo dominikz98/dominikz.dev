@@ -3,7 +3,7 @@ using System.Xml;
 using dominikz.api.Mapper;
 using dominikz.api.Models.Options;
 using dominikz.shared.Contracts;
-using dominikz.shared.ViewModels;
+using dominikz.shared.ViewModels.Blog;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -21,9 +21,9 @@ public class MedlanClient
         _cache = cache;
     }
 
-    public async Task<IReadOnlyCollection<ArticleListVm>> GetArticlesByCategory(ArticleCategoryEnum? category)
+    public async Task<IReadOnlyCollection<ArticleVm>> GetArticlesByCategory(ArticleCategoryEnum? category)
     {
-        var articles = await _cache.GetOrCreateAsync<List<ArticleListVm>>(CacheKey, options =>
+        var articles = await _cache.GetOrCreateAsync<List<ArticleVm>>(CacheKey, options =>
         {
             options.AbsoluteExpiration = DateTimeOffset.UtcNow.AddHours(_options.Value.CacheDurationInH);
             var medlanArticles = ParseRssFeed($"{_options.Value.Url}?feed=rss2");
@@ -33,7 +33,7 @@ public class MedlanClient
                 .ToList();
 
             return Task.FromResult(articles);
-        }) ?? new List<ArticleListVm>();
+        }) ?? new List<ArticleVm>();
 
         if (category is null)
             return articles;

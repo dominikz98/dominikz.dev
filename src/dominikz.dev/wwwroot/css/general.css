@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .avatar img {
@@ -19,11 +20,27 @@
     gap: 12px;
 }
 
+.surface
+{
+    border-radius: 5px;
+    background-color: var(--theme-surface);
+    overflow: hidden;
+}
+
 .menu-element  {
     display: flex;
     align-items: center;
     font-size: large;
     background-color: var(--theme-surface);
+    border-radius: 4px;
+    padding: 6px;
+}
+
+.admin-menu-element  {
+    display: flex;
+    align-items: center;
+    font-size: large;
+    background-color: var(--theme-warning);
     border-radius: 4px;
     padding: 6px;
 }

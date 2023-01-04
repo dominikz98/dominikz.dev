@@ -32,15 +32,7 @@ public class GetMovie : EndpointController
     }
 }
 
-public class GetMovieQuery : IRequest<MovieDetailVM?>
-{
-    public Guid Id { get; set; }
-
-    public GetMovieQuery(Guid id)
-    {
-        Id = id;
-    }
-}
+public record GetMovieQuery(Guid Id) : IRequest<MovieDetailVM?>;
 
 public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVM?>
 {
@@ -70,19 +62,19 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVM
         var vm = movie.MapToDetailVm();
 
         // attach image urls
-        vm.Image!.Url = _linkCreator.CreateImageUrl(movie.File!.Id, ImageSizeEnum.Poster)?.ToString() ?? string.Empty;
+        vm.ImageUrl = _linkCreator.CreateImageUrl(movie.File!.Id.ToString(), ImageSizeEnum.Poster);
 
-        if (vm.Author?.Image is not null)
-            vm.Author.Image.Url = _linkCreator.CreateImageUrl(vm.Author.Image.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
+        if (vm.Author?.ImageUrl is not null or "")
+            vm.Author.ImageUrl = _linkCreator.CreateImageUrl(vm.Author.ImageUrl, ImageSizeEnum.Avatar);
 
         foreach (var directorVm in vm.Directors)
-            directorVm.Image!.Url = _linkCreator.CreateImageUrl(directorVm.Image!.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
+            directorVm.ImageUrl = _linkCreator.CreateImageUrl(directorVm.ImageUrl, ImageSizeEnum.Avatar);
 
         foreach (var writerVm in vm.Writers)
-            writerVm.Image!.Url = _linkCreator.CreateImageUrl(writerVm.Image!.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
+            writerVm.ImageUrl = _linkCreator.CreateImageUrl(writerVm.ImageUrl, ImageSizeEnum.Avatar);
 
         foreach (var starVm in vm.Stars)
-            starVm.Image!.Url = _linkCreator.CreateImageUrl(starVm.Image!.Id, ImageSizeEnum.Avatar)?.ToString() ?? string.Empty;
+            starVm.ImageUrl = _linkCreator.CreateImageUrl(starVm.ImageUrl, ImageSizeEnum.Avatar);
 
         return vm;
     }

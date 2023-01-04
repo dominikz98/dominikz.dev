@@ -12,23 +12,32 @@ public partial class TextBox
     [Parameter] public string Placeholder { get; set; } = string.Empty;
     [Parameter] public bool DelayInputTrigger { get; set; }
     [Parameter] public bool IsPassword { get; set; }
+    [Parameter] public EventCallback LostFocus { get; set; }
+    [Parameter] public bool ForceFocusAfterRender { get; set; }
 
     private readonly Timer _inputTimer = new(TimeSpan.FromSeconds(0.3));
+    private ElementReference _textBox;
 
     public TextBox()
     {
         _inputTimer.Elapsed += async (_, _) =>
         {
             _inputTimer.Stop();
-
-            // handle data binding
             await ValueChanged.InvokeAsync(Value);
         };
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender == false || ForceFocusAfterRender == false)
+            return;
+
+        await _textBox.FocusAsync();
+    }
+
     public void SetValue(string? value)
         => Value = value;
-    
+
     private async Task CallOnChanged()
     {
         if (DelayInputTrigger == false)

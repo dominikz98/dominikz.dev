@@ -1,12 +1,20 @@
 @typeparam T
 
-<Panel Gap="8">
+<div class="flex-row gap">
 
-    <span class="chip-selection-title">@Title</span>
-
+    @if (string.IsNullOrWhiteSpace(Title) == false)
+    {
+        <span class="chip-selection-title">@Title</span>    
+    }
+    
     @foreach (var value in Values)
     {
-        <Chip @ref="ChipRef" Value="@value" AllowSelect=true Title="@TextFormatter(value)" OnChanged="CallOnChanged" />
+        <Chip T="T" 
+              @ref="ChipRef" 
+              Value="@value" 
+              AllowSelect="@AllowSelect" 
+              Title="@TextFormatter(value)" 
+              Clicked="@((x) => OnChipClicked(x))" />
     }
 
     @if (AllowExpand && !IsExpanded && _values.Count > ExpandLimiter)
@@ -19,4 +27,4 @@
         <span class="chip-selection-expand" @onclick="CallOnExpand">Show less ...</span>
     }
 
-</Panel>
+</div>

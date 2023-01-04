@@ -2,7 +2,8 @@
 
 public enum FileExtensionEnum
 {
-    PNG,
-    JPG,
-    WEBP
+    Png,
+    Jpg,
+    Webp,
+    Unknown = 999
 }

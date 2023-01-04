@@ -4,7 +4,7 @@ using dominikz.dev.Components.TabControl;
 using dominikz.dev.Components.Toast;
 using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
-using dominikz.dev.Models;
+using dominikz.dev.Extensions;
 using dominikz.dev.Utils;
 using dominikz.shared.Contracts;
 using dominikz.shared.Filter;
@@ -29,7 +29,7 @@ public partial class Media
     private List<GameVM> _games = new();
     private List<BookVM> _books = new();
 
-    private int _view = (int)CollectionView.Grid;
+    private bool _isTableView;
     private TextBox? _searchbox;
     private TabControl? _categoryTabCtrl;
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;

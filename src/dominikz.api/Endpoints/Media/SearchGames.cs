@@ -71,8 +71,8 @@ public class SearchGamesQueryHandler : IRequestHandler<SearchGamesQuery, IReadOn
 
         // attach image url
         foreach (var game in games)
-            if (game.Image is not null)
-                game.Image.Url = _linkCreator.CreateImageUrl(game.Image.Id, ImageSizeEnum.Vertical)?.ToString() ?? string.Empty;
+            if (game.ImageUrl != string.Empty)
+                game.ImageUrl = _linkCreator.CreateImageUrl(game.ImageUrl, ImageSizeEnum.Vertical);
 
         return games;
     }

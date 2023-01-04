@@ -29,7 +29,7 @@ public readonly struct NoteData
         if (!Enum.TryParse<NoteEnum>(key[1].ToString(), out var note))
             throw new ArgumentException("Invalid note!");
 
-        if (!Enum.TryParse<NoteTypeEnum>(key[2..].ToString(), out var type))
+        if (!Enum.TryParse<NoteTypeEnum>(key[2..], out var type))
             throw new ArgumentException("Invalid type!");
 
         Segment = segment;

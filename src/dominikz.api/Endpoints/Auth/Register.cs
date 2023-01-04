@@ -1,5 +1,7 @@
+using dominikz.api.Attributes;
 using dominikz.api.Models;
 using dominikz.api.Models.Options;
+using dominikz.api.Models.ViewModels;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared.ViewModels.Auth;
@@ -32,28 +34,16 @@ public class Register : ControllerBase
     public async Task<IActionResult> Execute([FromBody] RegisterVm request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new RegisterRequest(request.Username, request.Email, request.Password), cancellationToken);
-        if (string.IsNullOrWhiteSpace(response.Info) == false)
-            return BadRequest(response);
+        if (response.IsValid == false)
+            return BadRequest(response.ToErrorList());
 
-        return Ok(response);
+        return Ok(response.ViewModel);
     }
 }
 
-public class RegisterRequest : IRequest<AuthVm>
-{
-    public RegisterRequest(string username, string email, string password)
-    {
-        Username = username;
-        Email = email;
-        Password = password;
-    }
+public record RegisterRequest(string Username, string Email, string Password) : IRequest<ActionWrapper<AuthVm>>;
 
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-}
-
-public class RegisterRequestHandler : IRequestHandler<RegisterRequest, AuthVm>
+public class RegisterRequestHandler : IRequestHandler<RegisterRequest, ActionWrapper<AuthVm>>
 {
     private readonly DatabaseContext _database;
     private readonly PasswordHasher _hasher;
@@ -66,7 +56,7 @@ public class RegisterRequestHandler : IRequestHandler<RegisterRequest, AuthVm>
         _options = options;
     }
 
-    public async Task<AuthVm> Handle(RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<ActionWrapper<AuthVm>> Handle(RegisterRequest request, CancellationToken cancellationToken)
     {
         // get account from database
         var account = await _database.From<Account>()
@@ -75,7 +65,7 @@ public class RegisterRequestHandler : IRequestHandler<RegisterRequest, AuthVm>
             .FirstOrDefaultAsync(cancellationToken);
 
         if (account is not null)
-            return new AuthVm() { Info = "Username or Email already in use!" };
+            return new ActionWrapper<AuthVm>("Username or Email already in use!");
 
         // hash  password
         var hash = _hasher.GenerateHash(request.Password);
@@ -97,13 +87,13 @@ public class RegisterRequestHandler : IRequestHandler<RegisterRequest, AuthVm>
 
         // create token
         var token = JwtHelper.CreateToken(account, _options.Value);
-        return new AuthVm()
+        return new ActionWrapper<AuthVm>(new AuthVm()
         {
             Token = token.Value,
             TokenExpiration = token.Expiration,
             RefreshToken = refreshToken.Value,
             RefreshTokenExpiration = refreshToken.Expiration,
             Permissions = account.Permissions
-        };
+        });
     }
 }

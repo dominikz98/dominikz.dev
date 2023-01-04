@@ -1,6 +1,6 @@
 using Blazored.LocalStorage;
 using dominikz.dev;
-using dominikz.dev.Utils;
+using dominikz.dev.Extensions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

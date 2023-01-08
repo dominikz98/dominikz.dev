@@ -9,7 +9,7 @@
 @using dominikz.dev.Extensions
 @using dominikz.dev.Utils
 @using dominikz.shared
-@using dominikz.shared.Contracts
+@using dominikz.shared.Enums
 @using dominikz.shared.ViewModels.Media
 
 <PageTitle>Media</PageTitle>
@@ -32,10 +32,18 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_movieGenreSelect"
-                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Movie.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<MovieGenresFlags>(QueryNames.Media.Movie.Genre, value.FirstOrDefault()))"
                         Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
             <div class="flex-row gap">
+
+                @if (_hasCreatePermission)
+                {
+                    <div class="admin-menu-element gap">
+                        <IconButton OnClick="@(() => NavManager!.NavigateTo("/media/movie/edit"))" Icon="fa-solid fa-circle-plus"/>
+                    </div>
+                }
+
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
                     <Switch @bind-State="_isTableView"/>
@@ -50,7 +58,7 @@
 
             @if (_isTableView)
             {
-                <Table T="MovieVM" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex="true"></Table>
+                <Table T="MovieVm" Values="@_movies" Columns="@MovieTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {
@@ -85,16 +93,24 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_bookGenreSelect"
-                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<BookGenresFlags>(QueryNames.Media.Book.Genre, value.FirstOrDefault()))"
                         Values="Enum.GetValues<BookGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="BookLanguageEnum"
                         Title="Genres"
                         @ref="_bookLanguageSelect"
-                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Book.Language, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<BookLanguageEnum>(QueryNames.Media.Book.Language, value.FirstOrDefault()))"
                         Values="Enum.GetValues<BookLanguageEnum>().ToList()"/>
 
             <div class="flex-row gap">
+
+                @if (_hasCreatePermission)
+                {
+                    <div class="admin-menu-element gap">
+                        <IconButton OnClick="@(() => NavManager!.NavigateTo("/media/book/edit"))" Icon="fa-solid fa-circle-plus"/>
+                    </div>
+                }
+
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
                     <Switch @bind-State="_isTableView"/>
@@ -109,7 +125,7 @@
 
             @if (_isTableView)
             {
-                <Table T="BookVM" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex="true"></Table>
+                <Table T="BookVm" Values="@_books" Columns="@BookTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {
@@ -139,16 +155,24 @@
                         AllowExpand=true
                         Title="Genres"
                         @ref="_gameGenreSelect"
-                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Genre, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<GameGenresFlags>(QueryNames.Media.Game.Genre, value.FirstOrDefault()))"
                         Values="Enum.GetValues<GameGenresFlags>()[1..].ToList()"/>
 
             <ChipSelect T="GamePlatformEnum"
                         Title="Genres"
                         @ref="_gamePlatformSelect"
-                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Media.Game.Platform, value))"
+                        SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<GamePlatformEnum>(QueryNames.Media.Game.Platform, value.FirstOrDefault()))"
                         Values="Enum.GetValues<GamePlatformEnum>().ToList()"/>
 
             <div class="flex-row gap">
+
+                @if (_hasCreatePermission)
+                {
+                    <div class="admin-menu-element gap">
+                        <IconButton OnClick="@(() => NavManager!.NavigateTo("/media/game/edit"))" Icon="fa-solid fa-circle-plus"/>
+                    </div>
+                }
+
                 <div class="menu-element gap">
                     <i class="fa-solid fa-border-top-left"></i>
                     <Switch @bind-State="_isTableView"/>
@@ -163,7 +187,7 @@
 
             @if (_isTableView)
             {
-                <Table T="GameVM" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
+                <Table T="GameVm" Values="@_games" Columns="@GameTableDefinition.Columns" ShowIndex="true"></Table>
             }
             else
             {

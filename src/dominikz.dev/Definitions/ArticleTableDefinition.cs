@@ -1,7 +1,7 @@
 ﻿using dominikz.dev.Components.Tables;
 using dominikz.dev.Utils;
 using dominikz.shared;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Blog;
 
 namespace dominikz.dev.Definitions;

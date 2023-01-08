@@ -2,7 +2,7 @@
 @using dominikz.dev.Components.Files
 @using dominikz.dev.Components.Buttons
 @using dominikz.dev.Components.Chips
-@using dominikz.shared.Contracts
+@using dominikz.shared.Enums
 
 @page "/blog/edit"
 @page "/blog/edit/{articleid:guid}"
@@ -97,7 +97,7 @@ else
                 </div>
 
                 <div>
-                    <FilePicker @bind-Files="_vm.Images" MaxAllowedFiles="1"/>
+                    <FilePicker @bind-Files="_vm.Images" MaxFiles="1"/>
                     <ValidationMessage For="@(() => _vm.Images)"/>
                 </div>
             </div>

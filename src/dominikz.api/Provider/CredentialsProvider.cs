@@ -1,6 +1,6 @@
 using dominikz.api.Extensions;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 
 namespace dominikz.api.Provider;
 

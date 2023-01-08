@@ -23,7 +23,13 @@ public class DatabaseContext : DbContext
         article.ToTable("articles");
         article.HasKey(x => x.Id);
         article.Property(x => x.Tags).HasConversion<TagsConverter>(new ListComparer<string>());
+        article.HasOne(x => x.File)
+            .WithOne(x => x.Article)
+            .HasForeignKey<Article>(x => x.Id);
 
+        var movie = builder.Entity<Movie>();
+        movie.ToTable("movies");
+        
         var book = builder.Entity<Book>();
         book.ToTable("books");
 
@@ -33,17 +39,20 @@ public class DatabaseContext : DbContext
         var media = builder.Entity<Media>();
         media.ToTable("medias");
         media.HasKey(x => x.Id);
-
-        var movie = builder.Entity<Movie>();
-        movie.ToTable("movies");
+        media.HasOne(x => x.File)
+            .WithOne(x => x.Media)
+            .HasForeignKey<Media>(x => x.Id);
 
         var moviesPersonsMapping = builder.Entity<MoviesPersonsMapping>();
         moviesPersonsMapping.ToTable("movies_persons_mapping");
-        moviesPersonsMapping.HasKey(x => new { x.MovieId, x.PersonId });
+        moviesPersonsMapping.HasKey(x => new { x.MovieId, x.PersonId, x.Category });
 
-        var author = builder.Entity<Person>();
-        author.ToTable("persons");
-        author.HasKey(x => x.Id);
+        var person = builder.Entity<Person>();
+        person.ToTable("persons");
+        person.HasKey(x => x.Id);
+        person.HasOne(x => x.File)
+            .WithOne(x => x.Person)
+            .HasForeignKey<Person>(x => x.Id);
 
         var file = builder.Entity<StorageFile>();
         file.ToTable("files");

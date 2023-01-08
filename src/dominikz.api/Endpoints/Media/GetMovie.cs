@@ -1,8 +1,9 @@
 ﻿using dominikz.api.Mapper;
 using dominikz.api.Models;
+using dominikz.api.Models.Constants;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Media;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,9 +33,9 @@ public class GetMovie : EndpointController
     }
 }
 
-public record GetMovieQuery(Guid Id) : IRequest<MovieDetailVM?>;
+public record GetMovieQuery(Guid Id) : IRequest<MovieDetailVm?>;
 
-public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVM?>
+public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVm?>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
@@ -45,11 +46,10 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVM
         _linkCreator = linkCreator;
     }
 
-    public async Task<MovieDetailVM?> Handle(GetMovieQuery request, CancellationToken cancellationToken)
+    public async Task<MovieDetailVm?> Handle(GetMovieQuery request, CancellationToken cancellationToken)
     {
         var movie = await _database.From<Movie>()
             .Include(x => x.File)
-            .Include(x => x.Author!.File)
             .Include(x => x.MoviesPersonsMappings)
             .ThenInclude(x => x.Person!.File)
             .AsNoTracking()
@@ -63,9 +63,7 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVM
 
         // attach image urls
         vm.ImageUrl = _linkCreator.CreateImageUrl(movie.File!.Id.ToString(), ImageSizeEnum.Poster);
-
-        if (vm.Author?.ImageUrl is not null or "")
-            vm.Author.ImageUrl = _linkCreator.CreateImageUrl(vm.Author.ImageUrl, ImageSizeEnum.Avatar);
+        vm.AuthorImageUrl = _linkCreator.CreateImageUrl(Persons.DominikZettlId.ToString(), ImageSizeEnum.Avatar);
 
         foreach (var directorVm in vm.Directors)
             directorVm.ImageUrl = _linkCreator.CreateImageUrl(directorVm.ImageUrl, ImageSizeEnum.Avatar);

@@ -17,9 +17,9 @@ public class MediaEndpoints
         _options = options;
     }
 
-    public async Task<List<MediaPreviewVM>> GetPreview(CancellationToken cancellationToken = default)
+    public async Task<List<MediaPreviewVm>> GetPreview(CancellationToken cancellationToken = default)
     {
-        var vmList = await _client.Get<MediaPreviewVM>($"{Endpoint}/preview", cancellationToken);
+        var vmList = await _client.Get<MediaPreviewVm>($"{Endpoint}/preview", cancellationToken);
         vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }

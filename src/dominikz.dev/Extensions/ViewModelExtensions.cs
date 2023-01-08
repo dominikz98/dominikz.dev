@@ -1,6 +1,8 @@
 using System.Web;
 using dominikz.dev.Endpoints;
+using dominikz.dev.Models;
 using dominikz.shared.Contracts;
+using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Extensions;
 
@@ -17,10 +19,24 @@ public static class ViewModelExtensions
         if (string.IsNullOrWhiteSpace(vm?.ImageUrl))
             return;
 
-        var builder = new UriBuilder(vm.ImageUrl);
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.Add(ApiClient.ApiKeyHeaderName, value);
-        builder.Query = query.ToString();
-        vm.ImageUrl = builder.ToString();
+        vm.ImageUrl = AttachApiKey(vm.ImageUrl, value);
     }
+    
+    public static string AttachApiKey(string source, string key)
+    {
+        var builder = new UriBuilder(source);
+        var query = HttpUtility.ParseQueryString(builder.Query);
+        query.Add(ApiClient.ApiKeyHeaderName, key);
+        builder.Query = query.ToString();
+        return builder.ToString();
+    }
+    
+    public static EditPersonWrapper Wrap(this EditPersonVm vm)
+        => new()
+        {
+            Id = vm.Id,
+            Tracked = vm.Tracked,
+            Category = vm.Category,
+            Name = vm.Name
+        };
 }

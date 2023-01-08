@@ -1,11 +1,10 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 
 namespace dominikz.api.Models;
 
 public class Person
 {
     public Guid Id { get; set; }
-    public Guid? FileId { get; set; }
     public string Name { get; set; }
     public PersonCategoryFlags Category { get; set; }
 

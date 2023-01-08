@@ -1,6 +1,7 @@
 ﻿@page "/media/movie/{movieid:guid}"
 @using dominikz.dev.Components
 @using dominikz.dev.Components.Cards
+@using dominikz.dev.Components.Buttons
 @using dominikz.dev.Utils
 @using dominikz.shared
 
@@ -10,6 +11,16 @@
         <div>
             <h2>@_movie.Title</h2>
 
+                @if (_hasCreatePermission)
+                {
+                    <div class="flex-row">
+                        <div class="admin-menu-element gap">
+                            <IconButton OnClick="@(() => NavManager!.NavigateTo($"/media/movie/edit/{_movie.Id}"))" Icon="fa-solid fa-pen-to-square"/>
+                        </div>
+                    </div>
+                    <hr/>
+                }
+            
             <div class="flex-row gap">
 
                 <span>@($"🕑 {_movie.Year}")</span>
@@ -36,7 +47,7 @@
         @if (!string.IsNullOrWhiteSpace(_movie.Comment))
         {
             <div class="movie-comment">
-                <img src="@_movie.Author!.ImageUrl"  alt="Author Image"/>
+                <img src="@_movie.AuthorImageUrl"  alt="Author Image"/>
                 @((MarkupString)_movie.Comment)
             </div>
         }

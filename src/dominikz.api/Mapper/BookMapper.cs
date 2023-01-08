@@ -5,12 +5,12 @@ namespace dominikz.api.Mapper;
 
 public static class BookMapper
 {
-    public static IQueryable<BookVM> MapToVm(this IQueryable<Book> query)
-        => query.Select(book => new BookVM()
+    public static IQueryable<BookVm> MapToVm(this IQueryable<Book> query)
+        => query.Select(book => new BookVm()
         {
             Id = book.Id,
             Title = book.Title,
-            Timestamp = book.Timestamp,
+            PublishDate = book.PublishDate,
             ImageUrl = book.File!.Id.ToString(),
             Genres = book.Genres,
             Language = book.Language,

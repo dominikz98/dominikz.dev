@@ -1,13 +1,15 @@
+using dominikz.api.Extensions;
 using dominikz.api.Mapper;
 using dominikz.api.Models;
 using dominikz.api.Models.ViewModels;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
+using dominikz.shared;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Blog;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.api.Endpoints.Blog;
@@ -26,12 +28,9 @@ public class AddArticle : EndpointController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Execute([FromForm] FileUploadWrapper<AddArticleVm> request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Execute([FromForm] FileUploadWrapper<EditArticleVm> request, CancellationToken cancellationToken)
     {
-        var image = request.Files.First();
-        var vm = request.ViewModel.MapToModel(image.ContentType);
-
-        var response = await _mediator.Send(new AddArticleRequest(vm, image), cancellationToken);
+        var response = await _mediator.Send((AddArticleRequest)request, cancellationToken);
         if (response.IsValid == false)
             return BadRequest(response.ToErrorList());
 
@@ -39,7 +38,9 @@ public class AddArticle : EndpointController
     }
 }
 
-public record AddArticleRequest(Article Article, IFormFile Image) : IRequest<ActionWrapper<ArticleViewVm>>;
+public class AddArticleRequest : FileUploadWrapper<EditArticleVm>, IRequest<ActionWrapper<ArticleViewVm>>
+{
+}
 
 public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, ActionWrapper<ArticleViewVm>>
 {
@@ -56,18 +57,29 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
 
     public async Task<ActionWrapper<ArticleViewVm>> Handle(AddArticleRequest request, CancellationToken cancellationToken)
     {
+        // verify
+        if (request.Files.Count != 1)
+            return new("Expected file count mismatch");
+        
         // validate
-        var alreadyExists = await _database.From<Article>().AnyAsync(x => EF.Functions.Like(x.Title, request.Article.Title), cancellationToken);
+        var alreadyExists = await _database.From<Article>()
+            .AnyAsync(x => EF.Functions.Like(x.Title, request.ViewModel.Title)
+                           || x.Id == request.ViewModel.Id, cancellationToken);
+
         if (alreadyExists)
             return new("Article already exists");
 
         // upload file
-        var image = request.Image.OpenReadStream();
-        image.Position = 0;
-        await _storage.Upload(request.Article.FileId, image, cancellationToken);
-
+        var image = await UploadAndSaveImage(request, cancellationToken);
+        if (image == null)
+            return new("Invalid article image");
+        
         // save article
-        var id = (await _database.AddAsync(request.Article, cancellationToken)).Entity.Id;
+        var toAdd = new Article().ApplyChanges(request.ViewModel, image.ContentType);
+        var id = (await _database.AddAsync(toAdd, cancellationToken)).Entity.Id;
+        
+        // commit transactions
+        await _storage.SaveChanges(cancellationToken);
         await _database.SaveChangesAsync(cancellationToken);
 
         // load article detail
@@ -76,5 +88,29 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
             return new("Error loading article");
 
         return new ActionWrapper<ArticleViewVm>(article);
+    }
+
+    private async Task<IFormFile?> UploadAndSaveImage(AddArticleRequest request, CancellationToken cancellationToken)
+    {
+        var file = request.Files.GetFileById(request.ViewModel.Id);
+        if (file == null)
+            return null;
+
+        var image = file.OpenReadStream();
+        image.Position = 0;
+        
+        var exists = await _storage.Exists(request.ViewModel.Id, cancellationToken);
+        await _storage.Upload(request.ViewModel.Id, image, cancellationToken);
+        if (exists)
+            return file;
+        
+        await _database.AddAsync(new StorageFile()
+        {
+            Id = request.ViewModel.Id,
+            Category = FileCategoryEnum.Image,
+            Extension = FileIdentifier.GetExtensionByContentType(file.ContentType)
+        }, cancellationToken);
+
+        return file;
     }
 }

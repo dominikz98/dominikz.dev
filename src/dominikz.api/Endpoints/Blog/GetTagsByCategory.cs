@@ -1,7 +1,7 @@
 using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +11,7 @@ namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
 [Authorize(Policy = Policies.Blog)]
+[Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/blog/tags")]
 public class GetTagsByCategory : EndpointController
 {

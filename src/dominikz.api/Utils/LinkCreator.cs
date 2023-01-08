@@ -1,4 +1,4 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dominikz.api.Utils;

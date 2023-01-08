@@ -3,7 +3,7 @@ using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using MediatR;
@@ -38,22 +38,27 @@ public class SearchBooks : EndpointController
     }
 }
 
-public class SearchBooksQuery : BooksFilter, IRequest<IReadOnlyCollection<BookVM>> { }
+public class SearchBooksQuery : BooksFilter, IRequest<IReadOnlyCollection<BookVm>> { }
 
-public class SearchBooksQueryHandler : IRequestHandler<SearchBooksQuery, IReadOnlyCollection<BookVM>>
+public class SearchBooksQueryHandler : IRequestHandler<SearchBooksQuery, IReadOnlyCollection<BookVm>>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
+    private readonly CredentialsProvider _credentials;
 
-    public SearchBooksQueryHandler(DatabaseContext database, ILinkCreator linkCreator)
+    public SearchBooksQueryHandler(DatabaseContext database, ILinkCreator linkCreator, CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
+        _credentials = credentials;
     }
 
-    public async Task<IReadOnlyCollection<BookVM>> Handle(SearchBooksQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<BookVm>> Handle(SearchBooksQuery request, CancellationToken cancellationToken)
     {
         var query = _database.From<Book>();
+        
+        if (_credentials.HasPermission(PermissionFlags.Media) == false)
+            query = query.Where(x => x.PublishDate != null);
 
         if (!string.IsNullOrWhiteSpace(request.Text))
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));

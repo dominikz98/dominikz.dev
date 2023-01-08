@@ -1,7 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+using dominikz.shared.Attributes;
+using dominikz.shared.Enums;
+
 namespace dominikz.shared.ViewModels.Blog;
 
-public class EditArticleVm : AddArticleVm
+public class EditArticleVm
 {
-    public Guid Id { get; set; }
-    public Guid ImageId { get; set; }
+    [GuidNotEmpty] public Guid Id { get; set; }
+    [Required] [MinLength(5)] public string Title { get; set; } = string.Empty;
+    [Required] [MinLength(5)] public string HtmlText { get; set; } = string.Empty;
+    [DataType(DataType.DateTime)] public DateTime? PublishDate { get; set; }
+
+    [RequiredEnum<ArticleCategoryEnum>(Blacklist = new[] { ArticleCategoryEnum.Unknown })]
+    public ArticleCategoryEnum Category { get; set; }
+    [Required] [ListNotEmpty] public List<string> Tags { get; set; } = new();
 }

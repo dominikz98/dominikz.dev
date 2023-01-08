@@ -1,6 +1,6 @@
 using dominikz.dev.Endpoints;
 using dominikz.dev.Models;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -24,7 +24,10 @@ public partial class EditArticle
     {
         var articleLoaded = await LoadArticleIfRequired();
         if (articleLoaded == false)
-            _vm.PublishDate = DateTime.UtcNow.AddDays(1);
+        {
+            _vm.Id = Guid.NewGuid();
+            _vm.PublishDate = DateTime.UtcNow.AddDays(1);   
+        }
 
         await LoadRecommendations();
         _editContext = new EditContext(_vm);
@@ -50,7 +53,7 @@ public partial class EditArticle
 
         _vm = article;
 
-        var file = await DownloadEndpoints!.Image(article.ImageId, true, ImageSizeEnum.Original);
+        var file = await DownloadEndpoints!.Image(article.Id, true, ImageSizeEnum.Original);
         if (file == null)
             return true;
 
@@ -81,16 +84,12 @@ public partial class EditArticle
 
     private async Task OnSaveClicked()
     {
-        var messages = _editContext!.GetValidationMessages();
-        foreach (var message in messages)
-            Console.WriteLine(message);
-
         if (_editContext == null || _editContext.Validate() == false)
             return;
 
         var article = ArticleId == null
-            ? await BlogEndpoints!.AddArticle(_vm)
-            : await BlogEndpoints!.UpdateArticle(_vm);
+            ? await BlogEndpoints!.Add(_vm)
+            : await BlogEndpoints!.Update(_vm);
 
         if (article == null)
             return;

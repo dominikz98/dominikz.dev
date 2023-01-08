@@ -1,4 +1,4 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 
 namespace dominikz.api.Models;
 

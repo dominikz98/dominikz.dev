@@ -1,5 +1,5 @@
 using Blazored.LocalStorage;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Auth;
 
 namespace dominikz.dev.Utils;

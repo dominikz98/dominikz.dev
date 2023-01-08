@@ -2,9 +2,10 @@
 using System.Threading.RateLimiting;
 using dominikz.api.Models.Options;
 using dominikz.api.Provider;
+using dominikz.api.Provider.JustWatch;
 using dominikz.api.Provider.Noobit;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +43,7 @@ public static class DiExtensions
             .Configure<MedlanOptions>(builder.Configuration.GetSection(nameof(MedlanOptions)))
             .Configure<NoobitOptions>(builder.Configuration.GetSection(nameof(NoobitOptions)))
             .Configure<ImdbOptions>(builder.Configuration.GetSection(nameof(ImdbOptions)))
+            .Configure<JustWatchOptions>(builder.Configuration.GetSection(nameof(JustWatchOptions)))
             .Configure<PasswordOptions>(builder.Configuration.GetSection(nameof(PasswordOptions)))
             .Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)))
             .Configure<ApiKeyOptions>(builder.Configuration.GetSection(nameof(ApiKeyOptions)));
@@ -58,12 +60,12 @@ public static class DiExtensions
                 var options = sp.GetRequiredService<IOptions<NoobitOptions>>();
                 client.BaseAddress = new Uri(options.Value.Url);
             })
-            .Services
-            .AddScoped<ImdbClient>()
-            .AddHttpClient<ImdbClient>((sp, client) =>
+            .Services.AddScoped<JustWatchClient>()
+            .AddHttpClient<JustWatchClient>((sp, client) =>
             {
-                var options = sp.GetRequiredService<IOptions<ImdbOptions>>();
+                var options = sp.GetRequiredService<IOptions<JustWatchOptions>>();
                 client.BaseAddress = new Uri(options.Value.Url);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("JW DZ Client");
             });
 
         return builder;

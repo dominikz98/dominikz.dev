@@ -7,7 +7,7 @@
 @using dominikz.dev.Definitions
 @using dominikz.dev.Extensions
 @using dominikz.dev.Utils
-@using dominikz.shared.Contracts
+@using dominikz.shared.Enums
 @using dominikz.shared.ViewModels.Blog
 
 <PageTitle>Blog</PageTitle>
@@ -23,13 +23,13 @@
     <ChipSelect T="ArticleCategoryEnum"
                 Title="Category"
                 @ref="_categorySelect"
-                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Category, value))"
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleCategoryEnum>(QueryNames.Blog.Category, value.FirstOrDefault()))"
                 Values="Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList()"/>
 
     <ChipSelect T="ArticleSourceEnum"
                 Title="Source"
                 @ref="_sourceSelect"
-                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam(QueryNames.Blog.Source, value))"
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleSourceEnum>(QueryNames.Blog.Source, value.FirstOrDefault()))"
                 Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
     <div class="flex-row gap">

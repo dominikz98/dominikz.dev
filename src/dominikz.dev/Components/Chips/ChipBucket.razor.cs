@@ -42,16 +42,13 @@ public partial class ChipBucket
         await ValuesChanged.InvokeAsync(Values);
     }
 
-    private void OnRecommendedTagClicked(TextStruct? tag)
+    private void OnRecommendedTagClicked(TextStruct tag)
     {
-        if (tag is null)
+        if (Values.Contains(tag.Text))
             return;
 
-        if (Values.Contains(tag.Value.Text))
-            return;
-
-        var toRemove = Recommendations.Single(x => x.Equals(tag.Value.Text));
+        var toRemove = Recommendations.Single(x => x.Equals(tag.Text));
         Recommendations.Remove(toRemove);
-        Values.Add(tag.Value.Text);
+        Values.Add(tag.Text);
     }
 }

@@ -18,15 +18,15 @@ public class MovieEndpoints
         _options = options;
     }
 
-    public async Task<MovieDetailVM?> GetById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<MovieDetailVm?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var vm = await _client.GetSingle<MovieDetailVM>($"{Endpoint}/{id}", cancellationToken);
+        var vm = await _client.GetSingle<MovieDetailVm>($"{Endpoint}/{id}", cancellationToken);
         if (vm is null)
             return null;
 
         // attach image api keys
         vm.AttachApiKey(_options.Value.Key);
-        vm.Author?.AttachApiKey(_options.Value.Key);
+        vm.AuthorImageUrl = ViewModelExtensions.AttachApiKey(vm.AuthorImageUrl, _options.Value.Key);
         vm.Writers.AttachApiKey(_options.Value.Key);
         vm.Stars.AttachApiKey(_options.Value.Key);
         vm.Directors.AttachApiKey(_options.Value.Key);
@@ -34,11 +34,46 @@ public class MovieEndpoints
         return vm;
     }
 
-    public async Task<List<MovieVM>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
+    public async Task<EditMovieWrapper?> GetDraftById(Guid id, CancellationToken cancellationToken = default)
     {
-        var vmList = await _client.Get<MovieVM>($"{Endpoint}/search", filter, cancellationToken);
+        var movie = await _client.GetSingle<EditMovieWrapper?>($"{Endpoint}/draft/{id}", cancellationToken);
+        if (movie == null)
+            return null;
+
+        movie.DirectorsWrappers = movie.Directors.Select(x => x.Wrap()).ToList();
+        movie.WritersWrappers = movie.Writers.Select(x => x.Wrap()).ToList();
+        movie.StarsWrappers = movie.Stars.Select(x => x.Wrap()).ToList();
+        return movie;
+    }
+
+    public async Task<MovieTemplateVm?> GetTemplateByImdbId(string imdbId, CancellationToken cancellationToken = default)
+        => await _client.GetSingle<MovieTemplateVm>($"{Endpoint}/template/{imdbId}", cancellationToken);
+
+    public async Task<List<MovieVm>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
+    {
+        var vmList = await _client.Get<MovieVm>($"{Endpoint}/search", filter, cancellationToken);
         vmList.AttachApiKey(_options.Value.Key);
         return vmList;
+    }
+
+    public async Task<MovieDetailVm?> Add(EditMovieWrapper vm, CancellationToken cancellationToken = default)
+    {
+        var images = vm.Image.Union(vm.DirectorsWrappers.SelectMany(x => x.Image))
+            .Union(vm.WritersWrappers.SelectMany(x => x.Image))
+            .Union(vm.StarsWrappers.SelectMany(x => x.Image))
+            .ToList();
+
+        return await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Post, Endpoint, vm, images, cancellationToken);
+    }
+
+    public async Task<MovieDetailVm?> Update(EditMovieWrapper vm, CancellationToken cancellationToken = default)
+    {
+        var images = vm.Image.Union(vm.DirectorsWrappers.SelectMany(x => x.Image))
+            .Union(vm.WritersWrappers.SelectMany(x => x.Image))
+            .Union(vm.StarsWrappers.SelectMany(x => x.Image))
+            .ToList();
+
+        return await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Put, Endpoint, vm, images, cancellationToken);
     }
 
     public string CurlSearch(MoviesFilter filter)

@@ -2,15 +2,17 @@ using dominikz.api.Mapper;
 using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
 using dominikz.shared.ViewModels.Blog;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.api.Endpoints.Blog;
 
 [Tags("blog")]
+[Authorize(Policy = Policies.Blog)]
+[Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/blog/draft")]
 public class GetDraft : EndpointController
 {

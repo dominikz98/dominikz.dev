@@ -1,4 +1,4 @@
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using HeyRed.Mime;
 
 namespace dominikz.shared;
@@ -7,7 +7,7 @@ public static class FileIdentifier
 {
     private static readonly List<FileExtensionEnum> ImageExtensions = new()
     {
-        FileExtensionEnum.Jpg, FileExtensionEnum.Png, FileExtensionEnum.Webp
+        FileExtensionEnum.Jpg, FileExtensionEnum.Jpeg, FileExtensionEnum.Png, FileExtensionEnum.Webp
     };
 
     public static FileExtensionEnum GetExtensionByName(string filename)

@@ -1,11 +1,10 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 
 namespace dominikz.api.Models;
 
 public class Article
 {
     public Guid Id { get; set; }
-    public Guid FileId { get; set; }
     public Guid AuthorId { get; set; }
     public string Title { get; set; }
     public string HtmlText { get; set; }

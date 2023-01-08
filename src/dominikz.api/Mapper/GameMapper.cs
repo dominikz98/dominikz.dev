@@ -5,12 +5,12 @@ namespace dominikz.api.Mapper;
 
 public static class GameMapper
 {
-    public static IQueryable<GameVM> MapToVm(this IQueryable<Game> query)
-        => query.Select(game => new GameVM()
+    public static IQueryable<GameVm> MapToVm(this IQueryable<Game> query)
+        => query.Select(game => new GameVm()
         {
             Id = game.Id,
             Title = game.Title,
-            Timestamp = game.Timestamp,
+            PublishDate = game.PublishDate,
             ImageUrl = game.File!.Id.ToString(),
             Genres = game.Genres,
             Platform = game.Platform,

@@ -13,7 +13,7 @@ public class FileUploadWrapper<T>
     [Required]
     [ValidFile]
     [ListNotEmpty]
-    public required List<IFormFile> Files { get; init; } = new ();
+    public required List<IFormFile> Files { get; set; } = new ();
 
     [Required]
     [ModelBinder(BinderType = typeof(FormDataJsonBinder))]

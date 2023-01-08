@@ -4,18 +4,28 @@
 
     @if (string.IsNullOrWhiteSpace(Title) == false)
     {
-        <span class="chip-selection-title">@Title</span>    
+        <span class="chip-selection-title">@Title</span>
     }
-    
-    @foreach (var value in Values)
-    {
-        <Chip T="T" 
-              @ref="ChipRef" 
-              Value="@value" 
-              AllowSelect="@AllowSelect" 
-              Title="@TextFormatter(value)" 
-              Clicked="@((x) => OnChipClicked(x))" />
-    }
+
+    <div class="flex-row gap">
+        @foreach (var value in Selected.OrderBy(x => x.ToString()))
+        {
+            <Chip T="T"
+                  Value="@value"
+                  Title="@TextFormatter(value)"
+                  Clicked="@(OnDeselectClicked)"/>
+        }
+    </div>
+
+    <div class="flex-row gap @(Selected.Count > 0 ? "recommendation" : string.Empty)">
+        @foreach (var value in Values.Except(Selected).OrderBy(x => x.ToString()))
+        {
+            <Chip T="T"
+                  Value="@value"
+                  Title="@TextFormatter(value)"
+                  Clicked="@(OnSelectClicked)"/>
+        }
+    </div>
 
     @if (AllowExpand && !IsExpanded && _values.Count > ExpandLimiter)
     {

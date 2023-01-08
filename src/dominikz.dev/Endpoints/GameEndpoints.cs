@@ -18,9 +18,9 @@ public class GameEndpoints
         _options = options;
     }
 
-    public async Task<List<GameVM>> Search(GamesFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<GameVm>> Search(GamesFilter filter, CancellationToken cancellationToken = default)
     {
-        var vmList = await _client.Get<GameVM>($"{Endpoint}/search", filter, cancellationToken);
+        var vmList = await _client.Get<GameVm>($"{Endpoint}/search", filter, cancellationToken);
         vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }

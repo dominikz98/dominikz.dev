@@ -5,7 +5,7 @@ using dominikz.dev.Definitions;
 using dominikz.dev.Endpoints;
 using dominikz.dev.Extensions;
 using dominikz.dev.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Blog;
 using Microsoft.AspNetCore.Components;

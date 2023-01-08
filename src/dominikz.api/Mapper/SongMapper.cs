@@ -1,5 +1,5 @@
 ﻿using dominikz.api.Models;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels;
 
 namespace dominikz.api.Mapper;

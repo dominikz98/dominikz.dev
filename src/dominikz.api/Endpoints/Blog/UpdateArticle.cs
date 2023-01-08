@@ -27,10 +27,7 @@ public class UpdateArticle : EndpointController
     [HttpPut]
     public async Task<IActionResult> Execute([FromForm] FileUploadWrapper<EditArticleVm> request, CancellationToken cancellationToken)
     {
-        var image = request.Files.First();
-        var vm = request.ViewModel.MapToModel(image.ContentType);
-
-        var response = await _mediator.Send(new EditArticleRequest(vm, image), cancellationToken);
+        var response = await _mediator.Send((EditArticleRequest)request, cancellationToken);
         if (response.IsValid == false)
             return BadRequest(response.ToErrorList());
 
@@ -38,7 +35,9 @@ public class UpdateArticle : EndpointController
     }
 }
 
-public record EditArticleRequest(Article Article, IFormFile Image) : IRequest<ActionWrapper<ArticleViewVm>>;
+public class EditArticleRequest : FileUploadWrapper<EditArticleVm>, IRequest<ActionWrapper<ArticleViewVm>>
+{
+}
 
 public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, ActionWrapper<ArticleViewVm>>
 {
@@ -55,19 +54,31 @@ public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, Act
 
     public async Task<ActionWrapper<ArticleViewVm>> Handle(EditArticleRequest request, CancellationToken cancellationToken)
     {
+        // verify
+        if (request.Files.Count != 1)
+            return new("Expected file count mismatch");
+
         // validate
         var original = await _database.From<Article>()
             .Include(x => x.File)
-            .FirstOrDefaultAsync(x => x.Id == request.Article.Id, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.ViewModel.Id, cancellationToken);
 
         if (original == null)
-            return new ActionWrapper<ArticleViewVm>("Article not exists");
+            return new ActionWrapper<ArticleViewVm>("Article not found");
 
-        await RefreshImageIfRequired(original, request, cancellationToken);
+        // upload file
+        var file = request.Files.First();
+        var image = file.OpenReadStream();
+        image.Position = 0;
+        await _storage.TryDelete(request.ViewModel.Id, cancellationToken);
+        await _storage.Upload(request.ViewModel.Id, image, cancellationToken);
 
         // apply changes
-        original.ApplyChanges(request.Article, request.Image.ContentType);
+        original.ApplyChanges(request.ViewModel, file.ContentType);
         _database.Update(original);
+
+        // commit transactions
+        await _storage.SaveChanges(cancellationToken);
         await _database.SaveChangesAsync(cancellationToken);
 
         // load article detail
@@ -76,26 +87,5 @@ public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, Act
             return new ActionWrapper<ArticleViewVm>("Error loading article");
 
         return new ActionWrapper<ArticleViewVm>(article);
-    }
-
-    private async Task RefreshImageIfRequired(Article original, EditArticleRequest request, CancellationToken cancellationToken)
-    {
-        // check for file changed
-        var originalImg = await _storage.Download(original.FileId, cancellationToken);
-        var currentImg = request.Image.OpenReadStream();
-        if (originalImg == null)
-        {
-            await _storage.Upload(request.Article.FileId, currentImg, cancellationToken);
-            return;
-        }
-
-        // compare
-        if (originalImg.Length == currentImg.Length)
-            return;
-
-        // override old image
-        await _storage.Delete(original.FileId, cancellationToken);
-        currentImg.Position = 0;
-        await _storage.Upload(request.Article.FileId, currentImg, cancellationToken);
     }
 }

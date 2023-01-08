@@ -16,8 +16,8 @@
                 <div class="carouselitem-container">
 
                     <div class="carouselitem-thumbnail-ambilight">
-                        <img src="@media.ImageUrl" class="carouselitem-thumbnail-image" />
-                        <img src="@media.ImageUrl" class="carouselitem-thumbnail-light" />
+                        <img src="@media.ImageUrl" class="carouselitem-thumbnail-image"/>
+                        <img src="@media.ImageUrl" class="carouselitem-thumbnail-light"/>
                     </div>
 
                     <div class="carouselitem-container-content">
@@ -27,9 +27,15 @@
                         <span>@(EnumFormatter.ToString(media.Category))</span>
 
                         <div class="carouselitem-container-subtitle">
-                            <span>🕑 @(media.Timestamp.ToString("yyyy-MM-dd"))</span>
+                            @if (media.PublishDate != null)
+                            {
+                                <span>🕑 @(media.PublishDate.Value.ToString("yyyy-MM-dd"))</span>
+                            }
+                            else
+                            {
+                                <span>DRAFT</span>
+                            }
                         </div>
-
                     </div>
                 </div>
             </div>

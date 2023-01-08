@@ -3,7 +3,7 @@ using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using MediatR;
@@ -38,23 +38,28 @@ public class SearchGames : EndpointController
     }
 }
 
-public class SearchGamesQuery : GamesFilter, IRequest<IReadOnlyCollection<GameVM>> { }
+public class SearchGamesQuery : GamesFilter, IRequest<IReadOnlyCollection<GameVm>> { }
 
-public class SearchGamesQueryHandler : IRequestHandler<SearchGamesQuery, IReadOnlyCollection<GameVM>>
+public class SearchGamesQueryHandler : IRequestHandler<SearchGamesQuery, IReadOnlyCollection<GameVm>>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
+    private readonly CredentialsProvider _credentials;
 
-    public SearchGamesQueryHandler(DatabaseContext database, ILinkCreator linkCreator)
+    public SearchGamesQueryHandler(DatabaseContext database, ILinkCreator linkCreator, CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
+        _credentials = credentials;
     }
 
-    public async Task<IReadOnlyCollection<GameVM>> Handle(SearchGamesQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<GameVm>> Handle(SearchGamesQuery request, CancellationToken cancellationToken)
     {
         var query = _database.From<Game>();
 
+        if (_credentials.HasPermission(PermissionFlags.Media) == false)
+            query = query.Where(x => x.PublishDate != null);
+        
         if (!string.IsNullOrWhiteSpace(request.Text))
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
 

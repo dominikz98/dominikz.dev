@@ -1,11 +1,10 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 
 namespace dominikz.api.Models;
 
 public class Movie : Media
 {
-    public string? MdText { get; set; }
-    public Guid? AuthorId { get; set; }
+    public string? Comment { get; set; }
     public MovieGenresFlags Genres { get; set; }
     public int Rating { get; set; }
     public int Year { get; set; }
@@ -13,8 +12,8 @@ public class Movie : Media
     public TimeSpan Runtime { get; set; }
     public string ImdbId { get; set; } = string.Empty;
     public string YoutubeId { get; set; } = string.Empty;
+    public int JustWatchId { get; set; }
 
-    public Person? Author { get; set; }
     public List<MoviesPersonsMapping> MoviesPersonsMappings { get; set; } = new();
 }
 

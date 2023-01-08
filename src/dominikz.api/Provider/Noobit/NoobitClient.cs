@@ -1,6 +1,6 @@
 ﻿using dominikz.api.Mapper;
 using dominikz.api.Models.Options;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Blog;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;

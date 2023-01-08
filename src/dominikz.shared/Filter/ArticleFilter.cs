@@ -1,4 +1,5 @@
 ﻿using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 
 namespace dominikz.shared.Filter;
 

@@ -8,7 +8,7 @@ namespace dominikz.dev.Pages.Media;
 public partial class MediaCarousel
 {
     [Parameter]
-    public List<MediaPreviewVM> Data { get; set; } = new();
+    public List<MediaPreviewVm> Data { get; set; } = new();
 
     [Inject]
     protected BrowserService? Browser { get; set; }

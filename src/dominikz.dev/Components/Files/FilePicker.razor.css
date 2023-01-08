@@ -19,3 +19,7 @@
 .error-label {
     color: var(--theme-error);
 }
+
+.recommendation {
+    opacity: 0.5;
+}

@@ -1,7 +1,6 @@
-﻿using dominikz.dev.Components.Files;
-using dominikz.dev.Extensions;
+﻿using dominikz.dev.Extensions;
 using dominikz.dev.Models;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Blog;
 using Microsoft.Extensions.Options;
@@ -45,10 +44,10 @@ internal class BlogEndpoints
     public async Task<List<string>> GetTagsByCategory(ArticleCategoryEnum category, CancellationToken cancellationToken = default)
         => await _client.Get<string>($"{Endpoint}/tags/{category.ToString().ToLower()}", cancellationToken);
 
-    public async Task<ArticleViewVm?> AddArticle(EditArticleWrapper vm, CancellationToken cancellationToken = default)
-        => await _client.Upload<AddArticleVm, ArticleViewVm>(HttpMethod.Post, Endpoint, vm, vm.Images, cancellationToken);
+    public async Task<ArticleViewVm?> Add(EditArticleWrapper vm, CancellationToken cancellationToken = default)
+        => await _client.Upload<EditArticleVm, ArticleViewVm>(HttpMethod.Post, Endpoint, vm, vm.Images, cancellationToken);
 
-    public async Task<ArticleViewVm?> UpdateArticle(EditArticleWrapper vm, CancellationToken cancellationToken = default)
+    public async Task<ArticleViewVm?> Update(EditArticleWrapper vm, CancellationToken cancellationToken = default)
         => await _client.Upload<EditArticleVm, ArticleViewVm>(HttpMethod.Put, Endpoint, vm, vm.Images, cancellationToken);
 
     private void AttachApiKey(ArticleVm? vm)

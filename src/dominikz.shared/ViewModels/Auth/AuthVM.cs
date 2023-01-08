@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 
 #pragma warning disable CS8618
 namespace dominikz.shared.ViewModels.Auth;

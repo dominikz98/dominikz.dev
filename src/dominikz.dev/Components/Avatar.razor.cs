@@ -6,5 +6,5 @@ namespace dominikz.dev.Components;
 public partial class Avatar
 {
     [Parameter]
-    public PersonVM? Person { get; set; }
+    public PersonVm? Person { get; set; }
 }

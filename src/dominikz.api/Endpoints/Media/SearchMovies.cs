@@ -3,7 +3,7 @@ using dominikz.api.Models;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
 using dominikz.shared;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using MediatR;
@@ -37,23 +37,28 @@ public class SearchMovies : EndpointController
     }
 }
 
-public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVM>> { }
+public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVm>> { }
 
-public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IReadOnlyCollection<MovieVM>>
+public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IReadOnlyCollection<MovieVm>>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
+    private readonly CredentialsProvider _credentials;
 
-    public SearchMoviesQueryHandler(DatabaseContext database, ILinkCreator linkCreator)
+    public SearchMoviesQueryHandler(DatabaseContext database, ILinkCreator linkCreator, CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
+        _credentials = credentials;
     }
 
-    public async Task<IReadOnlyCollection<MovieVM>> Handle(SearchMoviesQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<MovieVm>> Handle(SearchMoviesQuery request, CancellationToken cancellationToken)
     {
         var query = _database.From<Movie>();
 
+        if (_credentials.HasPermission(PermissionFlags.Media) == false)
+            query = query.Where(x => x.PublishDate != null);
+        
         if (request.Genres is not null or MovieGenresFlags.ALL)
             foreach (var genre in request.Genres.Value.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));

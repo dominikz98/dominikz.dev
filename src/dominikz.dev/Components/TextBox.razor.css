@@ -13,14 +13,14 @@ input:active {
     border-radius: 5px;
 }
 
-.textbox {
+.inputbox {
     display: flex;
     align-items: center;
     border-radius: 0 5px 5px 0;
     width: 100%;
 }
 
-.textbox-icon {
+.inputbox-icon {
     display: flex;
     align-items: center;
     padding-right: 8px;

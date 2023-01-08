@@ -7,6 +7,7 @@ using dominikz.dev.Endpoints;
 using dominikz.dev.Extensions;
 using dominikz.dev.Utils;
 using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.Filter;
 using dominikz.shared.ViewModels.Media;
 using Microsoft.AspNetCore.Components;
@@ -23,12 +24,14 @@ public partial class Media
     [Inject] protected NavigationManager? NavManager { get; set; }
     [Inject] protected BrowserService? Browser { get; set; }
     [Inject] protected ToastService? Toast { get; set; }
+    [Inject] protected CredentialStorage? Credentials { get; set; }
 
-    private List<MediaPreviewVM> _previews = new();
-    private List<MovieVM> _movies = new();
-    private List<GameVM> _games = new();
-    private List<BookVM> _books = new();
-
+    private List<MediaPreviewVm> _previews = new();
+    private List<MovieVm> _movies = new();
+    private List<GameVm> _games = new();
+    private List<BookVm> _books = new();
+    private bool _hasCreatePermission;
+    
     private bool _isTableView;
     private TextBox? _searchbox;
     private TabControl? _categoryTabCtrl;
@@ -40,6 +43,8 @@ public partial class Media
 
     protected override async Task OnInitializedAsync()
     {
+        _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Media);
+        
         _previews = await MediaEndpoints!.GetPreview();
         NavManager!.LocationChanged += async (_, _) => await SearchByCategory();
         await SearchByCategory();

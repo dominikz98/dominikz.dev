@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels;
 
 namespace dominikz.dev.Components.Instruments;

@@ -1,6 +1,6 @@
 ﻿using dominikz.dev.Endpoints;
 using dominikz.dev.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Blog;
 using Microsoft.AspNetCore.Components;
 

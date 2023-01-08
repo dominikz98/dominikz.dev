@@ -1,8 +1,11 @@
 ﻿
 <div class="rating">
 
-    <span>(@(Value))&nbsp;</span>
-
+    @if (ShowValue)
+    {
+        <span>(@(Value))&nbsp;</span>    
+    }
+    
     <div class="rating-stars">
         @for (int i = 0; i < FullStars; i++)
         {

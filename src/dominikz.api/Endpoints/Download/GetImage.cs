@@ -1,7 +1,7 @@
 ﻿using dominikz.api.Models;
 using dominikz.api.Models.ViewModels;
 using dominikz.api.Provider;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using HeyRed.Mime;
 using ImageMagick;
 using MediatR;

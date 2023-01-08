@@ -1,7 +1,7 @@
 ﻿using dominikz.api.Mapper;
 using dominikz.api.Provider;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using dominikz.shared.ViewModels.Media;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,22 +28,24 @@ public class GetPreview : EndpointController
     }
 }
 
-public record GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVM>>;
+public record GetPreviewQuery : IRequest<IReadOnlyCollection<MediaVm>>;
 
-public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCollection<MediaVM>>
+public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCollection<MediaVm>>
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
+    private readonly CredentialsProvider _credentials;
 
-    public GetFoodsQueryHandler(DatabaseContext database, ILinkCreator linkCreator)
+    public GetFoodsQueryHandler(DatabaseContext database, ILinkCreator linkCreator, CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
+        _credentials = credentials;
     }
 
-    public async Task<IReadOnlyCollection<MediaVM>> Handle(GetPreviewQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<MediaVm>> Handle(GetPreviewQuery request, CancellationToken cancellationToken)
     {
-        var previews = new List<MediaPreviewVM>();
+        var previews = new List<MediaPreviewVm>();
 
         foreach (var category in Enum.GetValues<MediaCategoryEnum>())
         {
@@ -56,16 +58,23 @@ public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCo
             previews.AddRange(previewsByCategory);
         }
 
-        return previews.OrderByDescending(x => x.Timestamp).ToList();
+        return previews.OrderByDescending(x => x.PublishDate).ToList();
     }
 
-    private async Task<IReadOnlyCollection<MediaPreviewVM>> GetNewestPreviews(MediaCategoryEnum category, CancellationToken cancellationToken)
-        => await _database.From<Models.Media>()
+    private async Task<IReadOnlyCollection<MediaPreviewVm>> GetNewestPreviews(MediaCategoryEnum category, CancellationToken cancellationToken)
+    {
+        var query = _database.From<Models.Media>()
             .Include(x => x.File)
             .AsNoTracking()
-            .Where(x => x.Category == category)
-            .OrderByDescending(x => x.Timestamp)
+            .Where(x => x.Category == category);
+
+        if (_credentials.HasPermission(PermissionFlags.Media) == false)
+            query = query.Where(x => x.PublishDate != null);
+        
+        return await query
+            .OrderByDescending(x => x.PublishDate)
             .Take(3)
             .MapToPreviewVm()
             .ToListAsync(cancellationToken);
+    }
 }

@@ -1,7 +1,7 @@
 using System.ServiceModel.Syndication;
 using System.Xml;
 using dominikz.api.Utils;
-using dominikz.shared.Contracts;
+using dominikz.shared.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

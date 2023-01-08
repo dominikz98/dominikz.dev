@@ -18,9 +18,9 @@ public class BookEndpoints
         _options = options;
     }
 
-    public async Task<List<BookVM>> Search(BooksFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<BookVm>> Search(BooksFilter filter, CancellationToken cancellationToken = default)
     {
-        var vmList = await _client.Get<BookVM>($"{Endpoint}/search", filter, cancellationToken);
+        var vmList = await _client.Get<BookVm>($"{Endpoint}/search", filter, cancellationToken);
         vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }

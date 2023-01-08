@@ -34,7 +34,7 @@ namespace dominikz.api.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("MdText")
+                    b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -42,7 +42,7 @@ namespace dominikz.api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Title")
@@ -109,7 +109,7 @@ namespace dominikz.api.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Title")
@@ -181,7 +181,7 @@ namespace dominikz.api.Migrations
                     b.Property<Guid>("FileId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("MdText")
+                    b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -337,7 +337,7 @@ namespace dominikz.api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("MdText")
+                    b.Property<string>("Comment")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Plot")

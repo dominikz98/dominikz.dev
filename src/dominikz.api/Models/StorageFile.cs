@@ -1,4 +1,4 @@
-﻿using dominikz.shared.Contracts;
+﻿using dominikz.shared.Enums;
 
 namespace dominikz.api.Models;
 
@@ -8,5 +8,7 @@ public class StorageFile
     public FileCategoryEnum Category { get; set; }
     public FileExtensionEnum Extension { get; set; }
 
-    public ICollection<Media> Medias { get; set; } = new List<Media>();
+    public Media? Media { get; set; }
+    public Person? Person { get; set; }
+    public Article? Article { get; set; }
 }

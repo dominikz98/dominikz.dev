@@ -5,6 +5,7 @@ using dominikz.Client.Extensions;
 using dominikz.Client.Tables;
 using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Clients.Api;

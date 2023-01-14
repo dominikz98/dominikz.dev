@@ -1,5 +1,6 @@
 ﻿using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider;

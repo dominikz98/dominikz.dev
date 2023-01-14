@@ -1,4 +1,6 @@
 ﻿using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
+using dominikz.Domain.Enums.Media;
 
 namespace dominikz.Client.Utils;
 

@@ -1,5 +1,6 @@
 ﻿using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Models;

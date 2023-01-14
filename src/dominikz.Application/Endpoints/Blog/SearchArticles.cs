@@ -1,5 +1,6 @@
 ﻿using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;

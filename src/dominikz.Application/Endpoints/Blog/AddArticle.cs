@@ -2,6 +2,7 @@ using dominikz.Application.Extensions;
 using dominikz.Application.Utils;
 using dominikz.Application.ViewModels;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Files;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;

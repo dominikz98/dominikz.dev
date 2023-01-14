@@ -1,4 +1,5 @@
 ﻿using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;

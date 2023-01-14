@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Options;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;

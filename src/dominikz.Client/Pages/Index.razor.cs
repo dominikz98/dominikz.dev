@@ -1,6 +1,7 @@
 using dominikz.Client.Utils;
 using dominikz.Domain.Constants;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;

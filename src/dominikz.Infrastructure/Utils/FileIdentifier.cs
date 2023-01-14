@@ -1,4 +1,5 @@
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Files;
 using HeyRed.Mime;
 
 namespace dominikz.Infrastructure.Utils;

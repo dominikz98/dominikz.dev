@@ -1,6 +1,7 @@
 ﻿using dominikz.Client.Components.Tables;
 using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.ViewModels.Blog;
 

@@ -1,4 +1,5 @@
 ﻿using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Files;
 
 namespace dominikz.Domain.Models;
 

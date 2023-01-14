@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Files;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Utils;
 using HeyRed.Mime;

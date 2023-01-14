@@ -1,4 +1,5 @@
 ﻿using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Media;

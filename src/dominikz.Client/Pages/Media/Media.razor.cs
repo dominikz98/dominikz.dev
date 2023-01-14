@@ -7,6 +7,7 @@ using dominikz.Client.Tables;
 using dominikz.Client.Utils;
 using dominikz.Domain.Contracts;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Clients.Api;

@@ -1,6 +1,7 @@
 using dominikz.Client.Extensions;
 using dominikz.Client.Wrapper;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Structs;
 using dominikz.Domain.ViewModels;
 using dominikz.Infrastructure.Clients.Api;

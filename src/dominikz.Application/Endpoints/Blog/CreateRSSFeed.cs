@@ -2,6 +2,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

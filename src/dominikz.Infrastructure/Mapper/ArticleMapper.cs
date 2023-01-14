@@ -1,6 +1,7 @@
 ﻿using System.ServiceModel.Syndication;
 using dominikz.Domain.Constants;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels;
 using dominikz.Domain.ViewModels.Blog;

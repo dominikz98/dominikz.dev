@@ -1,5 +1,6 @@
 ﻿using dominikz.Domain.Contracts;
 using dominikz.Domain.Enums;
+using dominikz.Domain.Enums.Blog;
 
 namespace dominikz.Domain.Filter;
 

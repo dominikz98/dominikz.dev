@@ -1,4 +1,4 @@
-﻿namespace dominikz.Domain.Enums;
+﻿namespace dominikz.Domain.Enums.Blog;
 
 public enum ArticleCategoryEnum
 {

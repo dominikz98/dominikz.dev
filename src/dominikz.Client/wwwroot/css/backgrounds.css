@@ -1,0 +1,16 @@
+﻿
+.page-index {
+    background: linear-gradient(155deg, rgba(108,113,111,0.5) 11%, rgba(142,166,213,0.5) 45%, rgba(1,18,22,0.5) 90%);
+}
+
+.page-blog {
+    background: linear-gradient(135deg, rgba(60,5,92,0.5) 9%, rgba(24,3,111,0.5) 35%, rgba(1,18,22,0.5) 90%);
+}
+
+.page-media {
+    background: linear-gradient(155deg, rgba(232,225,78,0.5) 11%, rgba(3,76,111,0.5) 45%, rgba(1,18,22,0.5) 90%);
+}
+
+.page-music {
+    background: linear-gradient(155deg, rgba(33,167,99,0.5) 11%, rgba(96,134,209,0.5) 45%, rgba(1,18,22,0.5) 90%);
+}

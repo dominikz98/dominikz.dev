@@ -1,0 +1,89 @@
+﻿@page "/media/movie/{movieid:guid}"
+@using dominikz.Client.Utils
+@using dominikz.Domain.Extensions
+
+<div class="movie">
+    @if (_movie is not null)
+    {
+        <div>
+            <h2>@_movie.Title</h2>
+
+                @if (_hasCreatePermission)
+                {
+                    <div class="flex-row">
+                        <div class="admin-menu-element gap">
+                            <IconButton OnClick="@(() => NavManager!.NavigateTo($"/media/movie/edit/{_movie.Id}"))" Icon="fa-solid fa-pen-to-square"/>
+                        </div>
+                    </div>
+                    <hr/>
+                }
+            
+            <div class="flex-row gap">
+
+                <span>@($"🕑 {_movie.Year}")</span>
+                <span>@($"🗓 {_movie.Runtime.Hours}h {_movie.Runtime.Minutes}m")</span>
+
+                <Rating Value="_movie.Rating" />
+
+                @foreach (var genre in _movie.Genres.GetFlags().ToArray()[1..])
+                {
+                    <span>@EnumFormatter.ToString(genre)</span>
+                }
+            </div>
+
+            <hr />
+        </div>
+
+        <div class="movie-preview">
+            <img src="@_movie.ImageUrl"  alt="Movie Poster"/>
+            <iframe class="trailer" src="@($"https://www.youtube.com/embed/{_movie.YoutubeId}?autoplay=1&mute=1&controls=0")"></iframe>
+        </div>
+
+        @((MarkupString)_movie.Plot)
+
+        @if (!string.IsNullOrWhiteSpace(_movie.Comment))
+        {
+            <div class="movie-comment">
+                <img src="@_movie.AuthorImageUrl"  alt="Author Image"/>
+                @((MarkupString)_movie.Comment)
+            </div>
+        }
+
+        <CardGrid>
+
+            @if (_movie.Directors.Count > 0)
+            {
+                <div class="movie-stars">
+                    <span>Directors</span>
+                    @foreach (var director in _movie.Directors)
+                    {
+                        <Avatar Person="@director" />
+                    }
+                </div>
+            }
+
+            @if (_movie.Writers.Count > 0)
+            {
+                <div class="movie-stars">
+                    <span>Writers</span>
+                    @foreach (var writer in _movie.Writers)
+                    {
+                        <Avatar Person="@writer" />
+                    }
+                </div>
+            }
+
+            @if (_movie.Stars.Count > 0)
+            {
+                <div class="movie-stars">
+                    <span>Stars</span>
+                    @foreach (var star in _movie.Stars)
+                    {
+                        <Avatar Person="@star" />
+                    }
+                </div>
+            }
+
+        </CardGrid>
+    }
+</div>

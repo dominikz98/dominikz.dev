@@ -1,0 +1,238 @@
+@using Microsoft.AspNetCore.Components
+@using dominikz.Domain.Enums
+
+@page "/media/movie/edit"
+@page "/media/movie/edit/{movieid:guid}"
+
+@if (_isEnabled == false)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <EditForm EditContext="@_editContext" OnSubmit="@OnSaveClicked">
+    <DataAnnotationsValidator/>
+    
+    <div class="container">
+
+    @* Externals *@
+    <div class="grid-col-2 shrink gap">
+        <div class="grid-label grid-label-span-3">
+            <span>🔗</span>
+        </div>
+
+        <div class="flex-column gap">
+            <TextBox Placeholder="ImdbId"
+                     Value="@_vm.ImdbId"
+                     ValueChanged="OnImdbIdChanged"
+                     DelayInputTrigger="true"/>
+            <ValidationMessage For="@(() => _vm.Title)"/>
+        </div>
+
+        <div class="flex-column gap">
+            <TextBox Placeholder="JustWatchId"
+                     Value="@(_vm.JustWatchId != default ? _vm.JustWatchId.ToString() : string.Empty)"
+                     ValueChanged="OnJustWatchIdChanged"/>
+            <ValidationMessage For="@(() => _vm.JustWatchId)"/>
+        </div>
+
+        <div class="flex-column gap">
+            <TextBox Placeholder="YouTubeId" @bind-Value="_vm.YouTubeId"/>
+            <ValidationMessage For="@(() => _vm.YouTubeId)"/>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    @* General *@
+    <div class="grid-col-3 shrink gap">
+        <div class="grid-label grid-label-span-4">
+            <span>⚙️</span>
+        </div>
+
+        <div class="input-label">
+            <span>Publish Date:</span>
+        </div>
+        <div class="flex-column gap">
+            <DatePicker @bind-Date="_vm.PublishDate"/>
+            <ValidationMessage For="@(() => _vm.PublishDate)"/>
+        </div>
+
+        <div class="input-label">
+            <span>Runtime:</span>
+        </div>
+        <div class="flex-column gap">
+            <TimePicker @bind-Time="_vm.Runtime"/>
+            <ValidationMessage For="@(() => _vm.Runtime)"/>
+        </div>
+
+        <div class="input-label">
+            <span>Publishing Year:</span>
+        </div>
+        <div class="flex-column gap">
+            <NumberPicker @bind-Value="_vm.Year"/>
+            <ValidationMessage For="@(() => _vm.Year)"/>
+        </div>
+
+        <div class="input-label">
+            <span>Genres:</span>
+        </div>
+        <div class="flex-column gap">
+            <ChipSelect T="MovieGenresFlags"
+                        @bind-Selected="_vm.Genres"
+                        AllowMultiSelect="true"
+                        Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
+
+            @if (_genreRecommendations.Count > 0)
+            {
+                <span>Recommendations: @string.Join(", ", _genreRecommendations) </span>
+            }
+
+            <ValidationMessage For="@(() => _vm.Genres)"/>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    @* Text *@
+    <div class="grid-col-2 shrink gap">
+        <div class="grid-label grid-label-span-2">
+            <span>📄</span>
+        </div>
+
+        <div class="flex-column gap">
+            <TextBox Placeholder="Title" @bind-Value="_vm.Title"/>
+            <ValidationMessage For="@(() => _vm.Title)"/>
+        </div>
+
+        <div class="flex-column gap">
+            <TextArea Placeholder="Plot" Rows="5" @bind-Value="_vm.Plot"></TextArea>
+            <ValidationMessage For="@(() => _vm.Plot)"/>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    @* Rating *@
+    <div class="grid-col-2 shrink gap">
+
+        <div class="grid-label grid-label-span-2">
+            <span>⭐</span>
+        </div>
+
+        <div class="flex-column gap">
+            <div class="flex-row gap">
+                <NumberPicker @bind-Value="_vm.Rating" Min="0" Max="100"/>
+                <Rating Value="@_vm.Rating" ShowValue="false"/>
+            </div>
+            <ValidationMessage For="@(() => _vm.Rating)"/>
+        </div>
+
+        <div class="flex-column gap">
+            <TextArea Placeholder="Comment" Rows="5" @bind-Value="_vm.Comment"></TextArea>
+            <ValidationMessage For="@(() => _vm.Comment)"/>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    @* Preview *@
+    <div class="grid-col-2 shrink gap">
+        <div class="grid-label grid-label-span-2">
+            <span>🖼️</span>
+        </div>
+
+        @if (_vm.YouTubeId != string.Empty)
+        {
+            <iframe class="trailer" src="@($"https://www.youtube.com/embed/{_vm.YouTubeId}?autoplay=1&mute=1&controls=0")"></iframe>
+        }
+
+        <div class="flex-column gap">
+            <FilePicker @bind-Selected="_vm.Image" @bind-Files="_posterFiles" MaxFiles="10" MaxSelectedFiles="1"/>
+            <ValidationMessage For="@(() => _vm.Image)"/>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    @* Directors *@
+    @if (_vm.DirectorsWrappers.Count > 0)
+    {
+        <div class="grid-col-2 shrink gap">
+            <div class="grid-label grid-label-span-2">
+                <span>🎬</span>
+            </div>
+
+            <span>Directors</span>
+
+            <div class="flex-column gap">
+                @foreach (var director in _vm.DirectorsWrappers)
+                {
+                    <Person Data="director"/>
+                    <ValidationMessage For="@(() => director.Name)"/>
+                    <ValidationMessage For="@(() => director.Image)"/>
+                    <ValidationMessage For="@(() => director.Category)"/>
+                }
+            </div>
+        </div>
+        <div class="spacer"></div>
+    }
+    
+    @* Writers *@
+    @if (_vm.WritersWrappers.Count > 0)
+    {
+        <div class="grid-col-2 shrink gap">
+            <div class="grid-label grid-label-span-2">
+                <span>📚</span>
+            </div>
+
+            <span>Writers</span>
+
+            <div class="flex-column gap">
+                @foreach (var writer in _vm.WritersWrappers)
+                {
+                    <Person Data="writer"/>
+                    <ValidationMessage For="@(() => writer.Name)"/>
+                    <ValidationMessage For="@(() => writer.Image)"/>
+                    <ValidationMessage For="@(() => writer.Category)"/>
+                }
+            </div>
+        </div>
+        <div class="spacer"></div>
+    }
+    
+    @* Stars *@
+    @if (_vm.StarsWrappers.Count > 0)
+    {
+        <div class="grid-col-2 shrink gap">
+            <div class="grid-label grid-label-span-2">
+                <span>🌟</span>
+            </div>
+
+            <span>Stars</span>
+
+            <div class="flex-column gap">
+                @foreach (var star in _vm.StarsWrappers)
+                {
+                    <Person Data="star"/>
+                    <ValidationMessage For="@(() => star.Name)"/>
+                    <ValidationMessage For="@(() => star.Image)"/>
+                    <ValidationMessage For="@(() => star.Category)"/>
+                }
+            </div>
+        </div>
+        <div class="spacer"></div>
+    }
+    
+    @* Buttons *@
+    <ValidationSummary />
+    
+    <div class="button">
+        <TextButton Text="Save" Disabled="@(!_isEnabled)"/>
+    </div>
+
+    </div>
+    </EditForm>
+}

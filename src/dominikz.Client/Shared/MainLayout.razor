@@ -1,0 +1,24 @@
+﻿@inherits LayoutComponentBase
+@using dominikz.Client.Theme
+
+<PageTitle>dominikz.dev</PageTitle>
+
+<ThemeProvider ClassByUrlChanged="OnClassByUrlChanged" />
+
+<Toast />
+
+<div class="page @_classByUrl">
+
+    <AppBar OnExpandClicked="OnExpandClicked" />
+
+    <div class="content">
+
+        <AppMenue IsExpanded="_isMenuOpen" />
+
+        <div class="main">
+            @Body
+        </div>
+
+    </div>
+
+</div>

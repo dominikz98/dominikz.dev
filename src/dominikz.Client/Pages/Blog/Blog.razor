@@ -1,0 +1,103 @@
+﻿@page "/blog"
+@using dominikz.Client.Utils
+@using dominikz.Domain.Enums
+@using dominikz.Domain.ViewModels.Blog
+@using dominikz.Client.Tables
+@using dominikz.Client.Extensions
+
+<PageTitle>Blog</PageTitle>
+
+<div class="flex-column gap">
+
+    <TextBox @ref="_searchbox"
+             DelayInputTrigger="true"
+             Placeholder="Search ..."
+             Icon="fa-solid fa-magnifying-glass"
+             ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Blog.Search, value))"/>
+
+    <ChipSelect T="ArticleCategoryEnum"
+                Title="Category"
+                @ref="_categorySelect"
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleCategoryEnum>(QueryNames.Blog.Category, value.Count > 0 ? value.First() : null))"
+                Values="Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList()"/>
+
+    <ChipSelect T="ArticleSourceEnum"
+                Title="Source"
+                @ref="_sourceSelect"
+                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleSourceEnum>(QueryNames.Blog.Source, value.Count > 0 ? value.First() : null))"
+                Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
+
+    <div class="flex-row gap">
+
+        @if (_hasCreatePermission)
+        {
+            <div class="admin-menu-element gap">
+                <IconButton OnClick="@(() => NavManager!.NavigateTo("/blog/edit"))" Icon="fa-solid fa-circle-plus"/>
+            </div>    
+        }
+        
+        <div class="menu-element gap">
+            <i class="fa-solid fa-border-top-left"></i>
+            <Switch @bind-State="_isTableView"/>
+            <i class="fa-solid fa-bars-staggered"></i>
+        </div>
+
+        <div class="menu-element">
+            <IconButton OnClick="OnRssFeedClicked" Icon="fa-solid fa-square-rss"/>
+            <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+            <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+        </div>
+    </div>
+
+    @if (_isTableView)
+    {
+        <Table T="ArticleVm"
+               Values="@_articles"
+               Columns="@ArticleTableDefinition.Columns"
+               OnRowClicked="(article) => NavigateToDetail(article.Id)"
+               ShowIndex="true">
+        </Table>
+    }
+    else
+    {
+        <CardGrid>
+            @foreach (var article in _articles)
+            {
+                <VerticalCard Highlight=@article.Featured
+                              Title="@article.Title"
+                              ImageUrl="@article.ImageUrl"
+                              OnClick="() => NavigateToDetail(article.Id)">
+
+                    <div class="blog-card">
+
+                        <div class="flex-column gap">
+                            @if (article.Category != ArticleCategoryEnum.Unknown)
+                            {
+                                <span>@EnumFormatter.ToString(article.Category)</span>
+                            }
+                            else
+                            {
+                                <span>@($"💬 {article.AltCategories}")</span>
+                            }
+                            
+                            @if (article.PublishDate != null)
+                            {
+                                <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>    
+                            }
+                            else
+                            {
+                                <span>DRAFT</span>
+                            }
+                            
+                        </div>
+
+                        <div class="blog-card-author avatar">
+                            <img src="@article.Author!.ImageUrl" alt="Image of article author"/>
+                        </div>
+
+                    </div>
+                </VerticalCard>
+            }
+        </CardGrid>
+    }
+</div>

@@ -1,0 +1,7 @@
+@using Microsoft.AspNetCore.Components
+<div class="flex-row-no-wrap gap">
+    
+    <FilePicker @bind-Selected="Data.Image" MaxFiles="1" MaxSelectedFiles="1" HideUploadIfCompleted="true" />
+    
+    <TextBox @bind-Value="Data.Name" />
+</div>

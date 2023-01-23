@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<GameEndpoints>()
             .AddSingleton<BookEndpoints>()
             .AddSingleton<DownloadEndpoints>()
+            .AddSingleton<SongsEndpoints>()
             .AddHttpClient<ApiClient>((sp, client) =>
             {
                 var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;

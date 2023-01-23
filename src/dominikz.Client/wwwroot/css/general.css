@@ -10,6 +10,12 @@
     align-items: center;
 }
 
+.flex-row-no-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .avatar img {
     width: 50px;
     border-radius: 50px;

@@ -57,6 +57,25 @@ public class DatabaseContext : DbContext
         var file = builder.Entity<StorageFile>();
         file.ToTable("files");
         file.HasKey(x => x.Id);
+
+        var song = builder.Entity<Song>();
+        song.ToTable("songs");
+        song.HasKey(x => x.Id);
+
+        var songSegment = builder.Entity<SongSegment>();
+        songSegment.ToTable("songs_segments");
+        songSegment.HasKey(x => new { x.Index, x.SongId });
+        songSegment.Property(x => x.TopNotes).HasConversion<NoteCollectionConverter>();
+        songSegment.Property(x => x.BottomNotes).HasConversion<NoteCollectionConverter>();
+    }
+}
+
+class NoteCollectionConverter : ValueConverter<NoteCollection, string>
+{
+    public NoteCollectionConverter()
+        : base(x => x.ToString(),
+            x => new NoteCollection(x))
+    {
     }
 }
 

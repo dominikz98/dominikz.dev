@@ -55,12 +55,6 @@
 .trailer {
     border: 0;
 }
-.flex-row-no-wrap {
-    display: flex;
-    flex-direction: row;
-    align-items: start;
-}
-
 
 @media (max-width: 1280px) {
 

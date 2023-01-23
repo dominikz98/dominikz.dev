@@ -18,3 +18,7 @@
 .icon-button-selected {
     background-color: var(--theme-onprimary);
 }
+
+.icon-button-disabled {
+    opacity: 0.6;
+}

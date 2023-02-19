@@ -3,7 +3,7 @@ namespace dominikz.Domain.ViewModels.Media;
 public class MovieTemplateVm
 {
     public string ImdbId { get; set; } = string.Empty;
-    public int JustWatchId { get; set; }
+    public int? JustWatchId { get; set; }
     public string Title { get; set; } = string.Empty;
     public List<string> GenreRecommendations { get; set; } = new();
     public int Rating { get; set; }

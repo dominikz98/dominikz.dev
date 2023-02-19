@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace dominikz.Client.Pages.Media;
 
-public partial class Media
+public partial class Media : ComponentBase
 {
     [Inject] protected MediaEndpoints? MediaEndpoints { get; set; }
     [Inject] protected MovieEndpoints? MovieEndpoints { get; set; }
@@ -32,7 +32,7 @@ public partial class Media
     private List<GameVm> _games = new();
     private List<BookVm> _books = new();
     private bool _hasCreatePermission;
-    
+
     private bool _isTableView;
     private TextBox? _searchbox;
     private TabControl? _categoryTabCtrl;
@@ -45,31 +45,33 @@ public partial class Media
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Media);
-        
         _previews = await MediaEndpoints!.GetPreview();
-        NavManager!.LocationChanged += async (_, _) => await SearchByCategory();
-        await SearchByCategory();
 
-        var category = NavManager.GetQueryParamByKey<MediaCategoryEnum>(QueryNames.Media.Category) ?? MediaCategoryEnum.Movie;
+        var category = NavManager!.GetQueryParamByKey<MediaCategoryEnum>(QueryNames.Media.Category) ?? MediaCategoryEnum.Movie;
         _categoryTabCtrl?.ShowPage((int)category);
 
-        var search = NavManager.GetQueryParamByKey(QueryNames.Media.Search);
+        var search = NavManager!.GetQueryParamByKey(QueryNames.Media.Search);
         _searchbox?.SetValue(search);
 
         var filter = CreateFilterByCategory(category);
-        if (filter is MoviesFilter mFilter)
-            _movieGenreSelect?.Select(mFilter.Genres);
+        switch (filter)
+        {
+            case MoviesFilter mFilter:
+                _movieGenreSelect?.Select(mFilter.Genres);
+                break;
+            case BooksFilter bFilter:
+                _bookGenreSelect?.Select(bFilter.Genres);
+                _bookLanguageSelect?.Select(bFilter.Language);
+                break;
+            case GamesFilter gFilter:
+                _gameGenreSelect?.Select(gFilter.Genres);
+                _gamePlatformSelect?.Select(gFilter.Platform);
+                break;
+        }
 
-        else if (filter is BooksFilter bFilter)
-        {
-            _bookGenreSelect?.Select(bFilter.Genres);
-            _bookLanguageSelect?.Select(bFilter.Language);    
-        }
-        else if (filter is GamesFilter gFilter)
-        {
-            _gameGenreSelect?.Select(gFilter.Genres);
-            _gamePlatformSelect?.Select(gFilter.Platform);    
-        }
+        var init = NavManager!.TrackQuery(SearchByCategory);
+        if (init)
+            await SearchByCategory();
     }
 
     private void OnPageChanged(int pageId)

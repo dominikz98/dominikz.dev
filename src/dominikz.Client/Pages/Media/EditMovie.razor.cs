@@ -74,13 +74,13 @@ public partial class EditMovie
         return true;
     }
 
-    private void OnJustWatchIdChanged(string? jwIdRaw)
-    {
-        if (int.TryParse(jwIdRaw, out var jwId) == false)
-            return;
-
-        _vm.JustWatchId = jwId;
-    }
+    // private void OnJustWatchIdChanged(string? jwIdRaw)
+    // {
+    //     if (int.TryParse(jwIdRaw, out var jwId) == false)
+    //         return;
+    //
+    //     _vm.JustWatchId = jwId;
+    // }
 
     private async Task OnImdbIdChanged(string? imdbId)
     {
@@ -165,6 +165,7 @@ public partial class EditMovie
         var files = _vm.StarsWrappers.SelectMany(x => x.Image)
             .Union(_vm.DirectorsWrappers.SelectMany(x => x.Image))
             .Union(_vm.WritersWrappers.SelectMany(x => x.Image))
+            .Union(_vm.Image)
             .ToList();
         
         var movie = MovieId == null

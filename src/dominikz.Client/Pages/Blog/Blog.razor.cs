@@ -32,13 +32,15 @@ public partial class Blog
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
-        NavManager!.LocationChanged += async (_, _) => await SearchArticles();
-        await SearchArticles();
-
+        
         var filter = CreateFilter();
         _searchbox?.SetValue(filter.Text);
         _categorySelect?.Select(filter.Category);
         _sourceSelect?.Select(filter.Source);
+        
+        var init = NavManager!.TrackQuery(SearchArticles);
+        if (init)
+            await SearchArticles();
     }
 
     private async Task SearchArticles()

@@ -32,12 +32,12 @@ else
             <ValidationMessage For="@(() => _vm.Title)"/>
         </div>
 
-        <div class="flex-column gap">
-            <TextBox Placeholder="JustWatchId"
-                     Value="@(_vm.JustWatchId != default ? _vm.JustWatchId.ToString() : string.Empty)"
-                     ValueChanged="OnJustWatchIdChanged"/>
-            <ValidationMessage For="@(() => _vm.JustWatchId)"/>
-        </div>
+        @* <div class="flex-column gap"> *@
+        @*     <TextBox Placeholder="JustWatchId" *@
+        @*              Value="@(_vm.JustWatchId != default ? _vm.JustWatchId.ToString() : string.Empty)" *@
+        @*              ValueChanged="OnJustWatchIdChanged"/> *@
+        @*     <ValidationMessage For="@(() => _vm.JustWatchId)"/> *@
+        @* </div> *@
 
         <div class="flex-column gap">
             <TextBox Placeholder="YouTubeId" @bind-Value="_vm.YouTubeId"/>

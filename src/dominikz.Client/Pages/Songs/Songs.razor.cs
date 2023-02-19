@@ -19,11 +19,12 @@ public partial class Songs
 
     protected override async Task OnInitializedAsync()
     {
-        NavManager!.LocationChanged += async (_, _) => await SearchSongs();
-        await SearchSongs();
-
         var filter = CreateFilter();
         _searchbox?.SetValue(filter.Text);
+        
+        var init = NavManager!.TrackQuery(SearchSongs);
+        if (init)
+            await SearchSongs();
     }
 
     private async Task SearchSongs()

@@ -11,7 +11,6 @@ public partial class Song
     [Inject] protected SongsEndpoints? Endpoints { get; set; }
     private SongVm? _song;
     private Piano? _piano;
-    private SongChart? _chart;
 
     protected override async Task OnInitializedAsync()
     {
@@ -20,11 +19,5 @@ public partial class Song
 
         _song = await Endpoints!.GetById(SongId.Value);
         Console.WriteLine("Song loaded!");
-    }
-
-    private void OnNoteChanged(List<NoteArgs> notes)
-    {
-        foreach (var note in notes)
-            _chart?.ToggleSelect(note.SegmentIndex, note.LaneIndex, Tone.FromNote(note.Note));
     }
 }

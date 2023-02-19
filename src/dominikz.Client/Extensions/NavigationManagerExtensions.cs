@@ -86,6 +86,8 @@ public static class NavigationManagerExtensions
         return updatedUrl;
     }
 
-    public static string AttachOrUpdateQueryParam<T>(this NavigationManager navigationManager, string key, T? value, bool handleDefaultAsNull = true, bool navigate = true) where T : struct
+    public static void AttachOrUpdateQueryParam<T>(this NavigationManager navigationManager, string key, T? value, bool handleDefaultAsNull = true, bool navigate = true) where T : struct
         => AttachOrUpdateRawQueryParam(navigationManager, key, value?.ToString(), handleDefaultAsNull, navigate);
+    
+    
 }

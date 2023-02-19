@@ -13,7 +13,7 @@ public class Movie : Media
     public TimeSpan Runtime { get; set; }
     public string ImdbId { get; set; } = string.Empty;
     public string YoutubeId { get; set; } = string.Empty;
-    public int JustWatchId { get; set; }
+    public int? JustWatchId { get; set; }
 
     public List<MoviesPersonsMapping> MoviesPersonsMappings { get; set; } = new();
 }

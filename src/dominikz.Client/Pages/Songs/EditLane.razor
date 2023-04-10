@@ -5,7 +5,7 @@
 <div class="flex-column gap">
 
 <div class="flex-row gap">
-    <span>Positions: </span>
+    <span>Orders: </span>
     <NumberPicker @bind-Value="Positions"/>
 </div>
 
@@ -13,12 +13,12 @@
 {
     <div class="flex-row gap">
         <span>Tact: </span>
-        <ComboBox T="TactEnum" @bind-Selected="Value.Tact" Values="@(Enum.GetValues<TactEnum>().ToList())"/>
+        <EnumPicker T="TactEnum" @bind-Selected="Value.Tact" Values="@(Enum.GetValues<TactEnum>().ToList())"/>
     </div>
 
     <div class="flex-row gap">
         <span>Clef: </span>
-        <ComboBox T="ClefEnum" @bind-Selected="Value.Clef" Values="@(Enum.GetValues<ClefEnum>().ToList())"/>
+        <EnumPicker T="ClefEnum" @bind-Selected="Value.Clef" Values="@(Enum.GetValues<ClefEnum>().ToList())"/>
     </div>
 
     <div class="flex-row gap">
@@ -28,8 +28,8 @@
             <div class="note-input flex-column gap">
                 <NumberPicker @bind-Value="note.Position"/>
                 <NumberPicker @bind-Value="note.Segment"/>
-                <ComboBox T="NoteEnum" @bind-Selected="note.Note" Values="@(Enum.GetValues<NoteEnum>().Where(x => x.ToString().Length == 1).ToList())"/>
-                <ComboBox T="NoteTypeEnum" @bind-Selected="note.Type" Values="@(Enum.GetValues<NoteTypeEnum>().ToList())"/>
+                <EnumPicker T="NoteEnum" @bind-Selected="note.Note" Values="@(Enum.GetValues<NoteEnum>().Where(x => x.ToString().Length == 1).ToList())"/>
+                <EnumPicker T="NoteTypeEnum" @bind-Selected="note.Type" Values="@(Enum.GetValues<NoteTypeEnum>().ToList())"/>
                 <IconButton Icon="fa-solid fa-circle-minus" OnClick="@(() => Value!.Notes.Remove(note))"/>
             </div>
 

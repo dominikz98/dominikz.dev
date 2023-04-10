@@ -2,7 +2,7 @@ using dominikz.Application.Utils;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

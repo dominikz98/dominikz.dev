@@ -11,7 +11,7 @@ public static class MediaMapper
             Id = media.Id,
             Title = media.Title,
             PublishDate = media.PublishDate,
-            ImageUrl = media.File!.Id.ToString(),
+            ImageUrl = media.Id.ToString(),
             Category = media.Category
         });
 }

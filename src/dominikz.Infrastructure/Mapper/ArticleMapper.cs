@@ -1,12 +1,8 @@
 ﻿using System.ServiceModel.Syndication;
-using dominikz.Domain.Constants;
-using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Models;
-using dominikz.Domain.ViewModels;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Clients.Noobit;
-using dominikz.Infrastructure.Utils;
 
 namespace dominikz.Infrastructure.Mapper;
 
@@ -24,21 +20,14 @@ public static class ArticleMapper
         { ArticleCategoryEnum.Project, Guid.Parse("11f6e4c8-7efa-11ed-8cfa-d20ab77c47ec") },
     };
 
-    public static Article ApplyChanges(this Article original, EditArticleVm vm, string contentType)
+    public static Article ApplyChanges(this Article original, EditArticleVm vm)
     {
         original.Id = vm.Id;
         original.Title = vm.Title;
         original.PublishDate = vm.PublishDate;
-        original.AuthorId = Persons.DominikZettlId;
         original.Category = vm.Category;
         original.Tags = vm.Tags;
         original.HtmlText = vm.HtmlText;
-        original.File ??= new StorageFile();
-        original.File.Id = vm.Id;
-        
-        var extension = FileIdentifier.GetExtensionByContentType(contentType);
-        original.File.Category = FileIdentifier.GetCategoryByExtension(extension);
-        original.File.Extension = extension;
         return original;
     }
 
@@ -46,8 +35,7 @@ public static class ArticleMapper
         => query.Select(article => new ArticleVm()
         {
             Id = article.Id,
-            Author = article.Author!.MapToVm(),
-            ImageUrl = article.File!.Id.ToString(),
+            ImageUrl = article.Id.ToString(),
             Title = article.Title,
             PublishDate = article.PublishDate,
             Category = article.Category,
@@ -62,12 +50,6 @@ public static class ArticleMapper
             PublishDate = article.Date,
             Category = Enum.Parse<ArticleCategoryEnum>(article.Topic.Blog.SeoName, true),
             Path = article.Url,
-            Author = new PersonVm()
-            {
-                Id = Persons.TobiasHaimerlId,
-                Name = "Tobias Haimerl",
-                ImageUrl = Persons.TobiasHaimerlId.ToString()
-            },
             ImageUrl = article.ImageUrl,
             Source = ArticleSourceEnum.Noobit
         });
@@ -89,12 +71,6 @@ public static class ArticleMapper
                 Category = sysCategory ?? ArticleCategoryEnum.Unknown,
                 AltCategories = string.Join(", ", item.Categories.Take(2).Select(x => x.Name)),
                 Path = item.Links.FirstOrDefault()?.Uri.ToString() ?? string.Empty,
-                Author = new PersonVm()
-                {
-                    Id = Persons.MarkusLieblId,
-                    Name = "Markus Liebl",
-                    ImageUrl = Persons.MarkusLieblId.ToString()
-                },
                 ImageUrl = imageId.ToString(),
                 Source = ArticleSourceEnum.Medlan
             };
@@ -123,8 +99,7 @@ public static class ArticleMapper
         => new()
         {
             Id = article.Id,
-            Author = article.Author!.MapToVm(),
-            ImageUrl = article.File!.Id.ToString(),
+            ImageUrl = article.Id.ToString(),
             Title = article.Title,
             PublishDate = article.PublishDate,
             Category = article.Category,

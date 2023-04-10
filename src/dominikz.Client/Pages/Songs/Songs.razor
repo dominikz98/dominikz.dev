@@ -12,7 +12,7 @@
              DelayInputTrigger="true"
              Placeholder="Search ..."
              Icon="fa-solid fa-magnifying-glass"
-             ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Songs.Search, value))"/>
+             ValueChanged="@(value => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Songs.Search, value))"/>
 
     <div class="flex-row gap">
         <div class="menu-element gap">
@@ -27,7 +27,7 @@
         <Table T="SongVm"
                Values="@_songs"
                Columns="@SongsTableDefinition.Columns"
-               OnRowClicked="@((song) => NavManager!.NavigateTo($"/songs/{song.Id}"))"
+               OnRowClicked="@(song => NavManager!.NavigateTo($"/songs/{song.Id}"))"
                ShowIndex="true">
         </Table>
     }

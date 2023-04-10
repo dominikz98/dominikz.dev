@@ -1,5 +1,5 @@
-﻿using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Blog;
+﻿using dominikz.Domain.Enums.Blog;
+using dominikz.Domain.Enums.Cookbook;
 using dominikz.Domain.Enums.Media;
 
 namespace dominikz.Client.Utils;
@@ -7,7 +7,7 @@ namespace dominikz.Client.Utils;
 public static class EnumFormatter
 {
     private const string Default = "Unknown";
- 
+
     public static string ToString<TEnum>(IReadOnlyCollection<TEnum> values) where TEnum : struct
         => string.Join(", ", values.Select(ToString));
 
@@ -15,30 +15,26 @@ public static class EnumFormatter
     {
         if (value is MediaCategoryEnum mediaCategory)
             return ToString(mediaCategory);
-
-        else if (value is MovieGenresFlags movieGenre)
+        if (value is MovieGenresFlags movieGenre)
             return ToString(movieGenre);
-
-        else if (value is ArticleCategoryEnum articleCategory)
+        if (value is ArticleCategoryEnum articleCategory)
             return ToString(articleCategory);
-
-        else if (value is ArticleSourceEnum articleSource)
+        if (value is ArticleSourceEnum articleSource)
             return ToString(articleSource);
-    
-        else if (value is GamePlatformEnum platform)
+        if (value is GamePlatformEnum platform)
             return ToString(platform);
-
-        else if (value is GameGenresFlags gameGenre)
+        if (value is GameGenresFlags gameGenre)
             return ToString(gameGenre);
-
-        else if (value is BookLanguageEnum language)
+        if (value is BookLanguageEnum language)
             return ToString(language);
-
-        else if (value is BookGenresFlags bookGenre)
+        if (value is BookGenresFlags bookGenre)
             return ToString(bookGenre);
-
-        else
-            return value.ToString()!;
+        if (value is RecipeFlags recipeFlag)
+            return ToString(recipeFlag);
+        if (value is RecipeType recipeType)
+            return ToString(recipeType);
+        
+        return value.ToString()!;
     }
 
     private static string ToString(MediaCategoryEnum category)
@@ -154,13 +150,74 @@ public static class EnumFormatter
             BookLanguageEnum.English => "English",
             _ => Default
         };
-    
+
     private static string ToString(ArticleSourceEnum sourceEnum)
         => sourceEnum switch
         {
             ArticleSourceEnum.Dz => "Dominik",
             ArticleSourceEnum.Medlan => "Medlan",
             ArticleSourceEnum.Noobit => "Noobit",
+            _ => Default
+        };
+
+    private static string ToString(RecipeFlags recipe)
+        => recipe switch
+        {
+            RecipeFlags.Vegetarian => "🍏 Vegetarian",
+            RecipeFlags.Vegan => "🥬 Vegan",
+            RecipeFlags.GlutenFree => "🌾 Gluten Free",
+            RecipeFlags.LactoseFree => "🥛 Lactose Free",
+            _ => Default
+        };
+
+    private static string ToString(RecipeType recipe)
+        => recipe switch
+        {
+            RecipeType.Starter => "🍲 Starter",
+            RecipeType.Main => "🥗 Main",
+            RecipeType.Dessert => "🍨 Dessert",
+            RecipeType.Cake => "🧁 Cake",
+            _ => throw new ArgumentOutOfRangeException(nameof(recipe), recipe, null)
+        };
+    
+    public static string ToIcon(RecipeType recipe)
+        => recipe switch
+        {
+            RecipeType.Starter => "🍲",
+            RecipeType.Main => "🥗",
+            RecipeType.Dessert => "🍨",
+            RecipeType.Cake => "🧁",
+            _ => throw new ArgumentOutOfRangeException(nameof(recipe), recipe, null)
+        };
+    
+    public static string ToText(RecipeType recipe)
+        => recipe switch
+        {
+            RecipeType.Starter => "Starter",
+            RecipeType.Main => "Main",
+            RecipeType.Dessert => "Dessert",
+            RecipeType.Cake => "Cake",
+            _ => throw new ArgumentOutOfRangeException(nameof(recipe), recipe, null)
+        };
+
+
+    public static string ToIcon(RecipeFlags recipe)
+        => recipe switch
+        {
+            RecipeFlags.Vegetarian => "🍏",
+            RecipeFlags.Vegan => "🥬",
+            RecipeFlags.GlutenFree => "🌾",
+            RecipeFlags.LactoseFree => "🥛",
+            _ => Default
+        };
+    
+    public static string ToText(RecipeFlags recipe)
+        => recipe switch
+        {
+            RecipeFlags.Vegetarian => "Vegetarian",
+            RecipeFlags.Vegan => "Vegan",
+            RecipeFlags.GlutenFree => "Gluten Free",
+            RecipeFlags.LactoseFree => "Lactose Free",
             _ => Default
         };
 }

@@ -8,6 +8,7 @@ using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,7 +102,6 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         // filter
         if (!string.IsNullOrWhiteSpace(request.Text))
             clone = clone.Where(x => x.Title.Contains(request.Text, StringComparison.OrdinalIgnoreCase)
-                                     || x.Author!.Name.Contains(request.Text, StringComparison.OrdinalIgnoreCase)
                                      || x.Category.ToString().Contains(request.Text, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
@@ -116,11 +116,6 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     {
         foreach (var article in articles)
         {
-            if (article.Author != null
-                && article.Author.ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false
-                && Guid.TryParse(article.Author.ImageUrl, out _))
-                article.Author!.ImageUrl = _linkCreator.CreateImageUrl(article.Author.ImageUrl, ImageSizeEnum.Avatar);
-
             if (article.ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false
                 && Guid.TryParse(article.ImageUrl, out _))
                 article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
@@ -143,9 +138,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
     private async Task<IReadOnlyCollection<ArticleVm>> LoadFromDatabase(SearchArticlesQuery request,
         CancellationToken cancellationToken)
     {
-        var query = _database.From<Article>()
-            .Include(x => x.Author!.File)
-            .AsNoTracking();
+        var query = _database.From<Article>().AsNoTracking();
 
         // pre filter
         if (_credentials.HasPermission(PermissionFlags.Blog) == false)
@@ -155,8 +148,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             query = query.Where(x => x.Category == request.Category);
 
         if (!string.IsNullOrWhiteSpace(request.Text))
-            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%")
-                                     || EF.Functions.Like(x.Author!.Name, $"%{request.Text}%"));
+            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
 
         var articles = await query.OrderByDescending(x => x.PublishDate)
             .ThenBy(x => x.Title)

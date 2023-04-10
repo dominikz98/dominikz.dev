@@ -1,6 +1,7 @@
 ﻿using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
+using dominikz.Domain.ViewModels;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
@@ -27,11 +28,6 @@ public class MovieEndpoints
 
         // attach image api keys
         vm.AttachApiKey(_options.Value.Key);
-        vm.AuthorImageUrl = ViewModelExtensions.AttachApiKey(vm.AuthorImageUrl, _options.Value.Key);
-        vm.Writers.AttachApiKey(_options.Value.Key);
-        vm.Stars.AttachApiKey(_options.Value.Key);
-        vm.Directors.AttachApiKey(_options.Value.Key);
-
         return vm;
     }
 
@@ -53,6 +49,12 @@ public class MovieEndpoints
 
     public async Task<MovieDetailVm?> Update(EditMovieVm vm, List<FileStruct> files, CancellationToken cancellationToken = default)
         => await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Put, Endpoint, vm, files, cancellationToken);
+
+    public async Task<StreamTokenVm?> CreateStreamingToken(Guid movieId, CancellationToken cancellationToken = default)
+        => await _client.Post<EmptyVm, StreamTokenVm>($"{Endpoint}/{movieId}/stream/token", new(), false, cancellationToken);
+
+    public string CreateStreamingUrl(Guid movieId, string token)
+        => $"{ApiClient.Prefix}/{Endpoint}/{movieId}/stream?{ApiClient.ApiKeyHeaderName}={_options.Value.Key}&token={token}";
 
     public string CurlSearch(MoviesFilter filter)
         => _client.Curl($"{Endpoint}/search", filter);

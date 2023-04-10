@@ -1,5 +1,4 @@
-﻿using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Media;
+﻿using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Media;
@@ -40,28 +39,16 @@ public static class MovieMapper
             JustWatchId = movie.JustWatchId,
             ImdbId = movie.ImdbId,
             YouTubeId = movie.YoutubeId,
-            Comment = movie.Comment,
-            Stars = movie.MoviesPersonsMappings
-                .Where(x => x.Category == PersonCategoryFlags.Star)
-                .MapToEditVm()
-                .ToList(),
-            Writers = movie.MoviesPersonsMappings
-                .Where(x => x.Category == PersonCategoryFlags.Writer)
-                .MapToEditVm()
-                .ToList(),
-            Directors = movie.MoviesPersonsMappings
-                .Where(x => x.Category == PersonCategoryFlags.Director)
-                .MapToEditVm()
-                .ToList()
+            Comment = movie.Comment
         });
-    
+
     public static IQueryable<MovieVm> MapToVm(this IQueryable<Movie> query)
         => query.Select(movie => new MovieVm()
         {
             Id = movie.Id,
             Title = movie.Title,
             PublishDate = movie.PublishDate,
-            ImageUrl = movie.File!.Id.ToString(),
+            ImageUrl = movie.Id.ToString(),
             Genres = movie.Genres,
             Rating = movie.Rating,
             Year = movie.Year
@@ -73,7 +60,7 @@ public static class MovieMapper
             Id = movie.Id,
             Title = movie.Title,
             PublishDate = movie.PublishDate,
-            ImageUrl = movie.File!.Id.ToString(),
+            ImageUrl = movie.Id.ToString(),
             Genres = movie.Genres,
             Rating = movie.Rating,
             Comment = movie.Comment,
@@ -81,8 +68,6 @@ public static class MovieMapper
             Runtime = movie.Runtime,
             YoutubeId = movie.YoutubeId,
             Year = movie.Year,
-            Directors = movie.MoviesPersonsMappings.Where(x => x.Category == PersonCategoryFlags.Director).MapToVm().ToList(),
-            Writers = movie.MoviesPersonsMappings.Where(x => x.Category == PersonCategoryFlags.Writer).MapToVm().ToList(),
-            Stars = movie.MoviesPersonsMappings.Where(x => x.Category == PersonCategoryFlags.Star).MapToVm().ToList()
+            IsStreamable = movie.FileName != null
         };
 }

@@ -65,6 +65,25 @@ public class ApiClient
         }
     }
 
+    public async Task<TResponse?> Put<TRequest, TResponse>(string endpoint, TRequest data, bool suppressTokenCheck, CancellationToken cancellationToken)
+    {
+        if (suppressTokenCheck == false)
+            await AttachOrRefreshTokenIfPossible(cancellationToken);
+
+        try
+        {
+            var route = CreateEndpointUrl(endpoint);
+            var result = await _client.PutAsJsonAsync(route, data, _serializerOptions, cancellationToken);
+            result.EnsureSuccessStatusCode();
+            return await result.Content.ReadFromJsonAsync<TResponse>(_serializerOptions, cancellationToken);
+        }
+        catch (HttpRequestException ex)
+        {
+            await _errorHandler.Handle(ex.StatusCode, ex.Message, cancellationToken);
+            return default;
+        }
+    }
+
     public async Task<TResponse?> Post<TRequest, TResponse>(string endpoint, TRequest data, bool suppressTokenCheck, CancellationToken cancellationToken)
     {
         if (suppressTokenCheck == false)
@@ -195,6 +214,21 @@ public class ApiClient
         return $"curl {_client.BaseAddress}{route}";
     }
 
+    public async Task<HttpClient> Clone()
+    {
+        var client = new HttpClient();
+        client.BaseAddress = _client.BaseAddress;
+
+        await AttachOrRefreshTokenIfPossible(CancellationToken.None);
+        if (_client.DefaultRequestHeaders.TryGetValues(ApiKeyHeaderName, out var apiKey))
+            client.DefaultRequestHeaders.Add(ApiKeyHeaderName, apiKey.FirstOrDefault());
+
+        if (_client.DefaultRequestHeaders.TryGetValues("Authorization", out var bearer))
+            client.DefaultRequestHeaders.Add("Authorization", bearer.FirstOrDefault());
+
+        return client;
+    }
+
     private static string CreateEndpointUrl(string endpoint, IFilter? filter = null)
     {
         var route = $"{Prefix}/{endpoint}";
@@ -203,9 +237,9 @@ public class ApiClient
             .Select(x => $"{x.Name}={x.Value}")
             .ToList() ?? new List<string>();
 
-        if (parameter.Count <= 0) 
+        if (parameter.Count <= 0)
             return route;
-        
+
         var query = string.Join('&', parameter);
         route += $"?{query}";
         return route;

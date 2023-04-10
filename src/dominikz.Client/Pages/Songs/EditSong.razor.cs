@@ -5,7 +5,7 @@ namespace dominikz.Client.Pages.Songs;
 
 public partial class EditSong
 {
-    private LaneVm _topLane = new()
+    private readonly LaneVm _topLane = new()
     {
         Clef = ClefEnum.Treble,
         Tact = TactEnum.T4Of4,
@@ -13,7 +13,7 @@ public partial class EditSong
         Notes = new List<NoteVm>()
     };
 
-    private LaneVm _bottomLane = new()
+    private readonly LaneVm _bottomLane = new()
     {
         Clef = ClefEnum.Bass,
         Tact = TactEnum.T4Of4,

@@ -1,5 +1,4 @@
-﻿using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Blog;
+﻿using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
@@ -56,9 +55,6 @@ public class BlogEndpoints
     {
         if (vm?.ImageUrl.StartsWith(_client.BaseUrl) ?? false)
             vm.AttachApiKey(_options.Value.Key);
-
-        if (vm?.Author?.ImageUrl.StartsWith(_client.BaseUrl) ?? false)
-            vm.Author.AttachApiKey(_options.Value.Key);
     }
 
     public string CurlSearch(ArticleFilter filter)

@@ -18,7 +18,7 @@ public struct FileStruct
         Data.Position = 0;
     }
 
-    public FileStruct CoptyTo(string name)
+    public FileStruct CopyTo(string name)
     {
         Data.Position = 0;
         return new(name, _contentType, Data);

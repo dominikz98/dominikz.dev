@@ -1,6 +1,5 @@
 ﻿@page "/blog"
 @using dominikz.Client.Utils
-@using dominikz.Domain.Enums
 @using dominikz.Domain.ViewModels.Blog
 @using dominikz.Client.Tables
 @using dominikz.Client.Extensions
@@ -14,18 +13,18 @@
              DelayInputTrigger="true"
              Placeholder="Search ..."
              Icon="fa-solid fa-magnifying-glass"
-             ValueChanged="@((value) => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Blog.Search, value))"/>
+             ValueChanged="@(value => NavManager!.AttachOrUpdateRawQueryParam(QueryNames.Blog.Search, value))"/>
 
     <ChipSelect T="ArticleCategoryEnum"
                 Title="Category"
                 @ref="_categorySelect"
-                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleCategoryEnum>(QueryNames.Blog.Category, value.Count > 0 ? value.First() : null))"
+                SelectedChanged="@(value => NavManager!.AttachOrUpdateQueryParam<ArticleCategoryEnum>(QueryNames.Blog.Category, value.Count > 0 ? value.First() : null))"
                 Values="Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList()"/>
 
     <ChipSelect T="ArticleSourceEnum"
                 Title="Source"
                 @ref="_sourceSelect"
-                SelectedChanged="@((value) => NavManager!.AttachOrUpdateQueryParam<ArticleSourceEnum>(QueryNames.Blog.Source, value.Count > 0 ? value.First() : null))"
+                SelectedChanged="@(value => NavManager!.AttachOrUpdateQueryParam<ArticleSourceEnum>(QueryNames.Blog.Source, value.Count > 0 ? value.First() : null))"
                 Values="Enum.GetValues<ArticleSourceEnum>().ToList()"/>
 
     <div class="flex-row gap">
@@ -34,9 +33,9 @@
         {
             <div class="admin-menu-element gap">
                 <IconButton OnClick="@(() => NavManager!.NavigateTo("/blog/edit"))" Icon="fa-solid fa-circle-plus"/>
-            </div>    
+            </div>
         }
-        
+
         <div class="menu-element gap">
             <i class="fa-solid fa-border-top-left"></i>
             <Switch @bind-State="_isTableView"/>
@@ -55,7 +54,7 @@
         <Table T="ArticleVm"
                Values="@_articles"
                Columns="@ArticleTableDefinition.Columns"
-               OnRowClicked="(article) => NavigateToDetail(article.Id)"
+               OnRowClicked="article => NavigateToDetail(article.Id)"
                ShowIndex="true">
         </Table>
     }
@@ -80,20 +79,31 @@
                             {
                                 <span>@($"💬 {article.AltCategories}")</span>
                             }
-                            
+
                             @if (article.PublishDate != null)
                             {
-                                <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>    
+                                <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>
                             }
                             else
                             {
                                 <span>DRAFT</span>
                             }
-                            
+
                         </div>
 
                         <div class="blog-card-author avatar">
-                            <img src="@article.Author!.ImageUrl" alt="Image of article author"/>
+                            @switch (article.Source)
+                            {
+                                case ArticleSourceEnum.Dz:
+                                    <img src="assets/icons/dz.png" alt="Image of article author"/>
+                                    break;
+                                case ArticleSourceEnum.Medlan:
+                                    <img src="assets/icons/medlan.png" alt="Image of article author"/>
+                                    break;
+                                case ArticleSourceEnum.Noobit:
+                                    <img src="assets/icons/noobit.png" alt="Image of article author"/>
+                                    break;
+                            }
                         </div>
 
                     </div>

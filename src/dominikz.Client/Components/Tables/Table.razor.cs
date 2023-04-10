@@ -14,7 +14,7 @@ public partial class Table<T>
     public bool ShowIndex { get; set; }
 
     [Parameter]
-    public Action<T> OnRowClicked { get; set; } = (_) => { };
+    public Action<T> OnRowClicked { get; set; } = _ => { };
 
     private string? GetColCssClass(ColumnDefinition<T> column)
     {

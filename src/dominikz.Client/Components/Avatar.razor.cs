@@ -1,10 +1,10 @@
-﻿using dominikz.Domain.ViewModels;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Components;
 
 public partial class Avatar
 {
-    [Parameter]
-    public PersonVm? Person { get; set; }
+    [Parameter] public string Name { get; set; } = string.Empty;
+
+    [Parameter] public string ImageSource { get; set; } = string.Empty;
 }

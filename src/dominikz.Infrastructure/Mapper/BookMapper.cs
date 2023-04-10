@@ -11,7 +11,7 @@ public static class BookMapper
             Id = book.Id,
             Title = book.Title,
             PublishDate = book.PublishDate,
-            ImageUrl = book.File!.Id.ToString(),
+            ImageUrl = book.Id.ToString(),
             Genres = book.Genres,
             Language = book.Language,
             Year = book.Year,

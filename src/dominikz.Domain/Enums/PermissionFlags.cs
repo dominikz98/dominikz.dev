@@ -7,5 +7,6 @@ public enum PermissionFlags
     CreateOrUpdate = 1,
     Blog = 2,
     Media = 4,
-    Account = 8
+    Account = 8,
+    Cookbook = 16
 }

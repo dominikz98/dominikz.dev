@@ -1,5 +1,4 @@
-﻿using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Media;
+﻿using dominikz.Domain.Enums.Media;
 
 namespace dominikz.Domain.Models;
 
@@ -14,16 +13,5 @@ public class Movie : Media
     public string ImdbId { get; set; } = string.Empty;
     public string YoutubeId { get; set; } = string.Empty;
     public int? JustWatchId { get; set; }
-
-    public List<MoviesPersonsMapping> MoviesPersonsMappings { get; set; } = new();
-}
-
-public class MoviesPersonsMapping
-{
-    public Guid MovieId { get; set; }
-    public Guid PersonId { get; set; }
-    public PersonCategoryFlags Category { get; set; }
-
-    public Movie? Movie { get; set; }
-    public Person? Person { get; set; }
+    public string? FileName { get; set; }
 }

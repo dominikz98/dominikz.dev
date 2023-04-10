@@ -3,7 +3,7 @@ using dominikz.Application.ViewModels;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,11 +52,6 @@ public class UpdateMovieRequestHandler : IRequestHandler<UpdateMovieRequest, Act
 
     public async Task<ActionWrapper<MovieDetailVm>> Handle(UpdateMovieRequest request, CancellationToken cancellationToken)
     {
-        // verify
-        var expectedFilesCount = 1 + request.ViewModel.Directors.Count + request.ViewModel.Writers.Count + request.ViewModel.Stars.Count;
-        if (request.Files.Count != expectedFilesCount)
-            return new("Expected file count mismatch");
-
         // validate
         var toUpdate = await _database.From<Movie>().FirstOrDefaultAsync(x => x.Id == request.ViewModel.Id, cancellationToken);
         if (toUpdate == null)

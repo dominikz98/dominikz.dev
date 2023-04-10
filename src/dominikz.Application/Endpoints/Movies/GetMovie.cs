@@ -1,10 +1,9 @@
 ﻿using dominikz.Application.Utils;
-using dominikz.Domain.Constants;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,9 +48,6 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVm
     public async Task<MovieDetailVm?> Handle(GetMovieQuery request, CancellationToken cancellationToken)
     {
         var movie = await _database.From<Movie>()
-            .Include(x => x.File)
-            .Include(x => x.MoviesPersonsMappings)
-            .ThenInclude(x => x.Person!.File)
             .AsNoTracking()
             .Where(x => x.Id == request.Id)
             .FirstOrDefaultAsync(cancellationToken);
@@ -62,18 +58,7 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVm
         var vm = movie.MapToDetailVm();
 
         // attach image urls
-        vm.ImageUrl = _linkCreator.CreateImageUrl(movie.File!.Id.ToString(), ImageSizeEnum.Poster);
-        vm.AuthorImageUrl = _linkCreator.CreateImageUrl(Persons.DominikZettlId.ToString(), ImageSizeEnum.Avatar);
-
-        foreach (var directorVm in vm.Directors)
-            directorVm.ImageUrl = _linkCreator.CreateImageUrl(directorVm.ImageUrl, ImageSizeEnum.Avatar);
-
-        foreach (var writerVm in vm.Writers)
-            writerVm.ImageUrl = _linkCreator.CreateImageUrl(writerVm.ImageUrl, ImageSizeEnum.Avatar);
-
-        foreach (var starVm in vm.Stars)
-            starVm.ImageUrl = _linkCreator.CreateImageUrl(starVm.ImageUrl, ImageSizeEnum.Avatar);
-
+        vm.ImageUrl = _linkCreator.CreateImageUrl(movie.Id.ToString(), ImageSizeEnum.Poster);
         return vm;
     }
 }

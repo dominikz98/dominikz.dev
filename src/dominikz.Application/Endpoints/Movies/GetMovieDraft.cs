@@ -1,10 +1,9 @@
 using dominikz.Application.Utils;
-using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,8 +48,6 @@ public class GetMovieDraftQueryHandler : IRequestHandler<GetMovieDraftQuery, Edi
     {
         var movie = await _database.From<Movie>()
             .Where(x => x.Id == request.Id)
-            .Include(x => x.MoviesPersonsMappings)
-            .ThenInclude(x => x.Person)
             .AsNoTracking()
             .MapToEditVm()
             .FirstOrDefaultAsync(cancellationToken);

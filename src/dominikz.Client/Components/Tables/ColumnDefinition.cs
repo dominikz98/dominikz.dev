@@ -4,7 +4,7 @@ public class ColumnDefinition<T>
 {
     public string? Name { get; private set; }
     public Func<T, object?> Accessor { get; private set; }
-    public Func<object?, string> Formatter { get; set; } = (x) => x?.ToString() ?? string.Empty;
+    public Func<object?, string> Formatter { get; set; } = x => x?.ToString() ?? string.Empty;
 
     public ColumnActionFlags Actions { get; set; }
 

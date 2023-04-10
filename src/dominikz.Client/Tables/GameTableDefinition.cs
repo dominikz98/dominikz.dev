@@ -1,6 +1,5 @@
 ﻿using dominikz.Client.Components.Tables;
 using dominikz.Client.Utils;
-using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.ViewModels.Media;
@@ -15,9 +14,9 @@ public static class GameTableDefinition
         {
             new (nameof(GameVm.Title), x => x.Title),
             new (nameof(GameVm.Year), x => x.Year) {Actions = ColumnActionFlags.HideOnMobile},
-            new (nameof(MovieVm.Genres), x => x.Genres) {  Formatter = (x) => EnumFormatter.ToString(((GameGenresFlags)(x ?? string.Empty)).GetFlags().ToArray()[1..]) },
-            new (nameof(GameVm.Platform), x => x.Platform) { Formatter = (platform) => EnumFormatter.ToString((GamePlatformEnum)platform!), Actions = ColumnActionFlags.HideOnMobile },
-            new (nameof(GameVm.PublishDate), x => x.PublishDate) {  Formatter = (x) => $"{x:yyyy.MM.dd}", Actions = ColumnActionFlags.HideOnMobile }
+            new (nameof(MovieVm.Genres), x => x.Genres) {  Formatter = x => EnumFormatter.ToString(((GameGenresFlags)(x ?? string.Empty)).GetFlags().ToArray()[1..]) },
+            new (nameof(GameVm.Platform), x => x.Platform) { Formatter = platform => EnumFormatter.ToString((GamePlatformEnum)platform!), Actions = ColumnActionFlags.HideOnMobile },
+            new (nameof(GameVm.PublishDate), x => x.PublishDate) {  Formatter = x => $"{x:yyyy.MM.dd}", Actions = ColumnActionFlags.HideOnMobile }
         };
     }
 }

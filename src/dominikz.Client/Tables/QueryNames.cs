@@ -14,6 +14,13 @@ public static class QueryNames
         public const string Source = "source";
     }
 
+    public static class Cookbook
+    {
+        public const string Search = "search";
+        public const string Type = "type";
+        public const string Flags = "flags";
+    }
+    
     public static class Media
     {
         public const string Search = "search";

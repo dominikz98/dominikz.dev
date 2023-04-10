@@ -1,7 +1,7 @@
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Songs;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

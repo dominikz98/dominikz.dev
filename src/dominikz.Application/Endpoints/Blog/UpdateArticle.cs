@@ -3,7 +3,8 @@ using dominikz.Application.ViewModels;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
+using dominikz.Infrastructure.Provider.Storage;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,9 +60,7 @@ public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, Act
             return new("Expected file count mismatch");
 
         // validate
-        var original = await _database.From<Article>()
-            .Include(x => x.File)
-            .FirstOrDefaultAsync(x => x.Id == request.ViewModel.Id, cancellationToken);
+        var original = await _database.From<Article>().FirstOrDefaultAsync(x => x.Id == request.ViewModel.Id, cancellationToken);
 
         if (original == null)
             return new ActionWrapper<ArticleViewVm>("Article not found");
@@ -70,15 +69,14 @@ public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, Act
         var file = request.Files.First();
         var image = file.OpenReadStream();
         image.Position = 0;
-        await _storage.TryDelete(request.ViewModel.Id, cancellationToken);
-        await _storage.Upload(request.ViewModel.Id, image, cancellationToken);
+        await _storage.TryDelete(new DeleteImageRequest(request.ViewModel.Id), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, image), cancellationToken);
 
         // apply changes
-        original.ApplyChanges(request.ViewModel, file.ContentType);
+        original.ApplyChanges(request.ViewModel);
         _database.Update(original);
 
         // commit transactions
-        await _storage.SaveChanges(cancellationToken);
         await _database.SaveChangesAsync(cancellationToken);
 
         // load article detail

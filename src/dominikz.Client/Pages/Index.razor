@@ -1,6 +1,5 @@
 ﻿@page "/"
 @using dominikz.Client.Utils
-@using dominikz.Domain.Enums
 @using dominikz.Domain.Enums.Blog
 
 <PageTitle>Home</PageTitle>
@@ -8,13 +7,13 @@
 <div class="flex-row gap">
 
     @* About me *@
-    <div class="panel page-index flex-column large-gap">
+    <div class="panel flex-column large-gap">
         <span class="panel-title">
             <b>About me</b>
         </span>
 
         <div class="flex-row-no-wrap large-gap">
-            <img class="avatar" src="@_authorImage?.DataAsPath" alt="Avatar"/>
+            <img class="avatar" src="assets/icons/dz.png" alt="Avatar"/>
             <span>
                 <b>Hey there ✌️ </b><br/>
                 I'm Dominik Zettl, a software developer, music, travel- and video game fan. <br/><br/>
@@ -34,7 +33,7 @@
     </div>
 
     @* Blog *@
-    <div class="panel clickable page-blog flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/blog"))">
+    <div class="panel clickable flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/blog"))">
         <span class="panel-title">
             <b>Blog</b>
         </span>
@@ -43,10 +42,10 @@
 
             <div class="constributor-container gap">
                 <div class="flex-row-no-wrap gap">
-                    <img class="constributor" src="@_medlanImage?.DataAsPath" alt="Markus Liebl"/>
-                    <img class="constributor" src="@_noobitImage?.DataAsPath" alt="Tobias Haimerl"/>
+                    <img class="constributor" src="assets/icons/medlan.png" alt="Markus Liebl"/>
+                    <img class="constributor" src="assets/icons/noobit.png" alt="Tobias Haimerl"/>
                 </div>
-                <img class="constributor" src="@_authorImage?.DataAsPath" alt="Dominik Zettl"/>
+                <img class="constributor" src="assets/icons/dz.png" alt="Dominik Zettl"/>
             </div>
 
             <div>
@@ -70,7 +69,7 @@
     </div>
 
     @* Medias  *@
-    <div class="panel clickable page-media flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/media"))">
+    <div class="panel clickable flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/media"))">
         <span class="panel-title">
             <b>Medias</b>
         </span>
@@ -94,7 +93,7 @@
     </div>
 
     @* $1$ Music #1# *@
-    @* <div class="panel clickable page-music flex-column gap"> *@
+    @* <div class="panel clickable lex-column gap"> *@
     @*     <span class="panel-title"> *@
     @*         <b>Music</b> *@
     @*     </span> *@

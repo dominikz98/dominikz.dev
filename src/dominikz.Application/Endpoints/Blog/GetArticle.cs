@@ -3,7 +3,7 @@ using dominikz.Domain.Enums;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +48,6 @@ public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleVi
     public async Task<ArticleViewVm?> Handle(GetArticleQuery request, CancellationToken cancellationToken)
     {
         var article = await _database.From<Article>()
-            .Include(x => x.Author!.File)
-            .Include(x => x.File)
             .AsNoTracking()
             .Where(x => x.Id == request.Id)
             .MapToViewVm()
@@ -59,7 +57,6 @@ public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleVi
             return null;
 
         article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
-        article.Author!.ImageUrl = _linkCreator.CreateImageUrl(article.Author.ImageUrl, ImageSizeEnum.Avatar);
         return article;
     }
 }

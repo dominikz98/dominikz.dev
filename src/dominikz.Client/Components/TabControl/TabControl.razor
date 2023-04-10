@@ -4,7 +4,7 @@
         @foreach (var page in _pages)
         {
             <div class="tab-control-page">
-                <TextButton @ref="Ref" Id="@(page.Id)" Text="@(page.Text)" OnClick="@((_) => CallOnPageChanged(page))" AllowSelection="true"/>
+                <TextButton @ref="Ref" Id="@(page.Id)" Text="@(page.Text)" OnClick="@(_ => CallOnPageChanged(page))" AllowSelection="true"/>
             </div>
         }
     </div>

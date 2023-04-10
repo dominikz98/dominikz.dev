@@ -15,7 +15,7 @@ public class LaneController
     private readonly int _laneIndex;
     private readonly int _segmentIndex;
     private readonly int _availableTicks;
-    private IReadOnlyCollection<NoteVm> _notes;
+    private readonly IReadOnlyCollection<NoteVm> _notes;
     private readonly Timer _timer;
     private int _tick;
 

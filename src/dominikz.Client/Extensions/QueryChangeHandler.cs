@@ -11,7 +11,7 @@ public static class QueryChangeHandler
     public static bool TrackQuery(this NavigationManager navigationManager, Func<Task> action)
     {
         InitIfRequired(navigationManager);
-        
+
         var trigger = navigationManager.ToAbsoluteUri(navigationManager.Uri).GetLeftPart(UriPartial.Path);
         var exists = _registrations.Any(x => x.Trigger.Equals(trigger, StringComparison.OrdinalIgnoreCase));
         if (exists)
@@ -32,13 +32,15 @@ public static class QueryChangeHandler
 
     private static async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        var trigger = _registrations.Where(x => args.Location.Contains(x.Trigger, StringComparison.OrdinalIgnoreCase)).ToList();
+        var location = new Uri(args.Location).GetLeftPart(UriPartial.Path);
+        if (string.IsNullOrWhiteSpace(location))
+            return;
+        
+        var trigger = _registrations.Where(x => location.Equals(x.Trigger, StringComparison.OrdinalIgnoreCase)).ToList();
         _registrations = trigger;
+        
         foreach (var registration in _registrations)
-        {
-            Console.WriteLine($"Executing for trigger \"{registration.Trigger}\"");
             await registration.Action.Invoke();
-        }
     }
 
     record TriggerRegistration(string Trigger, Func<Task> Action);

@@ -23,19 +23,24 @@ public partial class ChipSelect<T> where T : struct
     [Parameter] public Func<T, string> TextFormatter { get; set; } = EnumFormatter.ToString;
     [Parameter] public bool IsExpanded { get; set; }
     [Parameter] public bool AllowExpand { get; set; }
+    [Parameter] public bool AllowSelect { get; set; } = true;
     [Parameter] public bool AllowMultiSelect { get; set; }
     [Parameter] public List<T> Selected { get; set; } = new();
+    [Parameter] public EventCallback<T> ChipClicked { get; set; }
     [Parameter] public EventCallback<List<T>> SelectedChanged { get; set; }
 
     public void Select(T? value)
     {
-        if (value is null)
+        if (AllowSelect == false || value is null)
             return;
         
         Select(new List<T>() { value.Value });
     }
     public void Select(List<T> values)
     {
+        if (AllowSelect == false)
+            return;
+        
         if (AllowMultiSelect == false)
         {
             Selected.Clear();
@@ -45,13 +50,13 @@ public partial class ChipSelect<T> where T : struct
             Selected = values;
 
         // Check if expand is required
-        if (IsExpanded == false
-            && AllowExpand
-            && Values.Intersect(values).Count() == values.Count)
-        {
-            CallOnExpand();
-            StateHasChanged();
-        }
+        if (IsExpanded
+            || !AllowExpand
+            || Values.Intersect(values).Count() != values.Count) 
+            return;
+        
+        CallOnExpand();
+        StateHasChanged();
     }
 
     private void CallOnExpand()
@@ -59,8 +64,13 @@ public partial class ChipSelect<T> where T : struct
 
     private async Task OnDeselectClicked(T value)
     {
-        Selected.Remove(value);
-        Values.Add(value);
+        if (AllowSelect)
+        {
+            Selected.Remove(value);
+            Values.Add(value);
+        }
+
+        await ChipClicked.InvokeAsync(value);
         await SelectedChanged.InvokeAsync(Selected);
     }
 
@@ -68,9 +78,14 @@ public partial class ChipSelect<T> where T : struct
     {
         if (AllowMultiSelect == false)
             Selected.Clear();
+
+        if (AllowSelect)
+        {
+            Selected.Add(value);
+            Values.Remove(value);            
+        }
         
-        Selected.Add(value);
-        Values.Remove(value);
+        await ChipClicked.InvokeAsync(value);
         await SelectedChanged.InvokeAsync(Selected);
     }
 }

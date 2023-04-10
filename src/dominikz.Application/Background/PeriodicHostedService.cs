@@ -1,11 +1,13 @@
-﻿namespace dominikz.Application.Background;
+﻿using dominikz.Domain.Models;
+using dominikz.Infrastructure.Provider.Database;
+
+namespace dominikz.Application.Background;
 
 class PeriodicHostedService : BackgroundService
 {
-    private readonly TimeSpan _period = TimeSpan.FromHours(7.5);
+    private readonly TimeSpan _period = TimeSpan.FromMinutes(7.5);
     private readonly ILogger<PeriodicHostedService> _logger;
     private readonly IServiceScopeFactory _factory;
-    private bool _firstRun = true;
 
     public PeriodicHostedService(
         ILogger<PeriodicHostedService> logger,
@@ -19,15 +21,41 @@ class PeriodicHostedService : BackgroundService
     {
         using var timer = new PeriodicTimer(_period);
 
-        while ( _firstRun || (!cancellationToken.IsCancellationRequested && await timer.WaitForNextTickAsync(cancellationToken)))
+        while (cancellationToken.IsCancellationRequested == false && await timer.WaitForNextTickAsync(cancellationToken))
         {
             try
             {
-                _firstRun = false;
                 await using var scope = _factory.CreateAsyncScope();
-                var refresher = scope.ServiceProvider.GetRequiredService<CacheRefresher>();
-                await refresher.Refresh(cancellationToken);
-                _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Called: {nameof(CacheRefresher)}");
+                var workerList = scope.ServiceProvider.GetServices<ITimeTriggeredWorker>();
+                var database = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+
+                foreach (var worker in workerList)
+                {
+                    if (worker.Schedule.IsTime(DateTime.Now) == false)
+                        continue;
+
+                    var log = new WorkerLog();
+                    try
+                    {
+                        _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Start Executing: {worker.GetType().Name}");
+                        log.Success = await worker.Execute(log, cancellationToken);
+                        _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Finished Executing: {worker.GetType().Name}");
+                    }
+                    catch (Exception e)
+                    {
+                        database.ChangeTracker.Clear();
+                        log.Log ??= string.Empty;
+                        log.Log += e.Message + Environment.NewLine;
+                        log.Log += e.StackTrace;
+                        _logger.LogError($"[{nameof(PeriodicHostedService)}] Failed Executing: {worker.GetType().Name}");
+                    }
+                    finally
+                    {
+                        database.ChangeTracker.Clear();
+                        await database.AddAsync(log, cancellationToken);
+                        await database.SaveChangesAsync(cancellationToken);
+                    }
+                }
             }
             catch (Exception ex)
             {

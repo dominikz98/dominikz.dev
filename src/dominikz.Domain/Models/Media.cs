@@ -1,5 +1,4 @@
-﻿using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Media;
+﻿using dominikz.Domain.Enums.Media;
 
 namespace dominikz.Domain.Models;
 
@@ -9,8 +8,6 @@ public class Media
     public string Title { get; set; }
     public DateTime? PublishDate { get; set; }
     public MediaCategoryEnum Category { get; set; }
-
-    public StorageFile? File { get; set; }
 
     public Media()
     {

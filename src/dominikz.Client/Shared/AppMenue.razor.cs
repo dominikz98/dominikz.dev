@@ -15,7 +15,8 @@ public partial class AppMenue
         {
             new MenueEntry("fa-rss", "Blog", "/blog"),
             new MenueEntry("fa-film", "Media", "/media"),
-            new MenueEntry("fa-compact-disc", "Songs", "/songs")
+            new MenueEntry("fa-compact-disc", "Songs", "/songs"),
+            new MenueEntry("fa-lemon", "Cookbook", "/cookbook")
         };
 
     protected override void OnInitialized()

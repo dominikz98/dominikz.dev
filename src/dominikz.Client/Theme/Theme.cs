@@ -14,14 +14,6 @@ public class Theme
     public ThemeColor Warning { get; set; }
     public ThemeColor Error { get; set; }
 
-    public Dictionary<string, string> ClassesByUrls = new()
-    {
-        { "/index", "page-index" },
-        { "/blog", "page-blog" },
-        { "/media", "page-media" },
-        { "/music", "page-music" }
-    };
-
     public Theme(string surface, string background, string primary, string secondary, string success, string warning, string error)
     {
         Surface = new(surface, 80);
@@ -33,7 +25,7 @@ public class Theme
         Error = new(error);
     }
 
-    public static Theme Dark => new("33383c", "000000", "5f7d8f", "FFFFFF", "179b27", "e3cb23", "a92425");
+    public static Theme Dark => new("33383c", "1C1A1A", "5f7d8f", "FFFFFF", "179b27", "e3cb23", "a92425");
 
     public override string ToString()
     {

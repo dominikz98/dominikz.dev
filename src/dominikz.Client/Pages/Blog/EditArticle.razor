@@ -1,18 +1,19 @@
 @page "/blog/edit"
 @page "/blog/edit/{articleid:guid}"
-
-@using dominikz.Domain.Enums
 @using dominikz.Domain.Enums.Blog
 @using Microsoft.AspNetCore.Components
 
 @if (_isEnabled == false)
 {
+    <PageTitle>Loading</PageTitle>
     <p>
         <em>Loading...</em>
     </p>
 }
 else
 {
+    <PageTitle>@_vm.Title</PageTitle>
+    
     <EditForm EditContext="@_editContext" OnSubmit="@OnSaveClicked">
         <DataAnnotationsValidator/>
 
@@ -28,7 +29,7 @@ else
                     <span>Category:</span>
                 </div>
                 <div class="flex-column">
-                    <ComboBox T="@ArticleCategoryEnum"
+                    <EnumPicker T="@ArticleCategoryEnum"
                               Selected="@_vm.Category"
                               SelectedChanged="OnCategoryChanged"
                               Values="@(Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList())"/>

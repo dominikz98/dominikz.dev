@@ -17,7 +17,7 @@
         }
     </div>
 
-    <div class="flex-row gap @(Selected.Count > 0 ? "recommendation" : string.Empty)">
+    <div class="flex-row gap recommendation">
         @foreach (var value in Values.Except(Selected).OrderBy(x => x.ToString()))
         {
             <Chip T="T"

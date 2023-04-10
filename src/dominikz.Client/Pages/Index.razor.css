@@ -29,6 +29,7 @@
     height: 300px;
     border-radius: 5px;
     padding: 12px;
+    background-color: var(--theme-surface);
 }
 
 .clickable {

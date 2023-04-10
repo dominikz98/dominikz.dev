@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using dominikz.Domain.Attributes;
-using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 
 namespace dominikz.Domain.ViewModels.Media;
@@ -23,7 +22,4 @@ public class EditMovieVm
     public string? Comment { get; set; }
     [MinLength(5)] public string Plot { get; set; } = string.Empty;
     [TimespanNotEmpty] public TimeSpan Runtime { get; set; }
-    public List<EditPersonVm> Directors { get; set; } = new();
-    public List<EditPersonVm> Writers { get; set; } = new();
-    public List<EditPersonVm> Stars { get; set; } = new();
 }

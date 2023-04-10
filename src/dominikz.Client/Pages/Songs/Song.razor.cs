@@ -18,6 +18,5 @@ public partial class Song
             return;
 
         _song = await Endpoints!.GetById(SongId.Value);
-        Console.WriteLine("Song loaded!");
     }
 }

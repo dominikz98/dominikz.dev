@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
                 options.AddPolicy(Policies.CreateOrUpdate, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.CreateOrUpdate)));
                 options.AddPolicy(Policies.Blog, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Blog)));
                 options.AddPolicy(Policies.Media, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Media)));
+                options.AddPolicy(Policies.Cookbook, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Cookbook)));
                 options.AddPolicy(Policies.Account, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Account)));
             })
             .AddScoped<CredentialsProvider>();
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtensions
         {
             config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer((config) =>
+        }).AddJwtBearer(config =>
         {
             config.RequireHttpsMetadata = false;
             config.SaveToken = true;
@@ -107,10 +108,10 @@ public static class ServiceCollectionExtensions
                 return factory.GetUrlHelper(accessor.ActionContext!);
             });
 
-    public static void AddHostedServices(this IServiceCollection services)
+    public static void AddWorker(this IServiceCollection services)
         => services.AddSingleton<PeriodicHostedService>()
             .AddHostedService(provider => provider.GetRequiredService<PeriodicHostedService>())
-            .AddScoped<CacheRefresher>();
+            .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

@@ -3,17 +3,19 @@
 
 <PageTitle>dominikz.dev</PageTitle>
 
-<ThemeProvider ClassByUrlChanged="OnClassByUrlChanged" />
+<ThemeProvider/>
 
-<Toast />
+<Toast/>
 
-<div class="page @_classByUrl">
+<div>
 
-    <AppBar OnExpandClicked="OnExpandClicked" />
+    <AppBar OnExpandClicked="OnExpandClicked"/>
+
+    <div class="background"></div>
 
     <div class="content">
 
-        <AppMenue IsExpanded="_isMenuOpen" />
+        <AppMenue IsExpanded="_isMenuOpen"/>
 
         <div class="main">
             @Body

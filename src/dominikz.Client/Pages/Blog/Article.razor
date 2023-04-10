@@ -1,11 +1,12 @@
 ﻿@page "/blog/{articleid:guid}"
 @using dominikz.Client.Utils
-@using dominikz.Domain.Enums
 @using dominikz.Domain.Enums.Blog
 @using dominikz.Domain.Structs
 
 @if (_article is not null)
 {
+    <PageTitle>@_article.Title</PageTitle>
+    
     <h2>@_article.Title</h2>
 
     @if (_hasCreatePermission)
@@ -28,7 +29,7 @@
             <span>DRAFT</span>
         }
 
-        <span>@($"✏️ {_article.Author!.Name}")</span>
+        <span>@($"✏️ {AuthorHelper.GetNameBySource(_article.Source)}")</span>
 
         @if (_article.Category != ArticleCategoryEnum.Unknown)
         {
@@ -56,4 +57,9 @@
     <div class="blogdetail-text">
         @((MarkupString)_article.Text)
     </div>
+}
+else
+{
+    <PageTitle>Loading</PageTitle>
+    <span>Loading ...</span>
 }

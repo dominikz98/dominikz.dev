@@ -1,6 +1,5 @@
 using dominikz.Application;
 using dominikz.Infrastructure;
-using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,14 +21,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
 builder.Services.AddAuthPolicies();
+builder.Services.AddMedlanClient();
 builder.Services.AddNoobitClient();
+builder.Services.AddSupermarktCheckClient();
 builder.Services.AddJustWatchClient();
 builder.Services.AddContext(builder.Configuration, builder.Environment.IsDevelopment());
-builder.Services.AddStorage();
+builder.Services.AddStorage(builder.Configuration);
 builder.Services.AddUrlHelper();
 builder.Services.AddUtils();
-builder.Services.AddHostedServices();
-builder.Services.AddMediatR(typeof(Program));
+builder.Services.AddWorker();
+builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.AddOptions();
 builder.AddRateLimit();
 builder.AddJwtAuth();

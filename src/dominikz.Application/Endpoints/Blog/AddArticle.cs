@@ -1,13 +1,11 @@
 using dominikz.Application.Extensions;
 using dominikz.Application.Utils;
 using dominikz.Application.ViewModels;
-using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Files;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Mapper;
-using dominikz.Infrastructure.Provider;
-using dominikz.Infrastructure.Utils;
+using dominikz.Infrastructure.Provider.Database;
+using dominikz.Infrastructure.Provider.Storage;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +59,7 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
         // verify
         if (request.Files.Count != 1)
             return new("Expected file count mismatch");
-        
+
         // validate
         var alreadyExists = await _database.From<Article>()
             .AnyAsync(x => EF.Functions.Like(x.Title, request.ViewModel.Title)
@@ -71,16 +69,19 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
             return new("Article already exists");
 
         // upload file
-        var image = await UploadAndSaveImage(request, cancellationToken);
-        if (image == null)
+        var file = request.Files.GetBySingleOrId(request.ViewModel.Id);
+        if (file == null)
             return new("Invalid article image");
         
+        var stream = file.OpenReadStream();
+        stream.Position = 0;
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream), cancellationToken);
+
         // save article
-        var toAdd = new Article().ApplyChanges(request.ViewModel, image.ContentType);
+        var toAdd = new Article().ApplyChanges(request.ViewModel);
         var id = (await _database.AddAsync(toAdd, cancellationToken)).Entity.Id;
-        
+
         // commit transactions
-        await _storage.SaveChanges(cancellationToken);
         await _database.SaveChangesAsync(cancellationToken);
 
         // load article detail
@@ -89,29 +90,5 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
             return new("Error loading article");
 
         return new ActionWrapper<ArticleViewVm>(article);
-    }
-
-    private async Task<IFormFile?> UploadAndSaveImage(AddArticleRequest request, CancellationToken cancellationToken)
-    {
-        var file = request.Files.GetFileById(request.ViewModel.Id);
-        if (file == null)
-            return null;
-
-        var image = file.OpenReadStream();
-        image.Position = 0;
-        
-        var exists = await _storage.Exists(request.ViewModel.Id, cancellationToken);
-        await _storage.Upload(request.ViewModel.Id, image, cancellationToken);
-        if (exists)
-            return file;
-        
-        await _database.AddAsync(new StorageFile()
-        {
-            Id = request.ViewModel.Id,
-            Category = FileCategoryEnum.Image,
-            Extension = FileIdentifier.GetExtensionByContentType(file.ContentType)
-        }, cancellationToken);
-
-        return file;
     }
 }

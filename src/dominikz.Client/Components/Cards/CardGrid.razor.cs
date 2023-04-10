@@ -6,4 +6,7 @@ public partial class CardGrid
 {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    public void InvalidateState()
+        => StateHasChanged();
 }

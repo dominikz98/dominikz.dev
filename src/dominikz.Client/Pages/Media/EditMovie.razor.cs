@@ -1,9 +1,7 @@
-using dominikz.Client.Extensions;
 using dominikz.Client.Wrapper;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Structs;
-using dominikz.Domain.ViewModels;
 using dominikz.Infrastructure.Clients.Api;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Components;
@@ -60,10 +58,7 @@ public partial class EditMovie
             Year = _vm.Year,
             Rating = _vm.Rating,
             Genres = _vm.Genres,
-            Comment = _vm.Comment,
-            Directors = _vm.Directors,
-            Writers = _vm.Writers,
-            Stars = _vm.Stars
+            Comment = _vm.Comment
         };
 
         var file = await DownloadEndpoints!.Image(movie.Id, true, ImageSizeEnum.Original);
@@ -116,15 +111,6 @@ public partial class EditMovie
         if (_vm.Rating is 0 or 50)
             _vm.Rating = data.Rating;
 
-        if (_vm.Directors.Count == 0)
-            _vm.DirectorsWrappers = data.Directors.Select(x => x.Wrap()).ToList();
-
-        if (_vm.Writers.Count == 0)
-            _vm.WritersWrappers = data.Writers.Select(x => x.Wrap()).ToList();
-
-        if (_vm.Stars.Count == 0)
-            _vm.StarsWrappers = data.Stars.Select(x => x.Wrap()).ToList();
-
         if (_vm.Genres.Count == 0)
         {
             _genreRecommendations = data.GenreRecommendations.OrderBy(x => x).ToList();
@@ -157,56 +143,20 @@ public partial class EditMovie
 
     private async Task OnSaveClicked()
     {
-        PrepareVm();
+        // Set File Ids
+        for (var i = 0; i < _vm.Image.Count; i++)
+            _vm.Image[i] = _vm.Image[i].CopyTo(_vm.Id.ToString());
 
         if (_editContext == null || _editContext.Validate() == false)
             return;
-        
-        var files = _vm.StarsWrappers.SelectMany(x => x.Image)
-            .Union(_vm.DirectorsWrappers.SelectMany(x => x.Image))
-            .Union(_vm.WritersWrappers.SelectMany(x => x.Image))
-            .Union(_vm.Image)
-            .ToList();
-        
+
         var movie = MovieId == null
-            ? await MovieEndpoints!.Add(_vm, files)
-            : await MovieEndpoints!.Update(_vm, files);
-        
+            ? await MovieEndpoints!.Add(_vm, _vm.Image)
+            : await MovieEndpoints!.Update(_vm, _vm.Image);
+
         if (movie == null)
             return;
-        
+
         NavManager?.NavigateTo($"/media/movie/{movie.Id}");
-    }
-
-    private void PrepareVm()
-    {
-        // Set File Ids
-        for (var i = 0; i < _vm.Image.Count; i++)
-            _vm.Image[i] = _vm.Image[i].CoptyTo(_vm.Id.ToString());
-
-        foreach (var director in _vm.DirectorsWrappers)
-        {
-            for (var a = 0; a < director.Image.Count; a++)
-            {
-                director.Image[a] = director.Image[a].CoptyTo(director.Id.ToString());
-            }
-        }
-        
-        foreach (var writer in _vm.WritersWrappers)
-            for (var a = 0; a < writer.Image.Count; a++)
-                writer.Image[a] = writer.Image[a].CoptyTo(writer.Id.ToString());
-
-        foreach (var star in _vm.StarsWrappers)
-        {
-            for (var a = 0; a < star.Image.Count; a++)
-            {
-                star.Image[a] = star.Image[a].CoptyTo(star.Id.ToString());
-            }
-        }
-
-        // Cast persons back
-        _vm.Directors = _vm.DirectorsWrappers.Select(x => (EditPersonVm)x).ToList();
-        _vm.Writers = _vm.WritersWrappers.Select(x => (EditPersonVm)x).ToList();
-        _vm.Stars = _vm.StarsWrappers.Select(x => (EditPersonVm)x).ToList();
     }
 }

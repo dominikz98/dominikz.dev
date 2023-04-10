@@ -4,6 +4,7 @@ using dominikz.Domain.Enums.Media;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -65,7 +66,6 @@ public class GetFoodsQueryHandler : IRequestHandler<GetPreviewQuery, IReadOnlyCo
     private async Task<IReadOnlyCollection<MediaPreviewVm>> GetNewestPreviews(MediaCategoryEnum category, CancellationToken cancellationToken)
     {
         var query = _database.From<dominikz.Domain.Models.Media>()
-            .Include(x => x.File)
             .AsNoTracking()
             .Where(x => x.Category == category);
 

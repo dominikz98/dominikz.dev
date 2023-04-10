@@ -3,7 +3,9 @@ using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Clients.Api;
 using dominikz.Infrastructure.Clients.JustWatch;
 using dominikz.Infrastructure.Clients.Noobit;
-using dominikz.Infrastructure.Provider;
+using dominikz.Infrastructure.Clients.SupermarktCheck;
+using dominikz.Infrastructure.Provider.Database;
+using dominikz.Infrastructure.Provider.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +23,14 @@ public static class ServiceCollectionExtensions
             .AddSingleton<BookEndpoints>()
             .AddSingleton<DownloadEndpoints>()
             .AddSingleton<SongsEndpoints>()
+            .AddSingleton<CookbookEndpoints>()
             .AddHttpClient<ApiClient>((sp, client) =>
             {
                 var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Add(ApiClient.ApiKeyHeaderName, options.Key);
             }).Services;
-    
+
     public static IServiceCollection AddJustWatchClient(this IServiceCollection services)
         => services.AddScoped<JustWatchClient>()
             .AddHttpClient<JustWatchClient>((sp, client) =>
@@ -37,21 +40,27 @@ public static class ServiceCollectionExtensions
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("JW DZ Client");
             }).Services;
 
+    public static IServiceCollection AddMedlanClient(this IServiceCollection services)
+        => services.AddScoped<MedlanClient>();
+
     public static IServiceCollection AddNoobitClient(this IServiceCollection services)
-        => services.AddScoped<MedlanClient>()
-            .AddScoped<NoobitClient>()
+        => services.AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
             {
                 var options = sp.GetRequiredService<IOptions<NoobitOptions>>();
                 client.BaseAddress = new Uri(options.Value.Url);
             }).Services;
 
+    public static IServiceCollection AddSupermarktCheckClient(this IServiceCollection services)
+        => services.AddScoped<SupermarktCheckClient>();
+
     public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration, bool useDevelopmentEnv)
         => services.AddDbContext<DatabaseContext>(options =>
-                options.UseMySql(configuration.GetConnectionString(nameof(DatabaseContext)), MariaDbServerVersion.LatestSupportedServerVersion)
-                    .EnableDetailedErrors(useDevelopmentEnv)
-                    .EnableSensitiveDataLogging(useDevelopmentEnv));
+            options.UseSqlite(configuration.GetConnectionString(nameof(DatabaseContext)))
+                .EnableDetailedErrors(useDevelopmentEnv)
+                .EnableSensitiveDataLogging(useDevelopmentEnv));
 
-    public static IServiceCollection AddStorage(this IServiceCollection services)
-        => services.AddSingleton<IStorageProvider, IoStorageProvider>();
+    public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
+        => services.AddSingleton<IStorageProvider>(_ => new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
+
 }

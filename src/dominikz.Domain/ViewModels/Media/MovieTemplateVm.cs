@@ -12,8 +12,4 @@ public class MovieTemplateVm
     public TimeSpan Runtime { get; set; }
     public string YouTubeId { get; set; } = string.Empty;
     public List<string> PosterUrls { get; set; } = new();
-
-    public List<EditPersonVm> Directors { get; set; } = new();
-    public List<EditPersonVm> Writers { get; set; } = new();
-    public List<EditPersonVm> Stars { get; set; } = new();
 }

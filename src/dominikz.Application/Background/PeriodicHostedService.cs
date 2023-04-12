@@ -34,7 +34,11 @@ class PeriodicHostedService : BackgroundService
                     if (worker.Schedule.IsTime(DateTime.Now) == false)
                         continue;
 
-                    var log = new WorkerLog();
+                    var log = new WorkerLog()
+                    {
+                        Worker = worker.GetType().Name
+                    };
+                    
                     try
                     {
                         _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Start Executing: {worker.GetType().Name}");

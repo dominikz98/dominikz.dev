@@ -82,6 +82,9 @@ public static class EnumFormatter
             ArticleCategoryEnum.Birds => "🐤 Birds",
             ArticleCategoryEnum.Thoughts => "💡 Thoughts",
             ArticleCategoryEnum.Music => "🎸 Music",
+            ArticleCategoryEnum.Finance => "💵 Finance",
+            ArticleCategoryEnum.Shopping => "🛒 Shopping",
+            ArticleCategoryEnum.Leisure => "🎭️ Leisure",
             _ => Default
         };
 

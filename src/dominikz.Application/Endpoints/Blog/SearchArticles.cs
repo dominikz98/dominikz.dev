@@ -4,8 +4,6 @@ using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Blog;
-using dominikz.Infrastructure.Clients;
-using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider;
 using dominikz.Infrastructure.Provider.Database;
@@ -27,6 +25,7 @@ public class SearchArticles : EndpointController
     }
 
     [HttpGet("search")]
+    [ResponseCache(Duration = 3600)]
     public async Task<IActionResult> Execute([FromQuery] ArticleFilter filter, CancellationToken cancellationToken)
     {
         var query = new SearchArticlesQuery()
@@ -49,20 +48,14 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
 {
     private readonly DatabaseContext _database;
     private readonly ILinkCreator _linkCreator;
-    private readonly NoobitClient _noobitClient;
-    private readonly MedlanClient _medlanClient;
     private readonly CredentialsProvider _credentials;
 
     public SearchArticlesQueryHandler(DatabaseContext database,
         ILinkCreator linkCreator,
-        NoobitClient noobitClient,
-        MedlanClient medlanClient,
         CredentialsProvider credentials)
     {
         _database = database;
         _linkCreator = linkCreator;
-        _noobitClient = noobitClient;
-        _medlanClient = medlanClient;
         _credentials = credentials;
     }
 
@@ -76,16 +69,10 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             articles.AddRange(dzArticles);
         }
 
-        if (request.Source is null or ArticleSourceEnum.Noobit)
+        if (request.Source is null or ArticleSourceEnum.Noobit or ArticleSourceEnum.Medlan)
         {
-            var noobitArticles = await _noobitClient.GetArticlesByCategory(request.Category, request.SuppressCache, cancellationToken);
-            articles.AddRange(noobitArticles);
-        }
-
-        if (request.Source is null or ArticleSourceEnum.Medlan)
-        {
-            var medlanArticles = await _medlanClient.GetArticlesByCategory(request.Category, request.SuppressCache);
-            articles.AddRange(medlanArticles);
+            var extArticles = await LoadFromShadow(request, cancellationToken);
+            articles.AddRange(extArticles);
         }
 
         articles = PostFilterAndOrderArticles(request, articles).ToList();
@@ -135,8 +122,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             feature.Featured = true;
     }
 
-    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromDatabase(SearchArticlesQuery request,
-        CancellationToken cancellationToken)
+    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromDatabase(SearchArticlesQuery request, CancellationToken cancellationToken)
     {
         var query = _database.From<Article>().AsNoTracking();
 
@@ -159,5 +145,24 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             article.Path = _linkCreator.CreateBlogUrl(article.Id);
 
         return articles;
+    }
+
+    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromShadow(SearchArticlesQuery request, CancellationToken cancellationToken)
+    {
+        var query = _database.From<ExtArticleShadow>().AsNoTracking();
+
+        if (request.Category is not null)
+            query = query.Where(x => x.Category == request.Category);
+
+        if (!string.IsNullOrWhiteSpace(request.Text))
+            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
+
+        if (request.Source is not null and not ArticleSourceEnum.Dz)
+            query = query.Where(x => x.Source == request.Source);
+
+        return await query.OrderByDescending(x => x.Date)
+            .ThenBy(x => x.Title)
+            .MapToVm()
+            .ToListAsync(cancellationToken);
     }
 }

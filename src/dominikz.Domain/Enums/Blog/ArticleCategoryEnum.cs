@@ -10,5 +10,8 @@ public enum ArticleCategoryEnum
     Birds = 5,
     Thoughts = 6,
     Music = 7,
+    Finance = 8,
+    Shopping = 9,
+    Leisure = 10,
     Unknown = 999
 }

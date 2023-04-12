@@ -66,7 +66,7 @@ namespace dominikz.Migrations.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("PublishDate")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Tags")
@@ -172,7 +172,7 @@ namespace dominikz.Migrations.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("PublishDate")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

@@ -1,4 +1,5 @@
-﻿using dominikz.Client.Components;
+﻿using System.Text.Json;
+using dominikz.Client.Components;
 using dominikz.Client.Components.Chips;
 using dominikz.Client.Components.Toast;
 using dominikz.Client.Extensions;
@@ -32,12 +33,12 @@ public partial class Blog
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
-        
+
         var filter = CreateFilter();
         _searchbox?.SetValue(filter.Text);
         _categorySelect?.Select(filter.Category);
         _sourceSelect?.Select(filter.Source);
-        
+
         var init = NavManager!.TrackQuery(SearchArticles);
         if (init)
             await SearchArticles();

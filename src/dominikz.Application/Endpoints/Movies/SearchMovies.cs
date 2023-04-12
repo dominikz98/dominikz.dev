@@ -39,7 +39,9 @@ public class SearchMovies : EndpointController
     }
 }
 
-public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVm>> { }
+public class SearchMoviesQuery : MoviesFilter, IRequest<IReadOnlyCollection<MovieVm>>
+{
+}
 
 public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IReadOnlyCollection<MovieVm>>
 {
@@ -60,13 +62,13 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
 
         if (_credentials.HasPermission(PermissionFlags.Media) == false)
             query = query.Where(x => x.PublishDate != null);
-        
+
         if (request.Genres is not null or MovieGenresFlags.All)
             foreach (var genre in request.Genres.Value.GetFlags())
                 query = query.Where(x => x.Genres.HasFlag(genre));
 
         if (!string.IsNullOrWhiteSpace(request.Text))
-            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
+            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%") || x.ImdbId == x.Title);
 
         var movies = await query.MapToVm()
             .OrderBy(x => x.Title)

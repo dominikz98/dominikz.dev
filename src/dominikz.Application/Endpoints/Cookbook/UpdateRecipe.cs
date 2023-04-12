@@ -115,6 +115,7 @@ public class UpdateRecipeRequestHandler : IRequestHandler<UpdateRecipeRequest, A
             .ToList();
 
         var foods = await _database.From<Food>()
+            .AsNoTracking()
             .Where(x => foodIds.Contains(x.Id))
             .ToListAsync(cancellationToken);
 

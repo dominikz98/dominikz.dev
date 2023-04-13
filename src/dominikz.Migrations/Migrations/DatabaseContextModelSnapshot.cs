@@ -339,7 +339,7 @@ namespace dominikz.Migrations.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FileName")
+                    b.Property<string>("FilePath")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Genres")

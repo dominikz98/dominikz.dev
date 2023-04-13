@@ -64,7 +64,7 @@ public class CreateStreamTokenRequestHandler : IRequestHandler<CreateStreamToken
             info.AbsoluteExpiration = DateTimeOffset.UtcNow.AddHours(4);
             var fileName = await _database.From<Movie>()
                 .Where(x => x.Id == request.Id)
-                .Select(x => x.FileName)
+                .Select(x => x.FilePath)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (string.IsNullOrWhiteSpace(fileName))

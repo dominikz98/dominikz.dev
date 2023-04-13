@@ -26,6 +26,7 @@ public static class ArticleMapper
             Title = article.Title,
             PublishDate = article.PublishDate,
             Category = article.Category,
+            Path = article.Id.ToString(),
             Source = ArticleSourceEnum.Dz
         });
 

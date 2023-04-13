@@ -10,8 +10,6 @@ public static class MovieMapper
     public static Movie ApplyChanges(this Movie original, EditMovieVm vm)
     {
         original.Id = vm.Id;
-        original.YoutubeId = vm.YouTubeId;
-        original.JustWatchId = vm.JustWatchId;
         original.ImdbId = vm.ImdbId;
         original.Title = vm.Title;
         original.PublishDate = vm.PublishDate!.Value;
@@ -36,9 +34,7 @@ public static class MovieMapper
             Plot = movie.Plot,
             Genres = movie.Genres.GetFlags(),
             Rating = movie.Rating,
-            JustWatchId = movie.JustWatchId,
             ImdbId = movie.ImdbId,
-            YouTubeId = movie.YoutubeId,
             Comment = movie.Comment
         });
 
@@ -66,8 +62,7 @@ public static class MovieMapper
             Comment = movie.Comment,
             Plot = movie.Plot,
             Runtime = movie.Runtime,
-            YoutubeId = movie.YoutubeId,
             Year = movie.Year,
-            IsStreamable = movie.FileName != null
+            IsStreamable = movie.FilePath != null
         };
 }

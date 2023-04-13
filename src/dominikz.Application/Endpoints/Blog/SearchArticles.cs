@@ -25,7 +25,7 @@ public class SearchArticles : EndpointController
     }
 
     [HttpGet("search")]
-    [ResponseCache(Duration = 3600)]
+    [ResponseCache(Duration = 3600, VaryByQueryKeys = new[] { "*" })]
     public async Task<IActionResult> Execute([FromQuery] ArticleFilter filter, CancellationToken cancellationToken)
     {
         var query = new SearchArticlesQuery()
@@ -141,9 +141,6 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
             .MapToVm()
             .ToListAsync(cancellationToken);
 
-        foreach (var article in articles)
-            article.Path = _linkCreator.CreateBlogUrl(article.Id);
-
         return articles;
     }
 
@@ -157,7 +154,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         if (!string.IsNullOrWhiteSpace(request.Text))
             query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
 
-        if (request.Source is not null and not ArticleSourceEnum.Dz)
+        if (request.Source is not null)
             query = query.Where(x => x.Source == request.Source);
 
         return await query.OrderByDescending(x => x.Date)

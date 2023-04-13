@@ -2,6 +2,7 @@ using dominikz.Client.Wrapper;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Structs;
+using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Clients.Api;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Components;
@@ -17,7 +18,7 @@ public partial class EditMovie
     [Inject] internal NavigationManager? NavManager { get; set; }
 
     private EditContext? _editContext;
-    private EditMovieWrapper _vm = new();
+    private EditWithImageWrapper<EditMovieVm> _data = new();
     private List<FileStruct> _posterFiles = new();
     private List<string> _genreRecommendations = new();
     private bool _isEnabled;
@@ -27,12 +28,12 @@ public partial class EditMovie
         var movieLoaded = await LoadMovieIfRequired();
         if (movieLoaded == false)
         {
-            _vm.Id = Guid.NewGuid();
-            _vm.PublishDate = DateTime.UtcNow.AddDays(1);
-            _vm.Rating = 50;
+            _data.ViewModel.Id = Guid.NewGuid();
+            _data.ViewModel.PublishDate = DateTime.UtcNow.AddDays(1);
+            _data.ViewModel.Rating = 50;
         }
 
-        _editContext = new EditContext(_vm);
+        _editContext = new EditContext(_data);
         _isEnabled = true;
     }
 
@@ -45,41 +46,18 @@ public partial class EditMovie
         if (movie == null)
             return false;
 
-        _vm = new EditMovieWrapper()
-        {
-            Id = _vm.Id,
-            Plot = _vm.Plot,
-            Runtime = _vm.Runtime,
-            Title = _vm.Title,
-            YouTubeId = _vm.YouTubeId,
-            JustWatchId = _vm.JustWatchId,
-            ImdbId = _vm.ImdbId,
-            PublishDate = _vm.PublishDate,
-            Year = _vm.Year,
-            Rating = _vm.Rating,
-            Genres = _vm.Genres,
-            Comment = _vm.Comment
-        };
-
+        _data.ViewModel = movie;
         var file = await DownloadEndpoints!.Image(movie.Id, true, ImageSizeEnum.Original);
         if (file == null)
             return true;
 
-        _vm.Image.Add(file.Value);
+        _data.Image.Add(file.Value);
         return true;
     }
 
-    // private void OnJustWatchIdChanged(string? jwIdRaw)
-    // {
-    //     if (int.TryParse(jwIdRaw, out var jwId) == false)
-    //         return;
-    //
-    //     _vm.JustWatchId = jwId;
-    // }
-
     private async Task OnImdbIdChanged(string? imdbId)
     {
-        _vm.ImdbId = imdbId ?? string.Empty;
+        _data.ViewModel.ImdbId = imdbId ?? string.Empty;
         if (string.IsNullOrWhiteSpace(imdbId))
             return;
 
@@ -90,38 +68,32 @@ public partial class EditMovie
         if (data == null)
             return;
 
-        if (_vm.JustWatchId == default)
-            _vm.JustWatchId = data.JustWatchId;
+        if (_data.ViewModel.Title == string.Empty)
+            _data.ViewModel.Title = data.Title;
 
-        if (_vm.YouTubeId == string.Empty)
-            _vm.YouTubeId = data.YouTubeId;
+        if (_data.ViewModel.Plot == string.Empty)
+            _data.ViewModel.Plot = data.Plot;
 
-        if (_vm.Title == string.Empty)
-            _vm.Title = data.Title;
+        if (_data.ViewModel.Runtime == default)
+            _data.ViewModel.Runtime = data.Runtime;
 
-        if (_vm.Plot == string.Empty)
-            _vm.Plot = data.Plot;
+        if (_data.ViewModel.Year == default)
+            _data.ViewModel.Year = data.Year;
 
-        if (_vm.Runtime == default)
-            _vm.Runtime = data.Runtime;
+        if (_data.ViewModel.Rating is 0 or 50)
+            _data.ViewModel.Rating = data.Rating;
 
-        if (_vm.Year == default)
-            _vm.Year = data.Year;
-
-        if (_vm.Rating is 0 or 50)
-            _vm.Rating = data.Rating;
-
-        if (_vm.Genres.Count == 0)
+        if (_data.ViewModel.Genres.Count == 0)
         {
             _genreRecommendations = data.GenreRecommendations.OrderBy(x => x).ToList();
-            _vm.Genres = Enum.GetValues<MovieGenresFlags>()[1..]
+            _data.ViewModel.Genres = Enum.GetValues<MovieGenresFlags>()[1..]
                 .Where(x => _genreRecommendations.ContainsCleaned(x.ToString()))
                 .ToList();
 
-            _genreRecommendations = _genreRecommendations.Where(x => _vm.Genres.ContainsCleaned(x) == false).ToList();
+            _genreRecommendations = _genreRecommendations.Where(x => _data.ViewModel.Genres.ContainsCleaned(x) == false).ToList();
         }
 
-        if (_vm.Image.Count == 0 && _posterFiles.Count == 0)
+        if (_data.Image.Count == 0 && _posterFiles.Count == 0)
         {
             foreach (var posterUrl in data.PosterUrls)
             {
@@ -135,7 +107,7 @@ public partial class EditMovie
             if (_posterFiles.Count > 0)
             {
                 var toSelect = _posterFiles.First();
-                _vm.Image.Add(toSelect);
+                _data.Image.Add(toSelect);
                 _posterFiles.Remove(toSelect);
             }
         }
@@ -144,15 +116,15 @@ public partial class EditMovie
     private async Task OnSaveClicked()
     {
         // Set File Ids
-        for (var i = 0; i < _vm.Image.Count; i++)
-            _vm.Image[i] = _vm.Image[i].CopyTo(_vm.Id.ToString());
+        for (var i = 0; i < _data.Image.Count; i++)
+            _data.Image[i] = _data.Image[i].CopyTo(_data.ViewModel.Id.ToString());
 
         if (_editContext == null || _editContext.Validate() == false)
             return;
 
         var movie = MovieId == null
-            ? await MovieEndpoints!.Add(_vm, _vm.Image)
-            : await MovieEndpoints!.Update(_vm, _vm.Image);
+            ? await MovieEndpoints!.Add(_data.ViewModel, _data.Image)
+            : await MovieEndpoints!.Update(_data.ViewModel, _data.Image);
 
         if (movie == null)
             return;

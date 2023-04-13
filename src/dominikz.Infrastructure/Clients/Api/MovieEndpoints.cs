@@ -1,7 +1,6 @@
 ﻿using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
-using dominikz.Domain.ViewModels;
 using dominikz.Domain.ViewModels.Media;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;

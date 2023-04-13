@@ -1,7 +1,6 @@
 using dominikz.Application.Utils;
 using dominikz.Domain.Options;
 using dominikz.Domain.ViewModels.Media;
-using dominikz.Infrastructure.Clients.JustWatch;
 using IMDbApiLib;
 using IMDbApiLib.Models;
 using MediatR;
@@ -41,12 +40,10 @@ public record GetMovieTemplateQuery(string ImdbId) : IRequest<MovieTemplateVm?>;
 public class GetMovieTemplateHandler : IRequestHandler<GetMovieTemplateQuery, MovieTemplateVm?>
 {
     private readonly IOptions<ImdbOptions> _options;
-    private readonly JustWatchClient _jwClient;
-
-    public GetMovieTemplateHandler(IOptions<ImdbOptions> options, JustWatchClient jwClient)
+    
+    public GetMovieTemplateHandler(IOptions<ImdbOptions> options)
     {
         _options = options;
-        _jwClient = jwClient;
     }
 
     public async Task<MovieTemplateVm?> Handle(GetMovieTemplateQuery request, CancellationToken cancellationToken)
@@ -64,7 +61,7 @@ public class GetMovieTemplateHandler : IRequestHandler<GetMovieTemplateQuery, Mo
 
         posterUrls.AddRange(imdbData.Posters.Posters.Select(x => x.Link).Take(10));
 
-        var template = new MovieTemplateVm()
+        return new MovieTemplateVm()
         {
             ImdbId = imdbData.Id,
             Title = imdbData.Title,
@@ -75,17 +72,5 @@ public class GetMovieTemplateHandler : IRequestHandler<GetMovieTemplateQuery, Mo
             GenreRecommendations = imdbData.GenreList.Select(x => x.Value).ToList(),
             PosterUrls = posterUrls
         };
-
-        var jwId = await _jwClient.SearchMovieByName(template.Title, cancellationToken);
-        if (jwId == null)
-            return template;
-
-        var jwData = await _jwClient.GetMovieById(jwId.Value, cancellationToken);
-        if (jwData is null)
-            return template;
-
-        template.JustWatchId = jwId.Value;
-        template.YouTubeId = jwData.Clips.FirstOrDefault(x => x.Provider.Equals("youtube", StringComparison.OrdinalIgnoreCase))?.ExternalId ?? string.Empty;
-        return template;
     }
 }

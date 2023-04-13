@@ -39,7 +39,7 @@
 
         <div class="movie-preview">
             <img src="@_movie.ImageUrl" alt="Movie Poster"/>
-            <video width="587" height="330" src="@_trailerStreamUrl" autoplay="autoplay" controls="controls" muted></video>
+            <video width="587" height="330" src="@_trailerStreamUrl" autoplay="autoplay" controls="controls" muted="muted"></video>
         </div>
 
         @((MarkupString)_movie.Plot)
@@ -54,7 +54,7 @@
 
         @if (_hasStreamPermission && _movie.IsTrailerStreamAvailable)
         {
-            <video width="100%" height="100%" src="@_movieStreamUrl" autoplay="autoplay" controls="controls"></video>
+            <video width="100%" height="100%" src="@_movieStreamUrl" controls="controls"></video>
         }
     }
     else

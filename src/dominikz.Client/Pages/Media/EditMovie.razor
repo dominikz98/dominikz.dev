@@ -13,7 +13,7 @@
 }
 else
 {
-    <PageTitle>@(MovieId == null ? "Movie" : _vm.Title)</PageTitle>
+    <PageTitle>@(MovieId == null ? "Movie" : _data.ViewModel.Title)</PageTitle>
 
     <EditForm EditContext="@_editContext" OnSubmit="@OnSaveClicked">
         <DataAnnotationsValidator/>
@@ -28,22 +28,10 @@ else
 
                 <div class="flex-column gap">
                     <TextBox Placeholder="ImdbId"
-                             Value="@_vm.ImdbId"
+                             Value="@_data.ViewModel.ImdbId"
                              ValueChanged="OnImdbIdChanged"
                              DelayInputTrigger="true"/>
-                    <ValidationMessage For="@(() => _vm.Title)"/>
-                </div>
-
-                @* <div class="flex-column gap"> *@
-                @*     <TextBox Placeholder="JustWatchId" *@
-                @*              Value="@(_vm.JustWatchId != default ? _vm.JustWatchId.ToString() : string.Empty)" *@
-                @*              ValueChanged="OnJustWatchIdChanged"/> *@
-                @*     <ValidationMessage For="@(() => _vm.JustWatchId)"/> *@
-                @* </div> *@
-
-                <div class="flex-column gap">
-                    <TextBox Placeholder="YouTubeId" @bind-Value="_vm.YouTubeId"/>
-                    <ValidationMessage For="@(() => _vm.YouTubeId)"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Title)"/>
                 </div>
             </div>
 
@@ -59,24 +47,24 @@ else
                     <span>Publish Date:</span>
                 </div>
                 <div class="flex-column gap">
-                    <DatePicker @bind-Date="_vm.PublishDate"/>
-                    <ValidationMessage For="@(() => _vm.PublishDate)"/>
+                    <DatePicker @bind-Date="_data.ViewModel.PublishDate"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.PublishDate)"/>
                 </div>
 
                 <div class="input-label">
                     <span>Runtime:</span>
                 </div>
                 <div class="flex-column gap">
-                    <TimePicker @bind-Time="_vm.Runtime"/>
-                    <ValidationMessage For="@(() => _vm.Runtime)"/>
+                    <TimePicker @bind-Time="_data.ViewModel.Runtime"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Runtime)"/>
                 </div>
 
                 <div class="input-label">
                     <span>Publishing Year:</span>
                 </div>
                 <div class="flex-column gap">
-                    <NumberPicker @bind-Value="_vm.Year"/>
-                    <ValidationMessage For="@(() => _vm.Year)"/>
+                    <NumberPicker @bind-Value="_data.ViewModel.Year"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Year)"/>
                 </div>
 
                 <div class="input-label">
@@ -84,7 +72,7 @@ else
                 </div>
                 <div class="flex-column gap">
                     <ChipSelect T="MovieGenresFlags"
-                                @bind-Selected="_vm.Genres"
+                                @bind-Selected="_data.ViewModel.Genres"
                                 AllowMultiSelect="true"
                                 Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
@@ -93,7 +81,7 @@ else
                         <span>Recommendations: @string.Join(", ", _genreRecommendations) </span>
                     }
 
-                    <ValidationMessage For="@(() => _vm.Genres)"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Genres)"/>
                 </div>
             </div>
 
@@ -106,13 +94,13 @@ else
                 </div>
 
                 <div class="flex-column gap">
-                    <TextBox Placeholder="Title" @bind-Value="_vm.Title"/>
-                    <ValidationMessage For="@(() => _vm.Title)"/>
+                    <TextBox Placeholder="Title" @bind-Value="_data.ViewModel.Title"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Title)"/>
                 </div>
 
                 <div class="flex-column gap">
-                    <TextArea Placeholder="Plot" Rows="5" @bind-Value="_vm.Plot"></TextArea>
-                    <ValidationMessage For="@(() => _vm.Plot)"/>
+                    <TextArea Placeholder="Plot" Rows="5" @bind-Value="_data.ViewModel.Plot"></TextArea>
+                    <ValidationMessage For="@(() => _data.ViewModel.Plot)"/>
                 </div>
             </div>
 
@@ -127,15 +115,15 @@ else
 
                 <div class="flex-column gap">
                     <div class="flex-row gap">
-                        <NumberPicker @bind-Value="_vm.Rating" Min="0" Max="100"/>
-                        <Rating Value="@_vm.Rating" ShowValue="false"/>
+                        <NumberPicker @bind-Value="_data.ViewModel.Rating" Min="0" Max="100"/>
+                        <Rating Value="@_data.ViewModel.Rating" ShowValue="false"/>
                     </div>
-                    <ValidationMessage For="@(() => _vm.Rating)"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Rating)"/>
                 </div>
 
                 <div class="flex-column gap">
-                    <TextArea Placeholder="Comment" Rows="5" @bind-Value="_vm.Comment"></TextArea>
-                    <ValidationMessage For="@(() => _vm.Comment)"/>
+                    <TextArea Placeholder="Comment" Rows="5" @bind-Value="_data.ViewModel.Comment"></TextArea>
+                    <ValidationMessage For="@(() => _data.ViewModel.Comment)"/>
                 </div>
             </div>
 
@@ -147,14 +135,9 @@ else
                     <span>🖼️</span>
                 </div>
 
-                @if (_vm.YouTubeId != string.Empty)
-                {
-                    <iframe class="trailer" src="@($"https://www.youtube.com/embed/{_vm.YouTubeId}?autoplay=1&mute=1&controls=0")"></iframe>
-                }
-
                 <div class="flex-column gap">
-                    <FilePicker @bind-Selected="_vm.Image" @bind-Files="_posterFiles" MaxFiles="10" MaxSelectedFiles="1"/>
-                    <ValidationMessage For="@(() => _vm.Image)"/>
+                    <FilePicker @bind-Selected="_data.Image" @bind-Files="_posterFiles" MaxFiles="10" MaxSelectedFiles="1"/>
+                    <ValidationMessage For="@(() => _data.Image)"/>
                 </div>
             </div>
 

@@ -2,7 +2,6 @@ using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Media;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
-using dominikz.Domain.ViewModels;
 using dominikz.Domain.ViewModels.Media;
 using Microsoft.Extensions.Options;
 

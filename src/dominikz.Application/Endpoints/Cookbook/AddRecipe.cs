@@ -1,10 +1,8 @@
 using dominikz.Application.Extensions;
 using dominikz.Application.Utils;
 using dominikz.Application.ViewModels;
-using dominikz.Domain.Enums.Cookbook;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Cookbook;
-using dominikz.Infrastructure;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;

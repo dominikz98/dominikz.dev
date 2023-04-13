@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using dominikz.Domain.Attributes;
 
 namespace dominikz.Domain.ViewModels.Cookbook;
 

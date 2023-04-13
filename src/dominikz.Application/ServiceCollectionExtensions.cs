@@ -116,5 +116,6 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()
-            .AddSingleton<PasswordHasher>();
+            .AddSingleton<PasswordHasher>()
+            .AddScoped<StreamTokenHandler>();
 }

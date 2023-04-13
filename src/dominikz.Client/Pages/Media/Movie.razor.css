@@ -1,10 +1,4 @@
 ﻿
-.trailer {
-    border: 0;
-    width: 587px;
-    height: 330px;
-}
-
 .movie {
     display: flex;
     flex-direction: column;

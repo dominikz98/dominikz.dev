@@ -49,13 +49,7 @@ public class MovieEndpoints
 
     public async Task<MovieDetailVm?> Update(EditMovieVm vm, List<FileStruct> files, CancellationToken cancellationToken = default)
         => await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Put, Endpoint, vm, files, cancellationToken);
-
-    public async Task<StreamTokenVm?> CreateStreamingToken(Guid movieId, CancellationToken cancellationToken = default)
-        => await _client.Post<EmptyVm, StreamTokenVm>($"{Endpoint}/{movieId}/stream/token", new(), false, cancellationToken);
-
-    public string CreateStreamingUrl(Guid movieId, string token)
-        => $"{ApiClient.Prefix}/{Endpoint}/{movieId}/stream?{ApiClient.ApiKeyHeaderName}={_options.Value.Key}&token={token}";
-
+    
     public string CurlSearch(MoviesFilter filter)
         => _client.Curl($"{Endpoint}/search", filter);
 }

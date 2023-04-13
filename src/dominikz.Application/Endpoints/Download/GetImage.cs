@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace dominikz.Application.Endpoints.Download;
 
 [Tags("download")]
-[Route("api/download")]
+[Route("api/download/image")]
 public class GetImage : EndpointController
 {
     private readonly IMediator _mediator;
@@ -18,11 +18,11 @@ public class GetImage : EndpointController
         _mediator = mediator;
     }
 
-    [HttpGet("image/fresh/{id:guid}/{size}")]
+    [HttpGet("fresh/{id:guid}/{size}")]
     public async Task<IActionResult> ExecuteWithoutCache(Guid id, ImageSizeEnum size, CancellationToken cancellationToken)
         => await Execute(id, size, cancellationToken);
 
-    [HttpGet("image/{id:guid}/{size}")]
+    [HttpGet("{id:guid}/{size}")]
     [ResponseCache(Duration = 604800)]
     public async Task<IActionResult> Execute(Guid id, ImageSizeEnum size, CancellationToken cancellationToken)
     {

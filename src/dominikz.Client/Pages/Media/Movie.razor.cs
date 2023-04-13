@@ -9,7 +9,8 @@ namespace dominikz.Client.Pages.Media;
 public partial class Movie
 {
     [Parameter] public Guid MovieId { get; set; }
-    [Inject] protected MovieEndpoints? Endpoints { get; set; }
+    [Inject] protected MovieEndpoints? MovieEndpoints { get; set; }
+    [Inject] protected DownloadEndpoints? DownloadEndpoints { get; set; }
     [Inject] protected ICredentialStorage? Credentials { get; set; }
     [Inject] protected NavigationManager? NavManager { get; set; }
     [Inject] protected ToastService? Toast { get; set; }
@@ -18,21 +19,30 @@ public partial class Movie
     private MovieDetailVm? _movie;
     private bool _hasCreatePermission;
     private bool _hasStreamPermission;
-    private string _streamUrl = string.Empty;
+    private string _movieStreamUrl = string.Empty;
+    private string _trailerStreamUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Media);
         _hasStreamPermission = await Credentials!.HasRight(PermissionFlags.Media);
-        _movie = await Endpoints!.GetById(MovieId);
 
-        if (_hasCreatePermission == false || _movie == null)
+        _movie = await MovieEndpoints!.GetById(MovieId);
+        if (_movie == null)
             return;
 
-        var stream = await Endpoints!.CreateStreamingToken(MovieId);
-        if (string.IsNullOrWhiteSpace(stream?.Token))
-            return;
+        if (_movie.IsTrailerStreamAvailable)
+        {
+            var stream = await DownloadEndpoints!.CreateTrailerStreamingToken(MovieId);
+            if (string.IsNullOrWhiteSpace(stream?.Token) == false)
+                _trailerStreamUrl = DownloadEndpoints!.CreateTrailerStreamingUrl(MovieId, stream.Token);
+        }
 
-        _streamUrl = Endpoints!.CreateStreamingUrl(MovieId, stream.Token);
+        if (_hasStreamPermission && _movie.IsStreamAvailable)
+        {
+            var stream = await DownloadEndpoints!.CreateMovieStreamingToken(MovieId);
+            if (string.IsNullOrWhiteSpace(stream?.Token) == false)
+                _movieStreamUrl = DownloadEndpoints!.CreateMovieStreamingUrl(MovieId, stream.Token);
+        }
     }
 }

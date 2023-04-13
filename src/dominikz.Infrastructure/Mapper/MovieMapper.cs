@@ -63,6 +63,7 @@ public static class MovieMapper
             Plot = movie.Plot,
             Runtime = movie.Runtime,
             Year = movie.Year,
-            IsStreamable = movie.FilePath != null
+            IsStreamAvailable = movie.FilePath != null,
+            IsTrailerStreamAvailable = movie.TrailerPath != null
         };
 }

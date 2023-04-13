@@ -1,9 +1,12 @@
-﻿using dominikz.Domain.Enums.Media;
+﻿using dominikz.Domain.Enums.Movies;
 
 namespace dominikz.Domain.Models;
 
-public class Movie : Media
+public class Movie
 {
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public DateTime? PublishDate { get; set; }
     public string? Comment { get; set; }
     public MovieGenresFlags Genres { get; set; }
     public int Rating { get; set; }

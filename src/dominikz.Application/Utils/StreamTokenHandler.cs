@@ -1,5 +1,5 @@
-using dominikz.Domain.Enums.Media;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.Enums.Movies;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Utils;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;

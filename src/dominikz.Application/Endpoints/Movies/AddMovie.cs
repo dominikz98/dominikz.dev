@@ -2,7 +2,7 @@ using dominikz.Application.Extensions;
 using dominikz.Application.Utils;
 using dominikz.Application.ViewModels;
 using dominikz.Domain.Models;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.Application.Endpoints.Movies;
 
 [Tags("movies")]
-[Authorize(Policy = Policies.Media)]
+[Authorize(Policy = Policies.Movies)]
 [Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/movies")]
 public class AddMovie : EndpointController

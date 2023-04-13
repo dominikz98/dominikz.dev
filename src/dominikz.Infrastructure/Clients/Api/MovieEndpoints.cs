@@ -1,7 +1,7 @@
 ﻿using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
 
@@ -36,6 +36,13 @@ public class MovieEndpoints
     public async Task<MovieTemplateVm?> GetTemplateByImdbId(string imdbId, CancellationToken cancellationToken = default)
         => await _client.GetSingle<MovieTemplateVm>($"{Endpoint}/template/{imdbId}", cancellationToken);
 
+    public async Task<List<MoviePreviewVm>> GetPreview(CancellationToken cancellationToken = default)
+    {
+        var vmList = await _client.Get<MoviePreviewVm>($"{Endpoint}/preview", cancellationToken);
+        vmList.AttachApiKey(_options.Value.Key);
+        return vmList;
+    }
+    
     public async Task<List<MovieVm>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<MovieVm>($"{Endpoint}/search", filter, cancellationToken);

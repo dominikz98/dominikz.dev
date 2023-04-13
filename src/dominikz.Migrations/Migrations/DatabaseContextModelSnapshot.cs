@@ -164,7 +164,7 @@ namespace dominikz.Migrations.Migrations
                     b.ToTable("ingredients", (string)null);
                 });
 
-            modelBuilder.Entity("dominikz.Domain.Models.Media", b =>
+            modelBuilder.Entity("dominikz.Domain.Models.Movies", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
@@ -298,7 +298,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Book", b =>
                 {
-                    b.HasBaseType("dominikz.Domain.Models.Media");
+                    b.HasBaseType("dominikz.Domain.Models.Movies");
 
                     b.Property<string>("Author")
                         .IsRequired()
@@ -318,7 +318,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Game", b =>
                 {
-                    b.HasBaseType("dominikz.Domain.Models.Media");
+                    b.HasBaseType("dominikz.Domain.Models.Movies");
 
                     b.Property<int>("Genres")
                         .HasColumnType("INTEGER");
@@ -334,7 +334,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Movie", b =>
                 {
-                    b.HasBaseType("dominikz.Domain.Models.Media");
+                    b.HasBaseType("dominikz.Domain.Models.Movies");
 
                     b.Property<string>("Comment")
                         .HasColumnType("TEXT");
@@ -411,11 +411,11 @@ namespace dominikz.Migrations.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("dominikz.Domain.Models.Media", b =>
+            modelBuilder.Entity("dominikz.Domain.Models.Movies", b =>
                 {
                     b.HasOne("dominikz.Domain.Models.StorageFile", "File")
-                        .WithOne("Media")
-                        .HasForeignKey("dominikz.Domain.Models.Media", "Id")
+                        .WithOne("Movies")
+                        .HasForeignKey("dominikz.Domain.Models.Movies", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -455,7 +455,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Book", b =>
                 {
-                    b.HasOne("dominikz.Domain.Models.Media", null)
+                    b.HasOne("dominikz.Domain.Models.Movies", null)
                         .WithOne()
                         .HasForeignKey("dominikz.Domain.Models.Book", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -464,7 +464,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Game", b =>
                 {
-                    b.HasOne("dominikz.Domain.Models.Media", null)
+                    b.HasOne("dominikz.Domain.Models.Movies", null)
                         .WithOne()
                         .HasForeignKey("dominikz.Domain.Models.Game", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -473,7 +473,7 @@ namespace dominikz.Migrations.Migrations
 
             modelBuilder.Entity("dominikz.Domain.Models.Movie", b =>
                 {
-                    b.HasOne("dominikz.Domain.Models.Media", null)
+                    b.HasOne("dominikz.Domain.Models.Movies", null)
                         .WithOne()
                         .HasForeignKey("dominikz.Domain.Models.Movie", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -501,7 +501,7 @@ namespace dominikz.Migrations.Migrations
                 {
                     b.Navigation("Article");
 
-                    b.Navigation("Media");
+                    b.Navigation("Movies");
 
                     b.Navigation("Recipe");
                 });

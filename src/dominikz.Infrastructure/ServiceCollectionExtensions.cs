@@ -17,10 +17,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApiClient(this IServiceCollection services, string url)
         => services.AddSingleton<BlogEndpoints>()
-            .AddSingleton<MediaEndpoints>()
             .AddSingleton<MovieEndpoints>()
-            .AddSingleton<GameEndpoints>()
-            .AddSingleton<BookEndpoints>()
             .AddSingleton<DownloadEndpoints>()
             .AddSingleton<SongsEndpoints>()
             .AddSingleton<CookbookEndpoints>()

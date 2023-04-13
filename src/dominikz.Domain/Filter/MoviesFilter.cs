@@ -1,5 +1,5 @@
 ﻿using dominikz.Domain.Contracts;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 
 namespace dominikz.Domain.Filter;
 

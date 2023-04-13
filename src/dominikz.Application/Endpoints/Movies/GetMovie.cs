@@ -1,7 +1,7 @@
 ﻿using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Models;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using MediatR;

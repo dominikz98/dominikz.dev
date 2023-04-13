@@ -1,6 +1,6 @@
 using dominikz.Application.Utils;
 using dominikz.Domain.Options;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using IMDbApiLib;
 using IMDbApiLib.Models;
 using MediatR;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace dominikz.Application.Endpoints.Movies;
 
 [Tags("movies")]
-[Authorize(Policy = Policies.Media)]
+[Authorize(Policy = Policies.Movies)]
 [Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/movies/template")]
 public class GetMovieTemplate : EndpointController

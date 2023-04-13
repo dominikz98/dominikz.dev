@@ -1,8 +1,8 @@
 ﻿using dominikz.Client.Components.Tables;
 using dominikz.Client.Utils;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Extensions;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 
 namespace dominikz.Client.Tables;
 

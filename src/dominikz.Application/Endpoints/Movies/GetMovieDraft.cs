@@ -1,7 +1,7 @@
 using dominikz.Application.Utils;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Models;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using MediatR;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace dominikz.Application.Endpoints.Movies;
 
 [Tags("movies")]
-[Authorize(Policy = Policies.Media)]
+[Authorize(Policy = Policies.Movies)]
 [Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/movies/draft")]
 public class GetMovieDraft : EndpointController

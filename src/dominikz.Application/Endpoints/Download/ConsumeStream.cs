@@ -1,5 +1,5 @@
 using dominikz.Application.Utils;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dominikz.Application.Endpoints.Download;

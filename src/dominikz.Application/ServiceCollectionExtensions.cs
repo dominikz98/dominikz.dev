@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
             {
                 options.AddPolicy(Policies.CreateOrUpdate, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.CreateOrUpdate)));
                 options.AddPolicy(Policies.Blog, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Blog)));
-                options.AddPolicy(Policies.Media, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Media)));
+                options.AddPolicy(Policies.Movies, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Movies)));
                 options.AddPolicy(Policies.Cookbook, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Cookbook)));
                 options.AddPolicy(Policies.Account, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Account)));
             })

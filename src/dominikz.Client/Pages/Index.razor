@@ -61,31 +61,27 @@
                 </div>
 
                 <span>
-                    Sepcial thans to my friends, for sharing their content ❤️ 
+                    Sepcial thans to my friends, for sharing their content ❤️
                 </span>
             </div>
 
         </div>
     </div>
 
-    @* Medias  *@
-    <div class="panel clickable flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/media"))">
+    @* Moviess  *@
+    <div class="panel clickable flex-column large-gap" @onclick="@(() => NavigationManager!.NavigateTo("/movies"))">
         <span class="panel-title">
-            <b>Medias</b>
+            <b>Moviess</b>
         </span>
 
         <div class="flex-row-no-wrap large-gap">
 
             <div class="constributor-container gap">
-                <div class="flex-row-no-wrap gap">
-                    <img class="constributor" src="./assets/icons/movie.png" alt="Movies"/>
-                    <img class="constributor" src="./assets/icons/game.png" alt="Games"/>
-                </div>
-                <img class="constributor" src="./assets/icons/book.png" alt="Books"/>
+                <img class="constributor" src="./assets/icons/movie.png" alt="Movies"/>
             </div>
 
             <span>
-                This site started as a simple movie / game / book list, but evolved into a collection of data connected to Imdb and JustWatch.<br/><br/>
+                This site started as a simple movie list, but evolved into a collection of data connected to Imdb and JustWatch.<br/><br/>
                 Mainly this is used to keep my list up to date and quickly search for streaming services, actors and titles. <br/><br/>
                 So try it out and explore categories like @GetRandomGenres()
             </span>

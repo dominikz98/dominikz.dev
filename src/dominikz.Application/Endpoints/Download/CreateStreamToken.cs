@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using dominikz.Application.Utils;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Models;
 using dominikz.Domain.Options;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Provider.Database;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -71,7 +71,7 @@ internal class CreateStreamTokenRequestHandler : IRequestHandler<CreateStreamTok
             .Select(x => new { x.FilePath, x.TrailerPath })
             .FirstOrDefaultAsync(cancellationToken);
 
-        var movieAvailable = request.Claims != null && (await _authorizationHandler.AuthorizeAsync(request.Claims, Policies.Media)).Succeeded;
+        var movieAvailable = request.Claims != null && (await _authorizationHandler.AuthorizeAsync(request.Claims, Policies.Movies)).Succeeded;
         var filename = request.Prefix switch
         {
             StreamTokenPrefix.Movie => movieAvailable ? movie?.FilePath : null,

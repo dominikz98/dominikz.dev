@@ -14,7 +14,7 @@ public partial class AppMenue
     private static List<MenueEntry> _pages = new()
         {
             new MenueEntry("fa-rss", "Blog", "/blog"),
-            new MenueEntry("fa-film", "Media", "/media"),
+            new MenueEntry("fa-film", "Movies", "/movies"),
             new MenueEntry("fa-compact-disc", "Songs", "/songs"),
             new MenueEntry("fa-lemon", "Cookbook", "/cookbook")
         };

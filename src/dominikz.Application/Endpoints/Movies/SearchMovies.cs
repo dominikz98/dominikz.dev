@@ -1,10 +1,10 @@
 ﻿using dominikz.Application.Utils;
 using dominikz.Domain.Enums;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Extensions;
 using dominikz.Domain.Filter;
 using dominikz.Domain.Models;
-using dominikz.Domain.ViewModels.Media;
+using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider;
 using dominikz.Infrastructure.Provider.Database;
@@ -60,7 +60,7 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
     {
         var query = _database.From<Movie>();
 
-        if (_credentials.HasPermission(PermissionFlags.Media) == false)
+        if (_credentials.HasPermission(PermissionFlags.Movies) == false)
             query = query.Where(x => x.PublishDate != null);
 
         if (request.Genres is not null or MovieGenresFlags.All)

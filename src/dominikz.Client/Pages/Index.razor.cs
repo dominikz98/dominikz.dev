@@ -1,5 +1,5 @@
 using dominikz.Client.Utils;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages;

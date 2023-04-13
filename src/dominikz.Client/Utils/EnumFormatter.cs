@@ -1,6 +1,6 @@
 ﻿using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Enums.Cookbook;
-using dominikz.Domain.Enums.Media;
+using dominikz.Domain.Enums.Movies;
 
 namespace dominikz.Client.Utils;
 
@@ -13,22 +13,12 @@ public static class EnumFormatter
 
     public static string ToString<TEnum>(TEnum value) where TEnum : struct
     {
-        if (value is MediaCategoryEnum mediaCategory)
-            return ToString(mediaCategory);
         if (value is MovieGenresFlags movieGenre)
             return ToString(movieGenre);
         if (value is ArticleCategoryEnum articleCategory)
             return ToString(articleCategory);
         if (value is ArticleSourceEnum articleSource)
             return ToString(articleSource);
-        if (value is GamePlatformEnum platform)
-            return ToString(platform);
-        if (value is GameGenresFlags gameGenre)
-            return ToString(gameGenre);
-        if (value is BookLanguageEnum language)
-            return ToString(language);
-        if (value is BookGenresFlags bookGenre)
-            return ToString(bookGenre);
         if (value is RecipeFlags recipeFlag)
             return ToString(recipeFlag);
         if (value is RecipeType recipeType)
@@ -36,15 +26,6 @@ public static class EnumFormatter
         
         return value.ToString()!;
     }
-
-    private static string ToString(MediaCategoryEnum category)
-        => category switch
-        {
-            MediaCategoryEnum.Movie => "🍿 Movie",
-            MediaCategoryEnum.Book => "📖 Book",
-            MediaCategoryEnum.Game => "🎮 Game",
-            _ => Default
-        };
 
     private static string ToString(MovieGenresFlags genre)
         => genre switch
@@ -85,72 +66,6 @@ public static class EnumFormatter
             ArticleCategoryEnum.Finance => "💵 Finance",
             ArticleCategoryEnum.Shopping => "🛒 Shopping",
             ArticleCategoryEnum.Leisure => "🎭️ Leisure",
-            _ => Default
-        };
-
-    private static string ToString(GamePlatformEnum platform)
-        => platform switch
-        {
-            GamePlatformEnum.Pc => "🖥 PC",
-            GamePlatformEnum.Ps4 => "🎮 PS4",
-            GamePlatformEnum.Switch => "🎮 Nintendo Switch",
-            _ => Default
-        };
-
-    private static string ToString(GameGenresFlags genre)
-        => genre switch
-        {
-            GameGenresFlags.All => string.Empty,
-            GameGenresFlags.VirtualReality => "👓 VR",
-            GameGenresFlags.Indie => "🕹 Indie",
-            GameGenresFlags.Survival => "🎒 Survival",
-            GameGenresFlags.Horror => "👻 Horror",
-            GameGenresFlags.Action => "📣 Action",
-            GameGenresFlags.Puzzle => "🧩 Puzzle",
-            GameGenresFlags.OpenWorld => "🌎 Open World",
-            GameGenresFlags.Adventure => "🗺 Adventure",
-            GameGenresFlags.Shooter => "🔫 Shooter",
-            GameGenresFlags.RealTime => "🕑 Realtime",
-            GameGenresFlags.Strategy => "✏ Strategy",
-            GameGenresFlags.Tactic => "🗒 Tactic",
-            GameGenresFlags.Rpg => "🌲 RPG",
-            GameGenresFlags.Sandbox => "📦 Sandbox",
-            GameGenresFlags.Simulation => "⌨ Simulation",
-            GameGenresFlags.Stealth => "🥷 Stealth",
-            GameGenresFlags.Racing => "🚗 Racing",
-            GameGenresFlags.Construction => "🚧 Construction",
-            GameGenresFlags.JumpNRun => "🔘 Jump and Run",
-            GameGenresFlags.BattleRoyal => "🏆 Battle Royal",
-            GameGenresFlags.HackAndSlay => "⚔ Hack and Slay",
-            GameGenresFlags.ClickAndPoint => "🖱 Click & Point",
-            GameGenresFlags.Party => "🎈 Party",
-            _ => Default
-        };
-
-    private static string ToString(BookGenresFlags genre)
-        => genre switch
-        {
-            BookGenresFlags.All => string.Empty,
-            BookGenresFlags.Crime => "🎈 Crime",
-            BookGenresFlags.Fantasy => "🦄 Fantasy",
-            BookGenresFlags.Adventure => "🗺 Adventure",
-            BookGenresFlags.Horror => "👻 Horror",
-            BookGenresFlags.SciFi => "🚀 SciFi",
-            BookGenresFlags.Novel => "📕 Novel",
-            BookGenresFlags.Thriller => "🧟 Thriller",
-            BookGenresFlags.Dystopia => "💣 Dystopia",
-            BookGenresFlags.NonFiction => "📚 Non-Fiction",
-            BookGenresFlags.Advising => "🎓 Advising",
-            BookGenresFlags.Romance => "♥ Romance",
-            BookGenresFlags.Humor => "🎤 Comedy",
-            _ => Default
-        };
-
-    private static string ToString(BookLanguageEnum language)
-        => language switch
-        {
-            BookLanguageEnum.German => "German",
-            BookLanguageEnum.English => "English",
             _ => Default
         };
 

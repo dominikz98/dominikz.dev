@@ -1,5 +1,4 @@
-﻿using dominikz.Client.Components.Toast;
-using dominikz.Domain.Enums;
+﻿using dominikz.Domain.Enums;
 using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
@@ -13,8 +12,6 @@ public partial class Movie
     [Inject] protected DownloadEndpoints? DownloadEndpoints { get; set; }
     [Inject] protected ICredentialStorage? Credentials { get; set; }
     [Inject] protected NavigationManager? NavManager { get; set; }
-    [Inject] protected ToastService? Toast { get; set; }
-    [Inject] protected ApiClient? ApiClient { get; set; }
 
     private MovieDetailVm? _movie;
     private bool _hasCreatePermission;

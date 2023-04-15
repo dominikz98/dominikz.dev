@@ -21,21 +21,22 @@ public partial class Blog
     [Inject] protected ToastService? Toast { get; set; }
     [Inject] protected ICredentialStorage? Credentials { get; set; }
 
-    private List<ArticleVm> _articles = new();
+    private readonly List<ArticleVm> _articles = new();
     private bool _isTableView;
     private bool _hasCreatePermission;
 
-    private TextBox? _searchbox;
+    private TextBox? _searchBox;
     private ChipSelect<ArticleCategoryEnum>? _categorySelect;
     private ChipSelect<ArticleSourceEnum>? _sourceSelect;
     private const int LoadingPackageSize = 100;
+    private readonly List<CancellationTokenSource> _cancellationSources = new();
 
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Blog);
 
         var filter = CreateFilter();
-        _searchbox?.SetValue(filter.Text);
+        _searchBox?.SetValue(filter.Text);
         _categorySelect?.Select(filter.Category);
         _sourceSelect?.Select(filter.Source);
 
@@ -50,14 +51,25 @@ public partial class Blog
         var count = await Endpoints!.SearchCount(filter);
         _articles.Clear();
 
+        foreach (var toCancel in _cancellationSources)
+            toCancel.Cancel();
+
+        var cancellationSource = new CancellationTokenSource();
+        _cancellationSources.Add(cancellationSource);
+        
         for (var i = 0; i < count; i += LoadingPackageSize)
         {
+            if (cancellationSource.IsCancellationRequested)
+                break;
+
             filter.Start = i;
             filter.Count = Math.Min(LoadingPackageSize, count - i);
-            var articles = await Endpoints!.Search(filter);
+            var articles = await Endpoints!.Search(filter, cancellationSource.Token);
             _articles.AddRange(articles);
             StateHasChanged();
         }
+
+        _cancellationSources.Remove(cancellationSource);
     }
 
     private ArticleFilter CreateFilter()

@@ -22,13 +22,14 @@ public partial class Movies : ComponentBase
     [Inject] protected ICredentialStorage? Credentials { get; set; }
 
     private List<MoviePreviewVm> _previews = new();
-    private List<MovieVm> _movies = new();
+    private readonly List<MovieVm> _movies = new();
     private bool _hasCreatePermission;
 
     private bool _isTableView;
-    private TextBox? _searchbox;
+    private TextBox? _searchBox;
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;
     private const int LoadingPackageSize = 50;
+    private readonly List<CancellationTokenSource> _cancellationSources = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,7 +37,7 @@ public partial class Movies : ComponentBase
         _previews = await Endpoints!.GetPreview();
 
         var filter = CreateFilter();
-        _searchbox?.SetValue(filter.Text);
+        _searchBox?.SetValue(filter.Text);
         _movieGenreSelect?.Select(filter.Genres);
 
         var init = NavManager!.TrackQuery(SearchMovies);
@@ -78,14 +79,25 @@ public partial class Movies : ComponentBase
         var count = await Endpoints!.SearchCount(filter);
         _movies.Clear();
 
+        foreach (var toCancel in _cancellationSources)
+            toCancel.Cancel();
+
+        var cancellationSource = new CancellationTokenSource();
+        _cancellationSources.Add(cancellationSource);
+
         for (var i = 0; i < count; i += LoadingPackageSize)
         {
+            if (cancellationSource.IsCancellationRequested)
+                break;
+            
             filter.Start = i;
             filter.Count = Math.Min(LoadingPackageSize, count - i);
-            var movies = await Endpoints!.Search(filter);
+            var movies = await Endpoints!.Search(filter, cancellationSource.Token);
             _movies.AddRange(movies);
             StateHasChanged();
         }
+        
+        _cancellationSources.Remove(cancellationSource);
     }
 
     private void NavigateToMovie(Guid movieId)

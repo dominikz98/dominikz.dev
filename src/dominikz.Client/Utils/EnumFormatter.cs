@@ -56,7 +56,7 @@ public static class EnumFormatter
         => category switch
         {
             ArticleCategoryEnum.Coding => "💾 Coding",
-            ArticleCategoryEnum.Movie => "🎞 Movie",
+            ArticleCategoryEnum.Movie => "🍿 Movie",
             ArticleCategoryEnum.Project => "🚀 Project",
             ArticleCategoryEnum.Gaming => "🎮 Gaming",
             ArticleCategoryEnum.Travel => "✈ Travel",
@@ -69,6 +69,40 @@ public static class EnumFormatter
             _ => Default
         };
 
+    public static string ToIcon(ArticleCategoryEnum category)
+        => category switch
+        {
+            ArticleCategoryEnum.Coding => "💾",
+            ArticleCategoryEnum.Movie => "🍿",
+            ArticleCategoryEnum.Project => "🚀",
+            ArticleCategoryEnum.Gaming => "🎮",
+            ArticleCategoryEnum.Travel => "✈",
+            ArticleCategoryEnum.Birds => "🐤",
+            ArticleCategoryEnum.Thoughts => "💡",
+            ArticleCategoryEnum.Music => "🎸",
+            ArticleCategoryEnum.Finance => "💵",
+            ArticleCategoryEnum.Shopping => "🛒",
+            ArticleCategoryEnum.Leisure => "🎭️",
+            _ => string.Empty
+        };
+    
+    public static string ToText(ArticleCategoryEnum category)
+        => category switch
+        {
+            ArticleCategoryEnum.Coding => "Coding",
+            ArticleCategoryEnum.Movie => "Movie",
+            ArticleCategoryEnum.Project => "Project",
+            ArticleCategoryEnum.Gaming => "Gaming",
+            ArticleCategoryEnum.Travel => "Travel",
+            ArticleCategoryEnum.Birds => "Birds",
+            ArticleCategoryEnum.Thoughts => "Thoughts",
+            ArticleCategoryEnum.Music => "Music",
+            ArticleCategoryEnum.Finance => "Finance",
+            ArticleCategoryEnum.Shopping => "Shopping",
+            ArticleCategoryEnum.Leisure => "Leisure",
+            _ => Default
+        };
+    
     private static string ToString(ArticleSourceEnum sourceEnum)
         => sourceEnum switch
         {

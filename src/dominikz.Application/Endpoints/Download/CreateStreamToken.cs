@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace dominikz.Application.Endpoints.Download;
 
-[Tags("donwload")]
+[Tags("download")]
 [Route("api/download/stream/token")]
 public class CreateStreamToken : EndpointController
 {

@@ -15,6 +15,7 @@ namespace dominikz.Application.Endpoints.Blog;
 
 [Tags("blog")]
 [Route("api/blog")]
+[ResponseCache(Duration = 3600, VaryByQueryKeys = new[] { "*" })]
 public class SearchArticles : EndpointController
 {
     private readonly IMediator _mediator;
@@ -25,23 +26,22 @@ public class SearchArticles : EndpointController
     }
 
     [HttpGet("search")]
-    [ResponseCache(Duration = 3600, VaryByQueryKeys = new[] { "*" })]
-    public async Task<IActionResult> Execute([FromQuery] ArticleFilter filter, CancellationToken cancellationToken)
+    public async Task<IActionResult> Search([FromQuery] SearchArticlesQuery query, CancellationToken cancellationToken)
     {
-        var query = new SearchArticlesQuery()
-        {
-            Text = filter.Text,
-            Category = filter.Category,
-            Source = filter.Source
-        };
-        var vms = await _mediator.Send(query, cancellationToken);
-        return Ok(vms);
+        var articles = await _mediator.Send(query, cancellationToken);
+        return Ok(articles);
+    }
+
+    [HttpGet("search/count")]
+    public async Task<IActionResult> Count([FromQuery] CountArticlesQuery query, CancellationToken cancellationToken)
+    {
+        var count = await _mediator.Send(query, cancellationToken);
+        return Ok(count);
     }
 }
 
 public class SearchArticlesQuery : ArticleFilter, IRequest<IReadOnlyCollection<ArticleVm>>
 {
-    public bool SuppressCache { get; set; }
 }
 
 public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, IReadOnlyCollection<ArticleVm>>
@@ -65,38 +65,36 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         var articles = new List<ArticleVm>();
         if (request.Source is null or ArticleSourceEnum.Dz)
         {
-            var dzArticles = await LoadFromDatabase(request, cancellationToken);
+            var includeDrafts = _credentials.HasPermission(PermissionFlags.Blog | PermissionFlags.CreateOrUpdate);
+            var dzArticles = await _database.From<Article>()
+                .AsNoTracking()
+                .ApplyFilter(request, includeDrafts)
+                .MapToVm()
+                .ToListAsync(cancellationToken);
+
             articles.AddRange(dzArticles);
         }
 
         if (request.Source is null or ArticleSourceEnum.Noobit or ArticleSourceEnum.Medlan)
         {
-            var extArticles = await LoadFromShadow(request, cancellationToken);
+            var extArticles = await _database.From<ExtArticleShadow>()
+                .AsNoTracking()
+                .ApplyFilter(request)
+                .MapToVm()
+                .ToListAsync(cancellationToken);
+
             articles.AddRange(extArticles);
         }
 
-        articles = PostFilterAndOrderArticles(request, articles).ToList();
         AttachMissingLinks(articles);
         SetFeaturedFlags(articles);
 
-        return articles;
-    }
-
-    private IReadOnlyCollection<ArticleVm> PostFilterAndOrderArticles(SearchArticlesQuery request, IReadOnlyCollection<ArticleVm> articles)
-    {
-        var clone = new List<ArticleVm>(articles);
-
-        // filter
-        if (!string.IsNullOrWhiteSpace(request.Text))
-            clone = clone.Where(x => x.Title.Contains(request.Text, StringComparison.OrdinalIgnoreCase)
-                                     || x.Category.ToString().Contains(request.Text, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-        // order 
-        return clone.OrderByDescending(x => x.PublishDate)
+        articles = articles.OrderByDescending(x => x.PublishDate)
             .ThenByDescending(x => x.Featured)
             .ThenBy(x => x.Title)
             .ToList();
+
+        return articles;
     }
 
     private void AttachMissingLinks(IReadOnlyCollection<ArticleVm> articles)
@@ -121,45 +119,85 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         foreach (var feature in articles.Where(x => x.Source == ArticleSourceEnum.Medlan).Take(2))
             feature.Featured = true;
     }
+}
 
-    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromDatabase(SearchArticlesQuery request, CancellationToken cancellationToken)
+public class CountArticlesQuery : ArticleFilter, IRequest<int>
+{
+}
+
+public class CountArticlesQueryHandler : IRequestHandler<CountArticlesQuery, int>
+{
+    private readonly DatabaseContext _database;
+    private readonly CredentialsProvider _credentials;
+
+    public CountArticlesQueryHandler(DatabaseContext database, CredentialsProvider credentials)
     {
-        var query = _database.From<Article>().AsNoTracking();
-
-        // pre filter
-        if (_credentials.HasPermission(PermissionFlags.Blog) == false)
-            query = query.Where(x => x.PublishDate != null);
-
-        if (request.Category is not null)
-            query = query.Where(x => x.Category == request.Category);
-
-        if (!string.IsNullOrWhiteSpace(request.Text))
-            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
-
-        var articles = await query.OrderByDescending(x => x.PublishDate)
-            .ThenBy(x => x.Title)
-            .MapToVm()
-            .ToListAsync(cancellationToken);
-
-        return articles;
+        _database = database;
+        _credentials = credentials;
     }
 
-    private async Task<IReadOnlyCollection<ArticleVm>> LoadFromShadow(SearchArticlesQuery request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CountArticlesQuery request, CancellationToken cancellationToken)
     {
-        var query = _database.From<ExtArticleShadow>().AsNoTracking();
+        // load articles from sources
+        var count = 0;
+        if (request.Source is null or ArticleSourceEnum.Dz)
+        {
+            var includeDrafts = _credentials.HasPermission(PermissionFlags.Blog | PermissionFlags.CreateOrUpdate);
+            count += await _database.From<Article>().ApplyFilter(request, includeDrafts).CountAsync(cancellationToken);
+        }
 
-        if (request.Category is not null)
-            query = query.Where(x => x.Category == request.Category);
+        if (request.Source is null or ArticleSourceEnum.Noobit or ArticleSourceEnum.Medlan)
+            count += await _database.From<ExtArticleShadow>().ApplyFilter(request).CountAsync(cancellationToken);
 
-        if (!string.IsNullOrWhiteSpace(request.Text))
-            query = query.Where(x => EF.Functions.Like(x.Title, $"%{request.Text}%"));
+        return count;
+    }
+}
 
-        if (request.Source is not null)
-            query = query.Where(x => x.Source == request.Source);
+internal static class ArticleQueryExtensions
+{
+    public static IQueryable<Article> ApplyFilter(this IQueryable<Article> query, ArticleFilter filter, bool includeDrafts)
+    {
+        if (filter.Category is not null)
+            query = query.Where(x => x.Category == filter.Category);
 
-        return await query.OrderByDescending(x => x.Date)
-            .ThenBy(x => x.Title)
-            .MapToVm()
-            .ToListAsync(cancellationToken);
+        if (!string.IsNullOrWhiteSpace(filter.Text))
+            query = query.Where(x => EF.Functions.Like(x.Title, $"%{filter.Text}%"));
+
+        if (includeDrafts == false)
+            query = query.Where(x => x.PublishDate != null);
+
+        query = query.OrderByDescending(x => x.PublishDate)
+            .ThenBy(x => x.Title);
+
+        if (filter.Start != null)
+            query = query.Skip(filter.Start.Value);
+
+        if (filter.Count != null)
+            query = query.Take(filter.Count.Value);
+
+        return query;
+    }
+
+    public static IQueryable<ExtArticleShadow> ApplyFilter(this IQueryable<ExtArticleShadow> query, ArticleFilter filter)
+    {
+        if (filter.Source is not null)
+            query = query.Where(x => x.Source == filter.Source);
+
+        if (filter.Category is not null)
+            query = query.Where(x => x.Category == filter.Category);
+
+        if (!string.IsNullOrWhiteSpace(filter.Text))
+            query = query.Where(x => EF.Functions.Like(x.Title, $"%{filter.Text}%"));
+
+        query = query.OrderByDescending(x => x.Date)
+            .ThenBy(x => x.Title);
+
+        if (filter.Start != null)
+            query = query.Skip(filter.Start.Value);
+
+        if (filter.Count != null)
+            query = query.Take(filter.Count.Value);
+
+        return query;
     }
 }

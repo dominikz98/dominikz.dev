@@ -10,6 +10,7 @@ namespace dominikz.Application.Endpoints.Cookbook;
 
 [Tags("cookbook")]
 [Route("api/cookbook/foods/template")]
+[ResponseCache(Duration = 86400)]
 [Authorize(Policy = Policies.Cookbook)]
 [Authorize(Policy = Policies.CreateOrUpdate)]
 public class GetFoodTemplate : EndpointController
@@ -22,7 +23,6 @@ public class GetFoodTemplate : EndpointController
     }
 
     [HttpGet("{id:int}")]
-    [ResponseCache(Duration = 86400)]
     public async Task<IActionResult> Execute(int id, CancellationToken cancellationToken)
     {
         var vm = await _mediator.Send(new GetFoodTemplateQuery(id), cancellationToken);

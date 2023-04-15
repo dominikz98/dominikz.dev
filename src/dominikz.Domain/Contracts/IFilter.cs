@@ -2,6 +2,8 @@
 
 public interface IFilter
 {
+    public int? Start { get; }
+    public int? Count { get; }
     IReadOnlyCollection<FilterParam> GetParameter();
 }
 

@@ -11,7 +11,7 @@ public partial class VerticalCard
     public string Title { get; set; } = string.Empty;
 
     [Parameter]
-    public bool Highlight { get; set; }
+    public string? CoverText { get; set; }
 
     [Parameter]
     public EventCallback OnClick { get; set; }

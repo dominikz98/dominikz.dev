@@ -15,7 +15,7 @@ namespace dominikz.Client.Pages.Movies;
 
 public partial class Movies : ComponentBase
 {
-    [Inject] protected MovieEndpoints? MovieEndpoints { get; set; }
+    [Inject] protected MovieEndpoints? Endpoints { get; set; }
     [Inject] protected NavigationManager? NavManager { get; set; }
     [Inject] protected BrowserService? Browser { get; set; }
     [Inject] protected ToastService? Toast { get; set; }
@@ -28,19 +28,20 @@ public partial class Movies : ComponentBase
     private bool _isTableView;
     private TextBox? _searchbox;
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;
+    private const int LoadingPackageSize = 50;
 
     protected override async Task OnInitializedAsync()
     {
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Movies);
-        _previews = await MovieEndpoints!.GetPreview();
+        _previews = await Endpoints!.GetPreview();
 
         var filter = CreateFilter();
         _searchbox?.SetValue(filter.Text);
         _movieGenreSelect?.Select(filter.Genres);
 
-        var init = NavManager!.TrackQuery(SearchByCategory);
+        var init = NavManager!.TrackQuery(SearchMovies);
         if (init)
-            await SearchByCategory();
+            await SearchMovies();
     }
 
     private async Task OnCopyLinkClicked()
@@ -52,7 +53,7 @@ public partial class Movies : ComponentBase
     private async Task OnCreateCURLClicked()
     {
         var filter = CreateFilter();
-        var curl = MovieEndpoints!.CurlSearch(filter);
+        var curl = Endpoints!.CurlSearch(filter);
 
         if (string.IsNullOrWhiteSpace(curl))
         {
@@ -71,11 +72,20 @@ public partial class Movies : ComponentBase
             Genres = NavManager!.GetQueryParamByKey<MovieGenresFlags>(QueryNames.Movies.Genre)
         };
 
-    private async Task SearchByCategory()
+    private async Task SearchMovies()
     {
         var filter = CreateFilter();
-        _movies = await MovieEndpoints!.Search(filter);
-        StateHasChanged();
+        var count = await Endpoints!.SearchCount(filter);
+        _movies.Clear();
+
+        for (var i = 0; i < count; i += LoadingPackageSize)
+        {
+            filter.Start = i;
+            filter.Count = Math.Min(LoadingPackageSize, count - i);
+            var movies = await Endpoints!.Search(filter);
+            _movies.AddRange(movies);
+            StateHasChanged();
+        }
     }
 
     private void NavigateToMovie(Guid movieId)

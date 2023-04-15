@@ -41,6 +41,9 @@ public class BlogEndpoints
 
         return vmList;
     }
+    
+    public async Task<int> SearchCount(ArticleFilter filter, CancellationToken cancellationToken = default)
+        => await _client.GetSingle<int>($"{Endpoint}/search/count", filter, cancellationToken);
 
     public async Task<List<string>> GetTagsByCategory(ArticleCategoryEnum category, CancellationToken cancellationToken = default)
         => await _client.Get<string>($"{Endpoint}/tags/{category.ToString().ToLower()}", cancellationToken);

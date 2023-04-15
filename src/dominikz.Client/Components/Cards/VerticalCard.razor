@@ -7,9 +7,9 @@
 
             <img src="@ImageUrl" alt="Preview" loading="lazy" />
 
-            @if (Highlight)
+            @if (string.IsNullOrWhiteSpace(CoverText) == false)
             {
-                <i class="vertical-card-header-highlight fa-solid fa-star"></i>
+                <span class="vertical-card-header-highlight">@CoverText</span>
             }
 
         </div>

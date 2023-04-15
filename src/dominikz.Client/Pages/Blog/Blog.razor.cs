@@ -28,6 +28,7 @@ public partial class Blog
     private TextBox? _searchbox;
     private ChipSelect<ArticleCategoryEnum>? _categorySelect;
     private ChipSelect<ArticleSourceEnum>? _sourceSelect;
+    private const int LoadingPackageSize = 100;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,8 +47,17 @@ public partial class Blog
     private async Task SearchArticles()
     {
         var filter = CreateFilter();
-        _articles = await Endpoints!.Search(filter);
-        StateHasChanged();
+        var count = await Endpoints!.SearchCount(filter);
+        _articles.Clear();
+
+        for (var i = 0; i < count; i += LoadingPackageSize)
+        {
+            filter.Start = i;
+            filter.Count = Math.Min(LoadingPackageSize, count - i);
+            var articles = await Endpoints!.Search(filter);
+            _articles.AddRange(articles);
+            StateHasChanged();
+        }
     }
 
     private ArticleFilter CreateFilter()

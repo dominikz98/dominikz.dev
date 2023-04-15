@@ -67,28 +67,15 @@
         <CardGrid>
             @foreach (var recipe in _recipes)
             {
-                <VerticalCard Title="@recipe.Name"
-                              ImageUrl="@recipe.ImageUrl"
-                              OnClick="() => NavigateToDetail(recipe.Id)">
+                <div class="card surface" @onclick="() => NavigateToDetail(recipe.Id)">
 
-                    <div class="recipe-card">
+                    <div class="card-header">
+                        <img src="@recipe.ImageUrl" alt="Preview" loading="lazy"/>
 
-                        <div class="flex-row gap">
-                            <NutriScore Value="recipe.NutriScore" ShowScale="false" />
+                        <div class="card-header-cover">
 
-                            <div class="flex-column">
-                                <div class="tooltip">
-                                    <span>⏱️ @recipe.Duration</span>
-                                    <span class="tooltip-text">Duration</span>
-                                </div>
-                                <div class="tooltip">
-                                    <span>@EnumFormatter.ToString(recipe.Type)</span>
-                                    <span class="tooltip-text">Price per portion</span>
-                                </div>
-                            </div>
-                        </div>
+                            <NutriScore Value="recipe.NutriScore" ShowScale="false"/>
 
-                        <div class="flex-row-no-wrap gap">
                             @foreach (var flag in recipe.Flags)
                             {
                                 <div class="tooltip">
@@ -96,9 +83,28 @@
                                     <span class="tooltip-text">@EnumFormatter.ToText(flag)</span>
                                 </div>
                             }
+
                         </div>
                     </div>
-                </VerticalCard>
+
+                    <div class="card-body gap">
+
+                        <span class="card-body-title">@recipe.Name</span>
+
+                        <div class="flex-row gap">
+                            <div class="tooltip">
+                                <span>⏱️ @recipe.Duration</span>
+                                <span class="tooltip-text">Duration</span>
+                            </div>
+                            <div class="tooltip">
+                                <span>@EnumFormatter.ToString(recipe.Type)</span>
+                                <span class="tooltip-text">Price per portion</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
             }
         </CardGrid>
     }

@@ -5,6 +5,8 @@ namespace dominikz.Domain.Filter;
 public class SongsFilter : IFilter
 {
     public string? Text { get; init; }
+    public int? Start { get; init; }
+    public int? Count { get; init; }
     
     public IReadOnlyCollection<FilterParam> GetParameter()
     {

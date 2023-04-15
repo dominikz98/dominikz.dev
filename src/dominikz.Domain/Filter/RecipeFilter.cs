@@ -9,7 +9,9 @@ public class RecipeFilter : IFilter
     public RecipeType? Type { get; init; }
     public RecipeFlags? Flags { get; init; }
     public List<Guid> FoodIds { get; init; } = new();
-
+    public int? Start { get; init; }
+    public int? Count { get; init; }
+    
     public IReadOnlyCollection<FilterParam> GetParameter()
     {
         var result = new List<FilterParam>();

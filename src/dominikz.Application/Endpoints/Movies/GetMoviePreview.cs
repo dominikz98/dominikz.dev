@@ -13,6 +13,7 @@ namespace dominikz.Application.Endpoints.Movies;
 
 [Tags("movies")]
 [Route("api/movies/preview")]
+[ResponseCache(Duration = 86400)]
 public class GetMoviePreview : EndpointController
 {
     private readonly IMediator _mediator;

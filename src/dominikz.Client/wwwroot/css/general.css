@@ -18,7 +18,9 @@
 
 .avatar img {
     width: 50px;
+    height: 50px;
     border-radius: 50px;
+    object-fit: cover;
 }
 
 .gap
@@ -60,7 +62,6 @@
 
 .tooltip {
     position: relative;
-    display: inline-block;
 }
 
 .tooltip .tooltip-text {
@@ -70,8 +71,12 @@
     text-align: center;
     border-radius: 6px;
     padding: 5px;
-    position: fixed;
+    position: absolute;
+    font-size: medium;
+    font-weight: normal;
     z-index: 1;
+    left: 0;
+    top: 40px;
 }
 
 .tooltip:hover .tooltip-text {

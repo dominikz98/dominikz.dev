@@ -7,7 +7,7 @@ namespace dominikz.Application.Endpoints;
 
 [ApiKey]
 [ApiController]
-[EnableRateLimiting(Policies.RateLimit)]
+// [EnableRateLimiting(Policies.RateLimit)]
 public class EndpointController : ControllerBase
 {
 }

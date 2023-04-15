@@ -42,7 +42,7 @@ public class MovieEndpoints
         vmList.AttachApiKey(_options.Value.Key);
         return vmList;
     }
-    
+
     public async Task<List<MovieVm>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<MovieVm>($"{Endpoint}/search", filter, cancellationToken);
@@ -50,12 +50,15 @@ public class MovieEndpoints
         return vmList;
     }
 
+    public async Task<int> SearchCount(MoviesFilter filter, CancellationToken cancellationToken = default)
+        => await _client.GetSingle<int>($"{Endpoint}/search/count", filter, cancellationToken);
+
     public async Task<MovieDetailVm?> Add(EditMovieVm vm, List<FileStruct> files, CancellationToken cancellationToken = default)
         => await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Post, Endpoint, vm, files, cancellationToken);
 
     public async Task<MovieDetailVm?> Update(EditMovieVm vm, List<FileStruct> files, CancellationToken cancellationToken = default)
         => await _client.Upload<EditMovieVm, MovieDetailVm>(HttpMethod.Put, Endpoint, vm, files, cancellationToken);
-    
+
     public string CurlSearch(MoviesFilter filter)
         => _client.Curl($"{Endpoint}/search", filter);
 }

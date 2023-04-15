@@ -63,35 +63,13 @@
         <CardGrid>
             @foreach (var article in _articles)
             {
-                <VerticalCard Highlight=@article.Featured
-                              Title="@article.Title"
-                              ImageUrl="@article.ImageUrl"
-                              OnClick="() => NavigateToDetail(article.Id)">
+                <div class="card surface" @onclick="() => NavigateToDetail(article.Id)">
 
-                    <div class="blog-card">
+                    <div class="card-header">
+                        <img src="@article.ImageUrl" alt="Preview" loading="lazy"/>
 
-                        <div class="flex-column gap">
-                            @if (article.Category != ArticleCategoryEnum.Unknown)
-                            {
-                                <span>@EnumFormatter.ToString(article.Category)</span>
-                            }
-                            else
-                            {
-                                <span>@($"💬 {article.AltCategories}")</span>
-                            }
+                        <div class="card-header-cover">
 
-                            @if (article.PublishDate != null)
-                            {
-                                <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>
-                            }
-                            else
-                            {
-                                <span>DRAFT</span>
-                            }
-
-                        </div>
-
-                        <div class="blog-card-author avatar">
                             @switch (article.Source)
                             {
                                 case ArticleSourceEnum.Dz:
@@ -104,10 +82,48 @@
                                     <img src="assets/icons/noobit.png" alt="Image of article author"/>
                                     break;
                             }
-                        </div>
 
+                            @if (article.Featured)
+                            {
+                                <div class="tooltip">
+                                    <span>⭐</span>
+                                    <span class="tooltip-text">New</span>
+                                </div>
+                            }
+
+                            @if (article.Category != ArticleCategoryEnum.Unknown)
+                            {
+                                <div class="tooltip">
+                                    <span>@EnumFormatter.ToIcon(article.Category)</span>
+                                    <span class="tooltip-text">@EnumFormatter.ToText(article.Category)</span>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(article.AltCategories))
+                            {
+                                <div class="tooltip">
+                                    <span>💬</span>
+                                    <span class="tooltip-text">@article.AltCategories</span>
+                                </div>
+                            }
+
+                        </div>
                     </div>
-                </VerticalCard>
+
+                    <div class="card-body gap">
+                        <span class="card-body-title">@article.Title</span>
+
+                        @if (article.PublishDate != null)
+                        {
+                            <span>@article.PublishDate.Value.ToString("yyyy-MM-dd")</span>
+                        }
+                        else
+                        {
+                            <span>DRAFT</span>
+                        }
+                    </div>
+
+                </div>
             }
         </CardGrid>
     }

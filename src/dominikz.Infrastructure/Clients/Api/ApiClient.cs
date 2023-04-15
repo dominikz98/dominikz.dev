@@ -30,12 +30,15 @@ public class ApiClient
     }
 
     public async Task<T?> GetSingle<T>(string endpoint, CancellationToken cancellationToken)
+        => await GetSingle<T>(endpoint, null, cancellationToken);
+
+    public async Task<T?> GetSingle<T>(string endpoint, IFilter? filter, CancellationToken cancellationToken)
     {
         await AttachOrRefreshTokenIfPossible(cancellationToken);
 
         try
         {
-            var route = CreateEndpointUrl(endpoint);
+            var route = CreateEndpointUrl(endpoint, filter);
             return await _client.GetFromJsonAsync<T>(route, _serializerOptions, cancellationToken);
         }
         catch (HttpRequestException ex)

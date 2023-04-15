@@ -4,12 +4,6 @@
     grid-gap: 12px;
 }
 
-.recipe-surface {
-    background-color: var(--theme-surface);
-    border-radius: 5px;
-    padding: 12px;
-}
-
 .recipe-thumbnail {
     position: relative;
     width:100px;

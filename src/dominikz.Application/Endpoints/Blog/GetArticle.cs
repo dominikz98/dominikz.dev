@@ -56,7 +56,7 @@ public class GetArticleQueryHandler : IRequestHandler<GetArticleQuery, ArticleVi
         if (article is null)
             return null;
 
-        article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
+        article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.ThumbnailHorizontal);
         return article;
     }
 }

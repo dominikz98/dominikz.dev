@@ -1,11 +1,13 @@
 using dominikz.Application.Extensions;
 using dominikz.Application.Utils;
 using dominikz.Application.ViewModels;
+using dominikz.Domain.Enums;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Movies;
 using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
+using dominikz.Infrastructure.Provider.Storage.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +75,7 @@ public class AddMovieRequestHandler : IRequestHandler<AddMovieRequest, ActionWra
         var stream = file.OpenReadStream();
         stream.Position = 0;
         await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, ImageSizeEnum.ThumbnailVertical), cancellationToken);
 
         // save movie
         var toAdd = new Movie().ApplyChanges(request.ViewModel);

@@ -37,10 +37,10 @@ public static class ArticleMapper
             PublishDate = shadow.Date.ToDateTime(TimeOnly.MinValue),
             Category = shadow.Category,
             Path = shadow.Url,
-            ImageUrl = shadow.ImageUrl,
+            ImageUrl = shadow.ImageId.ToString(),
             Source = shadow.Source
         });
-    
+
     public static IQueryable<EditArticleVm> MapToEditVm(this IQueryable<Article> query)
         => query.Select(article => new EditArticleVm()
         {

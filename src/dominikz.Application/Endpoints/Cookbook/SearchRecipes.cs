@@ -81,7 +81,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, IRe
             var vm = recipe.MapToListVm();
             
             // attach image url
-            vm.ImageUrl = _linkCreator.CreateImageUrl(vm.Id.ToString(), ImageSizeEnum.Vertical);
+            vm.ImageUrl = _linkCreator.CreateImageUrl(vm.Id.ToString(), ImageSizeEnum.ThumbnailVertical);
             vms.Add(vm);
         }
 

@@ -1,4 +1,6 @@
-﻿namespace dominikz.Infrastructure.Provider.Storage;
+﻿using dominikz.Infrastructure.Provider.Storage.Requests;
+
+namespace dominikz.Infrastructure.Provider.Storage;
 
 public interface IStorageProvider
 {

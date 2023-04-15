@@ -103,7 +103,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, I
         {
             if (article.ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) == false
                 && Guid.TryParse(article.ImageUrl, out _))
-                article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.Horizontal);
+                article.ImageUrl = _linkCreator.CreateImageUrl(article.ImageUrl, ImageSizeEnum.ThumbnailHorizontal);
         }
     }
 

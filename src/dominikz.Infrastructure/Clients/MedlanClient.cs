@@ -12,7 +12,7 @@ namespace dominikz.Infrastructure.Clients;
 public class MedlanClient
 {
     private readonly IOptions<MedlanOptions> _options;
-    private static readonly Guid MarkusLieblDefaultImageId = Guid.Parse("6887b330-7e26-11ed-8afc-ccf04caa7138");
+    private static readonly Guid DefaultImageId = Guid.Parse("6887b330-7e26-11ed-8afc-ccf04caa7138");
 
     public MedlanClient(IOptions<MedlanOptions> options)
     {
@@ -60,21 +60,43 @@ public class MedlanClient
             .ToList() ?? throw new InvalidCastException($"Cant parse category! ({url})");
 
         var thumbnailImages = document.QuerySelector("article")?.QuerySelectorAll("img").ToList() ?? new List<IElement>();
-        var thumbnail = thumbnailImages.Select(x => x.GetAttribute("data-src-cmplz"))
+        var thumbnailSrc = thumbnailImages.Select(x => x.GetAttribute("data-src-cmplz"))
             .Union(thumbnailImages.Select(x => x.GetAttribute("src")))
             .Where(x => string.IsNullOrWhiteSpace(x) == false)
             .Where(x => !excludeThumbnailUrls.Contains(x))
             .FirstOrDefault();
 
-        return new ExtArticleShadow()
+        var shadow = new ExtArticleShadow()
         {
             Title = title,
             Date = DateOnly.FromDateTime(date),
-            ImageUrl = thumbnail ?? MarkusLieblDefaultImageId.ToString(),
             Url = url,
             Source = ArticleSourceEnum.Medlan,
             Category = TryAssignSystemCategories(categories) ?? TryAssignSystemCategoriesViaName(title) ?? ArticleCategoryEnum.Unknown
         };
+
+        return await AssignImage(shadow, thumbnailSrc, cancellationToken);
+    }
+
+    private static async Task<ExtArticleShadow> AssignImage(ExtArticleShadow shadow, string? imageUrl, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+        {
+            shadow.ImageId = DefaultImageId;
+            return shadow;
+        }
+
+        try
+        {
+            shadow.Image = await new HttpClient().GetStreamAsync(imageUrl, cancellationToken);
+            shadow.ImageId = Guid.NewGuid();
+        }
+        catch (Exception)
+        {
+            shadow.ImageId = DefaultImageId;
+        }
+
+        return shadow;
     }
 
     private static readonly List<string> MusicAssignments = new()

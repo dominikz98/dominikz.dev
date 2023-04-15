@@ -58,7 +58,7 @@ public class GetMoviePreviewQueryHandler : IRequestHandler<GetMoviePreviewQuery,
 
         foreach (var preview in previews)
             if (preview.ImageUrl != string.Empty)
-                preview.ImageUrl = _linkCreator.CreateImageUrl(preview.ImageUrl, ImageSizeEnum.Carousel);
+                preview.ImageUrl = _linkCreator.CreateImageUrl(preview.ImageUrl, ImageSizeEnum.ThumbnailVertical);
 
         return previews;
     }

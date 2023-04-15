@@ -1,3 +1,4 @@
+using dominikz.Infrastructure.Provider.Storage.Requests;
 using ImageMagick;
 
 namespace dominikz.Infrastructure.Provider.Storage;

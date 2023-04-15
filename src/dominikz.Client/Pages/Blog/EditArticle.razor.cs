@@ -62,7 +62,7 @@ public partial class EditArticle
             HtmlText = _vm.HtmlText
         };
 
-        var file = await DownloadEndpoints!.Image(article.Id, true, ImageSizeEnum.Original);
+        var file = await DownloadEndpoints!.Image(article.Id, ImageSizeEnum.Original);
         if (file == null)
             return true;
 

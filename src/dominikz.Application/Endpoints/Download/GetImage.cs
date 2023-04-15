@@ -1,9 +1,9 @@
-﻿using dominikz.Application.ViewModels;
-using dominikz.Domain.Enums;
-using dominikz.Infrastructure.Provider.Storage;
+﻿using dominikz.Domain.Enums;
+using dominikz.Domain.Options;
+using dominikz.Infrastructure.Provider.Storage.Requests;
 using HeyRed.Mime;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace dominikz.Application.Endpoints.Download;
 
@@ -11,45 +11,21 @@ namespace dominikz.Application.Endpoints.Download;
 [Route("api/download/image")]
 public class GetImage : EndpointController
 {
-    private readonly IMediator _mediator;
+    private readonly IOptions<ConnectionStrings> _options;
 
-    public GetImage(IMediator mediator)
+    public GetImage(IOptions<ConnectionStrings> options)
     {
-        _mediator = mediator;
+        _options = options;
     }
-
-    [HttpGet("fresh/{id:guid}/{size}")]
-    public async Task<IActionResult> ExecuteWithoutCache(Guid id, ImageSizeEnum size, CancellationToken cancellationToken)
-        => await Execute(id, size, cancellationToken);
 
     [HttpGet("{id:guid}/{size}")]
-    public async Task<IActionResult> Execute(Guid id, ImageSizeEnum size, CancellationToken cancellationToken)
+    public IActionResult Execute(Guid id, ImageSizeEnum size)
     {
-        var file = await _mediator.Send(new GetImageQuery(id, size), cancellationToken);
-        if (file is null)
+        var filename = new DownloadImageRequest(id, size).Name;
+        var path = Path.Combine(_options.Value.StorageProvider, filename);
+        if (System.IO.File.Exists(path) == false)
             return NotFound();
-
-        return File(file.Data, file.ContentType, file.Name);
-    }
-}
-
-public record GetImageQuery(Guid Id, ImageSizeEnum Size) : IRequest<FileDownloadWrapper?>;
-
-public class GetImageQueryHandler : IRequestHandler<GetImageQuery, FileDownloadWrapper?>
-{
-    private readonly IStorageProvider _storage;
-
-    public GetImageQueryHandler(IStorageProvider storage)
-    {
-        _storage = storage;
-    }
-
-    public async Task<FileDownloadWrapper?> Handle(GetImageQuery request, CancellationToken cancellationToken)
-    {
-        var fileRequest = new DownloadImageRequest(request.Id, request.Size);
-        var file = await _storage.Download(fileRequest, cancellationToken);
-        return file == null
-            ? null
-            : new FileDownloadWrapper(file, fileRequest.Name, MimeTypesMap.GetMimeType(fileRequest.Name));
+        
+        return PhysicalFile(path, MimeTypesMap.GetMimeType(Path.GetFileName(filename)));
     }
 }

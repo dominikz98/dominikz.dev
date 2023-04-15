@@ -60,7 +60,7 @@ public class GetRecipeQueryHandler : IRequestHandler<GetRecipeQuery, RecipeDetai
             return null;
 
         // attach image url
-        vm.ImageUrl = _linkCreator.CreateImageUrl(vm.Id.ToString(), ImageSizeEnum.Horizontal);
+        vm.ImageUrl = _linkCreator.CreateImageUrl(vm.Id.ToString(), ImageSizeEnum.ThumbnailHorizontal);
 
         // attach price snapshots
         var foodIds = vm.Ingredients.Select(x => x.Id).Distinct().ToList();

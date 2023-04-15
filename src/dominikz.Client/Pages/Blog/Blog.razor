@@ -90,7 +90,15 @@
                                     <span class="tooltip-text">New</span>
                                 </div>
                             }
-
+                            @* *@
+                            @* @if (article.Source != ArticleSourceEnum.Dz) *@
+                            @* { *@
+                            @*     <div class="tooltip"> *@
+                            @*         <span>🔗</span> *@
+                            @*         <span class="tooltip-text">External Link</span> *@
+                            @*     </div> *@
+                            @* } *@
+                            @* *@
                             @if (article.Category != ArticleCategoryEnum.Unknown)
                             {
                                 <div class="tooltip">

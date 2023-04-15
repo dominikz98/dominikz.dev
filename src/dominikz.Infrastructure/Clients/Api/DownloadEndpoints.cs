@@ -19,8 +19,8 @@ public class DownloadEndpoints
         _options = options;
     }
 
-    public async Task<FileStruct?> Image(Guid imageId, bool suppressCache, ImageSizeEnum size, CancellationToken cancellationToken = default)
-        => await _client.Download($"{Endpoint}/image/{(suppressCache ? "fresh/" : string.Empty)}{imageId}/{size}", imageId.ToString(), cancellationToken);
+    public async Task<FileStruct?> Image(Guid imageId, ImageSizeEnum size, CancellationToken cancellationToken = default)
+        => await _client.Download($"{Endpoint}/image/{imageId}/{size}", imageId.ToString(), cancellationToken);
 
     public async Task<FileStruct?> RawImage(string url, CancellationToken cancellationToken = default)
     {

@@ -3,9 +3,6 @@
 public enum ImageSizeEnum
 {
     Original,
-    Vertical,
-    Horizontal,
-    Carousel,
-    Avatar,
-    Poster
+    ThumbnailVertical,
+    ThumbnailHorizontal
 }

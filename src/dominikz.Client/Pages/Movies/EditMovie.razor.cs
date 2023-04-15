@@ -47,7 +47,7 @@ public partial class EditMovie
             return false;
 
         _data.ViewModel = movie;
-        var file = await DownloadEndpoints!.Image(movie.Id, true, ImageSizeEnum.Original);
+        var file = await DownloadEndpoints!.Image(movie.Id, ImageSizeEnum.Original);
         if (file == null)
             return true;
 

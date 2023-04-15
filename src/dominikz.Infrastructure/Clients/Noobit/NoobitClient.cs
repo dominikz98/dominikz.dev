@@ -32,20 +32,40 @@ public class NoobitClient
         var vms = await _client.GetFromJsonAsync<List<NoobitArticleVm>>($"{Api}/blog/{category}/overview", cancellationToken) ?? new List<NoobitArticleVm>();
 
         // attach article url
+        var shadows = new List<ExtArticleShadow>();
         foreach (var vm in vms)
         {
-            vm.Url = $"{_client.BaseAddress}blog/{category}/{vm.Topic.SeoName}/{vm.SeoTitle}".ToLower();
-            vm.ImageUrl = $"{_client.BaseAddress}assets/blog/{category}/index.webp".ToLower();
+            var shadow = new ExtArticleShadow()
+            {
+                Title = vm.Title,
+                Date = DateOnly.FromDateTime(vm.Date),
+                Category = Enum.Parse<ArticleCategoryEnum>(vm.Topic.Blog.SeoName, true),
+                Url = $"{_client.BaseAddress}blog/{category}/{vm.Topic.SeoName}/{vm.SeoTitle}".ToLower(),
+                Source = ArticleSourceEnum.Noobit
+            };
+            await AssignImage(shadow, $"{_client.BaseAddress}assets/blog/{category}/index.webp".ToLower(), cancellationToken);
+            shadows.Add(shadow);
         }
 
-        return vms.Select(x => new ExtArticleShadow()
+        return shadows;
+    }
+    
+    private static async Task AssignImage(ExtArticleShadow shadow, string imageUrl, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
         {
-            Title = x.Title,
-            Date = DateOnly.FromDateTime(x.Date),
-            Category = Enum.Parse<ArticleCategoryEnum>(x.Topic.Blog.SeoName, true),
-            Url = x.Url,
-            ImageUrl = x.ImageUrl,
-            Source = ArticleSourceEnum.Noobit
-        }).ToList();
+            shadow.ImageId = Guid.Empty;
+            return;
+        }
+
+        try
+        {
+            shadow.Image = await new HttpClient().GetStreamAsync(imageUrl, cancellationToken);
+            shadow.ImageId = Guid.NewGuid();
+        }
+        catch (Exception)
+        {
+            shadow.ImageId = Guid.Empty;
+        }
     }
 }

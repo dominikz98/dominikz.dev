@@ -49,7 +49,7 @@ public partial class EditRecipe
 
         _data.ViewModel = recipe;
 
-        var file = await DownloadEndpoints!.Image(RecipeId.Value, true, ImageSizeEnum.Original);
+        var file = await DownloadEndpoints!.Image(RecipeId.Value, ImageSizeEnum.Original);
         if (file == null)
             return true;
 
@@ -68,7 +68,7 @@ public partial class EditRecipe
         var food = _foods.FirstOrDefault(x => x.Id == foodId);
         if (food == null)
             return new List<IngredientUnit>() { IngredientUnit.Piece };
-        
+
         return food.Unit switch
         {
             FoodUnit.Piece => new List<IngredientUnit> { IngredientUnit.Piece },
@@ -79,7 +79,7 @@ public partial class EditRecipe
     }
 
     private void OnAddIngredientClicked()
-    { 
+    {
         var firstFood = _foods.MinBy(x => x.Name);
         _data.ViewModel.Ingredients.Add(new IngredientVm()
         {

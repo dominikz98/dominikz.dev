@@ -70,7 +70,7 @@ public class SearchMoviesQueryHandler : IRequestHandler<SearchMoviesQuery, IRead
         // attach image url
         foreach (var movie in movies)
             if (movie.ImageUrl != string.Empty)
-                movie.ImageUrl = _linkCreator.CreateImageUrl(movie.ImageUrl, ImageSizeEnum.Vertical);
+                movie.ImageUrl = _linkCreator.CreateImageUrl(movie.ImageUrl, ImageSizeEnum.ThumbnailVertical);
 
         return movies;
     }

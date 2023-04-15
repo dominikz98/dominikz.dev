@@ -50,7 +50,8 @@ public partial class Blog
         var filter = CreateFilter();
         var count = await Endpoints!.SearchCount(filter);
         _articles.Clear();
-
+        StateHasChanged();
+        
         foreach (var toCancel in _cancellationSources)
             toCancel.Cancel();
 

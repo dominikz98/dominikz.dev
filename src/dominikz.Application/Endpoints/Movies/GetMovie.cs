@@ -58,7 +58,7 @@ public class GetMovieQueryHandler : IRequestHandler<GetMovieQuery, MovieDetailVm
         var vm = movie.MapToDetailVm();
 
         // attach image urls
-        vm.ImageUrl = _linkCreator.CreateImageUrl(movie.Id.ToString(), ImageSizeEnum.Poster);
+        vm.ImageUrl = _linkCreator.CreateImageUrl(movie.Id.ToString(), ImageSizeEnum.Original);
         return vm;
     }
 }

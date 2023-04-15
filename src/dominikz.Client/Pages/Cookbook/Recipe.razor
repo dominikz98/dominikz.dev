@@ -43,9 +43,9 @@
 
 <div class="flex-column gap">
 
-    <div class="category-grid">
+    <div class="recipe-grid">
         @* Steps / Time *@
-        <div class="flex-column gap category-surface">
+        <div class="flex-column spacing gap surface">
 
             <span>
                 <b>Steps</b>
@@ -76,7 +76,7 @@
         </div>
 
         @* Ingredients  *@
-        <div class="flex-column gap category-surface">
+        <div class="flex-column spacing gap surface">
             <span>
                 <b>Ingredients</b>
                 (@_vm.Portions Portions)
@@ -96,9 +96,9 @@
         </div>
     </div>
 
-    <div class="category-grid">
+    <div class="recipe-grid">
         @* Nutritional Table *@
-        <div class="flex-column gap category-surface">
+        <div class="flex-column spacing gap surface">
             <span>
                 <b>Nutritional Table</b>
                 <br/>
@@ -145,7 +145,7 @@
         @* Price  *@
         @if (_vm.PriceSnapshots.Count > 0)
         {
-            <div class="flex-column gap category-surface">
+            <div class="flex-column spacing gap surface">
 
                 <span>
                     <b>Price Trends</b>

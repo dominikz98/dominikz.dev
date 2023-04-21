@@ -1,6 +1,7 @@
 using dominikz.Domain.Options;
 using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Clients.Api;
+using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Clients.JustWatch;
 using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Clients.SupermarktCheck;
@@ -40,6 +41,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMedlanClient(this IServiceCollection services)
         => services.AddScoped<MedlanClient>();
 
+    public static IServiceCollection AddFinancialClients(this IServiceCollection services)
+        => services.AddScoped<EarningsWhispersClient>()
+            .AddScoped<OnVistaClient>()
+            .AddScoped<AktienFinderClient>()
+            .AddScoped<FinanzenNetClient>();
+    
     public static IServiceCollection AddNoobitClient(this IServiceCollection services)
         => services.AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
@@ -59,5 +66,4 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
         => services.AddSingleton<IStorageProvider>(_ => new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
-
 }

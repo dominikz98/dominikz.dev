@@ -22,6 +22,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddResponseCaching();
 builder.Services.AddAuthPolicies();
 builder.Services.AddMedlanClient();
+builder.Services.AddFinancialClients();
 builder.Services.AddNoobitClient();
 builder.Services.AddSupermarktCheckClient();
 builder.Services.AddContext(builder.Configuration, builder.Environment.IsDevelopment());

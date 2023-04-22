@@ -113,7 +113,8 @@ public static class ServiceCollectionExtensions
         => services.AddSingleton<PeriodicHostedService>()
             .AddHostedService(provider => provider.GetRequiredService<PeriodicHostedService>())
             .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>()
-            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowRefresher>();
+            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowRefresher>()
+            .AddScoped<ITimeTriggeredWorker, EarningsCallsRefresher>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

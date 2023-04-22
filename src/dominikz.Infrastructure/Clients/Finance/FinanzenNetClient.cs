@@ -6,6 +6,13 @@ namespace dominikz.Infrastructure.Clients.Finance;
 
 public class FinanzenNetClient
 {
+    private readonly FinanceBrowser _browser;
+
+    public FinanzenNetClient(FinanceBrowser browser)
+    {
+        _browser = browser;
+    }
+
     public async Task<string?> GetISINBySymbolAndKeyword(string symbol, string keyword)
         => (await Policy
                 .Handle<WaitTaskTimeoutException>()
@@ -18,12 +25,8 @@ public class FinanzenNetClient
         var cleanedKeyword = keyword.Replace(".", "")
             .Replace(",", "");
 
-        await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
-        await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-
         var url = $"https://www.finanzen.net/suchergebnis.asp?_search={HttpUtility.UrlEncode(cleanedKeyword)}";
-        var page = await browser.NewPageAsync();
-        await page.GoToAsync(url);
+        await using var page = await _browser.OpenPage(url);
 
         // Wait for the page to load
         var pageContent = await page.GetContentAsync();
@@ -60,7 +63,7 @@ public class FinanzenNetClient
                 var isin = await row.QuerySelectorAsync("td:nth-child(2)").EvaluateFunctionAsync<string>("(element) => element.textContent");
                 var link = await row.QuerySelectorAsync("td:nth-child(1) > a").EvaluateFunctionAsync<string>("(element) => element.getAttribute('href')");
 
-                if (isin.Equals(symbol, StringComparison.OrdinalIgnoreCase) == false)
+                if (isin.Contains(symbol, StringComparison.OrdinalIgnoreCase) == false)
                     continue;
 
                 var result = await ExtractISINFromStockPage($"https://www.finanzen.net{link}");
@@ -74,18 +77,13 @@ public class FinanzenNetClient
         return null;
     }
 
-    private static async Task<string?> ExtractISINFromStockPage(string url)
+    private async Task<string?> ExtractISINFromStockPage(string url)
         => (await Policy
                 .Handle<WaitTaskTimeoutException>()
                 .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(1))
                 .ExecuteAndCaptureAsync(async () =>
                 {
-                    await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
-                    await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-
-                    var page = await browser.NewPageAsync();
-                    await page.GoToAsync(url);
-
+                    await using var page = await _browser.OpenPage(url);
                     return await page.EvaluateExpressionAsync<string>(@"(() => {
                 const badges = Array.from(document.querySelectorAll('.badge-bar .badge'));
                 const isinBadge = badges.find(badge => badge.querySelector('.badge__key').textContent === 'ISIN');

@@ -1,4 +1,5 @@
 using dominikz.Domain.Enums;
+using ImageMagick;
 
 namespace dominikz.Infrastructure.Provider.Storage.Requests;
 
@@ -9,7 +10,7 @@ public class UploadImageRequest : IStorageUploadRequest
 
     public IReadOnlyCollection<IStorageProcessor> Processors { get; } = new[]
     {
-        new ConvertImageToJpgProcessor()
+        new ConvertImageProcessor(MagickFormat.Jpg)
     };
 
     public UploadImageRequest(Guid id, Stream data, ImageSizeEnum size = ImageSizeEnum.Original)

@@ -20,7 +20,7 @@ public static class TradingMapper
             BuyOut = source.BuyOut
         };
 
-    public static IReadOnlyCollection<EarningCallVm> MapToVm(this IReadOnlyCollection<EarningCall> source)
+    public static IQueryable<EarningCallVm> MapToVm(this IQueryable<EarningCall> source)
         => source.Select(x => new EarningCallVm()
         {
             Id = x.Id,
@@ -32,8 +32,7 @@ public static class TradingMapper
             Surprise = x.Surprise,
             ISIN = x.ISIN,
             Sources = x.Sources,
-            AktienFinderLogoLink = x.AktienFinderLogoLink,
             OnVistaLink = x.OnVistaLink,
             OnVistaNewsLink = x.OnVistaNewsLink,
-        }).ToList();
+        });
 }

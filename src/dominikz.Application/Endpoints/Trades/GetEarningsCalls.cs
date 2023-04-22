@@ -1,18 +1,17 @@
 using dominikz.Application.Utils;
 using dominikz.Domain.Enums.Trades;
+using dominikz.Domain.Filter;
 using dominikz.Domain.Models;
 using dominikz.Domain.ViewModels.Trading;
-using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Mapper;
+using dominikz.Infrastructure.Provider.Database;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.Application.Endpoints.Trades;
 
 [Tags("trades")]
-[Authorize(Policy = Policies.Movies)]
-[Authorize(Policy = Policies.CreateOrUpdate)]
 [Route("api/trades/earningscalls")]
 public class GetEarningsCalls : EndpointController
 {
@@ -24,79 +23,51 @@ public class GetEarningsCalls : EndpointController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Execute(CancellationToken cancellationToken)
+    public async Task<IActionResult> Execute([FromQuery] GetEarningsCallsRequest request, CancellationToken cancellationToken)
     {
-        var vms = await _mediator.Send(new GetEarningsCallsRequest(), cancellationToken);
+        var vms = await _mediator.Send(request, cancellationToken);
         return Ok(vms);
     }
 }
 
-public record GetEarningsCallsRequest : IRequest<IReadOnlyCollection<EarningCallVm>>;
+public class GetEarningsCallsRequest : EarningsCallsFilter, IRequest<IReadOnlyCollection<EarningCallVm>>
+{
+}
 
 public class GetEarningsCallsRequestHandler : IRequestHandler<GetEarningsCallsRequest, IReadOnlyCollection<EarningCallVm>>
 {
-    private readonly EarningsWhispersClient _eaClient;
-    private readonly OnVistaClient _onVistaClient;
-    private readonly AktienFinderClient _aktienFinderClient;
-    private readonly FinanzenNetClient _finanzenNetClient;
+    private readonly DatabaseContext _database;
+    private readonly ILinkCreator _linkCreator;
 
-    public GetEarningsCallsRequestHandler(EarningsWhispersClient eaClient,
-        OnVistaClient onVistaClient,
-        AktienFinderClient aktienFinderClient,
-        FinanzenNetClient finanzenNetClient)
+    public GetEarningsCallsRequestHandler(DatabaseContext database, ILinkCreator linkCreator)
     {
-        _eaClient = eaClient;
-        _onVistaClient = onVistaClient;
-        _aktienFinderClient = aktienFinderClient;
-        _finanzenNetClient = finanzenNetClient;
+        _database = database;
+        _linkCreator = linkCreator;
     }
 
     public async Task<IReadOnlyCollection<EarningCallVm>> Handle(GetEarningsCallsRequest request, CancellationToken cancellationToken)
     {
-        var earningsCalls = await _eaClient.GetEarningsCallsOfToday();
-        foreach (var call in earningsCalls)
-        {
-            // resolve stock by symbol and name
-            var stock = await GetStockBySymbolAndName(call, cancellationToken);
-            if (stock == null)
-                continue;
+        var date = DateOnly.FromDateTime(DateTime.Now);
+        var query = _database.From<EarningCall>()
+            .AsNoTracking()
+            .Where(x => x.Date == date);
 
-            call.ISIN = stock.ISIN;
-            call.OnVistaLink = stock.Urls.Website;
-            call.OnVistaNewsLink = stock.Urls.News;
+        if (request.OnlyIncreased)
+            query = query.Where(x => x.Surprise != null)
+                .Where(x => x.Surprise!.Value > 0)
+                .Where(x => x.Growth != null)
+                .Where(x => x.Growth!.Value > 0);
 
-            var logoUrl = await _aktienFinderClient.GetLogoByISIN(call.ISIN);
-            if (string.IsNullOrWhiteSpace(logoUrl))
-                continue;
+        if (!string.IsNullOrWhiteSpace(request.Text))
+            query = query.Where(x => EF.Functions.Like(x.Name, $"%{request.Text}%")
+                                     || EF.Functions.Like(x.Symbol, $"%{request.Text}%"));
 
-            call.AktienFinderLogoLink = logoUrl;
-            call.Sources |= InformationSource.AktienFinder;
-        }
+        var vms = await query.MapToVm().ToListAsync(cancellationToken);
 
-        return earningsCalls.MapToVm();
-    }
+        foreach (var vm in vms)
+            if (vm.Sources.HasFlag(InformationSource.AktienFinder))
+                vm.LogoUrl = _linkCreator.CreateLogoUrl(vm.Symbol);
 
-    private async Task<OvResult?> GetStockBySymbolAndName(EarningCall call, CancellationToken cancellationToken)
-    {
-        var stock = await _onVistaClient.GetStockBySymbolAndName(call.Symbol, call.Name, cancellationToken);
-        if (stock != null)
-        {
-            call.Sources |= InformationSource.OnVista;
-            return stock;
-        }
-
-        // use finanzen.net fallback to find isin
-        var isin = await _finanzenNetClient.GetISINBySymbolAndKeyword(call.Symbol, call.Name);
-        isin ??= await _finanzenNetClient.GetISINBySymbolAndKeyword(call.Symbol, call.Symbol);
-        if (string.IsNullOrWhiteSpace(isin))
-            return null;
-
-        call.Sources |= InformationSource.FinanzenNet;
-        stock = await _onVistaClient.GetStockByISIN(isin, cancellationToken);
-        if (stock == null)
-            return null;
-
-        call.Sources |= InformationSource.OnVista;
-        return stock;
+        return vms;
     }
 }

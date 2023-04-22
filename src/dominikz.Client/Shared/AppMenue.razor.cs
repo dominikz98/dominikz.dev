@@ -15,7 +15,8 @@ public partial class AppMenue
         {
             new MenueEntry("fa-rss", "Blog", "/blog"),
             new MenueEntry("fa-film", "Movies", "/movies"),
-            new MenueEntry("fa-compact-disc", "Songs", "/songs"),
+            new MenueEntry("fa-arrow-trend-up", "Songs", "/trades"),
+            new MenueEntry("fa-compact-disc", "Trades", "/songs"),
             new MenueEntry("fa-lemon", "Cookbook", "/cookbook")
         };
 

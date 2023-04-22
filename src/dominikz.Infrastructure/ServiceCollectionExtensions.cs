@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         => services.AddSingleton<BlogEndpoints>()
             .AddSingleton<MovieEndpoints>()
             .AddSingleton<DownloadEndpoints>()
+            .AddSingleton<TradesEndpoints>()
             .AddSingleton<SongsEndpoints>()
             .AddSingleton<CookbookEndpoints>()
             .AddHttpClient<ApiClient>((sp, client) =>
@@ -42,7 +43,8 @@ public static class ServiceCollectionExtensions
         => services.AddScoped<MedlanClient>();
 
     public static IServiceCollection AddFinancialClients(this IServiceCollection services)
-        => services.AddScoped<EarningsWhispersClient>()
+        => services.AddScoped<FinanceBrowser>()
+            .AddScoped<EarningsWhispersClient>()
             .AddScoped<OnVistaClient>()
             .AddScoped<AktienFinderClient>()
             .AddScoped<FinanzenNetClient>();

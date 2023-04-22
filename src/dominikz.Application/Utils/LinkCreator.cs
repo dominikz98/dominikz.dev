@@ -1,4 +1,5 @@
-﻿using dominikz.Domain.Enums;
+﻿using dominikz.Application.Attributes;
+using dominikz.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dominikz.Application.Utils;
@@ -8,6 +9,7 @@ public interface ILinkCreator
     Uri? CreateRssUrl();
     string CreateBlogUrl(Guid articleId);
     string CreateImageUrl(string fileId, ImageSizeEnum size);
+    string CreateLogoUrl(string symbol);
 }
 
 public class LinkCreator : ILinkCreator
@@ -35,6 +37,15 @@ public class LinkCreator : ILinkCreator
 
     public string CreateImageUrl(string fileId, ImageSizeEnum size)
         => GetUri($"~/download/image/{fileId}/{(int)size}");
+
+    public string CreateLogoUrl(string symbol)
+    {
+        var url = $"~/download/logo/{symbol}";
+        if (_contextAccessor.HttpContext?.Request.Headers.TryGetValue(ApiKeyAttribute.ApiKeyHeaderName, out var apiKey) ?? false)
+            url += $"?{ApiKeyAttribute.ApiKeyHeaderName}={apiKey}";
+
+        return GetUri(url);
+    }
 
     private string GetUri(string relativePath)
     {

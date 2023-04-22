@@ -11,9 +11,9 @@ public class EarningCall
     public TimeOnly? Release { get; set; } = new();
     public decimal? Growth { get; set; }
     public decimal? Surprise { get; set; }
-    public string ISIN { get; set; } = string.Empty;
-    public string? AktienFinderLogoLink { get; set; }
+    public string? ISIN { get; set; } = string.Empty;
     public string? OnVistaLink { get; set; }
     public string? OnVistaNewsLink { get; set; }
     public InformationSource Sources { get; set; }
+    public DateTime Updated { get; set; }
 }

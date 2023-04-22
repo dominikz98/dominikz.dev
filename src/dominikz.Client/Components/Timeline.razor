@@ -1,0 +1,43 @@
+@using System.Globalization
+
+<div class="timeline">
+    @foreach (var e in Events)
+    {
+        <div class="timeline-event">
+            <div class="timeline-event-date">
+                @if (string.IsNullOrWhiteSpace(e.SymbolSrc) == false)
+                {
+                    <img height="60px" width="60px" src="@e.SymbolSrc" alt="@e.Title"/>
+                }
+                else
+                {
+                    <div style="background-color: @($"#{new Random().Next(0x1000000):X6}")" class="avatar-placeholder">
+                        <span>@e.Title[..Math.Min(2, e.Title.Length)]</span>
+                    </div>
+                }
+            </div>
+            <div class="timeline-event-content">
+                <span>
+                    <b>@e.Title</b>
+                </span>
+                <span>@e.Description</span>
+                <span>@e.Date.ToString("HH:mm", CultureInfo.InvariantCulture)</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public List<TimelineEvent> Events { get; set; } = new();
+
+    public class TimelineEvent
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string? SymbolSrc { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+    }
+
+}

@@ -11,7 +11,7 @@ namespace dominikz.Application.Attributes;
 public class ApiKeyAttribute : Attribute, IAuthorizationFilter
 {
     public bool RequiresMasterKey { get; set; }
-    private const string ApiKeyHeaderName = "x-api-key";
+    public const string ApiKeyHeaderName = "x-api-key";
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {

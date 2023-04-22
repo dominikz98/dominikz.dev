@@ -22,6 +22,9 @@ public class DownloadEndpoints
     public async Task<FileStruct?> Image(Guid imageId, ImageSizeEnum size, CancellationToken cancellationToken = default)
         => await _client.Download($"{Endpoint}/image/{imageId}/{size}", imageId.ToString(), cancellationToken);
 
+    public async Task<FileStruct?> Logo(string symbol, CancellationToken cancellationToken = default)
+        => await _client.Download($"{Endpoint}/logo/{symbol}", symbol, cancellationToken);
+
     public async Task<FileStruct?> RawImage(string url, CancellationToken cancellationToken = default)
     {
         var client = new HttpClient();

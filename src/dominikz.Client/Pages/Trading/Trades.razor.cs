@@ -18,14 +18,20 @@ public partial class Trades
 
     protected override async Task OnInitializedAsync()
     {
-        _earningsCalls = await TradesEndpoints!.SearchEarningsCalls(new EarningsCallsFilter());
-        _events = _earningsCalls.Select(x => new Timeline.TimelineEvent()
-        {
-            Date = x.Date.ToDateTime(x.Release ?? new TimeOnly(13, 0, 0)),
-            Description = x.Name,
-            Title = x.Symbol,
-            SymbolSrc = x.Sources.HasFlag(InformationSource.AktienFinder) ? x.LogoUrl : null
-        }).ToList();
+        var calls = await TradesEndpoints!.SearchEarningsCalls(new EarningsCallsFilter());
+        _earningsCalls = calls.Where(x => x.Growth != null)
+            .OrderBy(x => x.Growth)
+            .ToList();
+
+        _events = calls.Where(x => x.Growth == null)
+            .Select(x => new Timeline.TimelineEvent()
+            {
+                Date = x.Date.ToDateTime(x.Release ?? new TimeOnly(13, 0, 0)),
+                Description = x.Name,
+                Title = x.Symbol,
+                SymbolSrc = x.Sources.HasFlag(InformationSource.AktienFinder) ? x.LogoUrl : null
+            }).OrderBy(x => x.Date)
+            .ToList();
     }
 
     private void SelectEarningCall(int id)

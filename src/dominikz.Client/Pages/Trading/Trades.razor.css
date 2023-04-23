@@ -18,3 +18,16 @@
 .generation-frame {
     /*display: none;*/
 }
+
+.trades-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.trades-container-item-small {
+    width: 25%;
+}
+
+.trades-container-item-tall {
+    width: 75%;
+}

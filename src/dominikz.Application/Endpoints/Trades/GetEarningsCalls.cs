@@ -62,7 +62,9 @@ public class GetEarningsCallsRequestHandler : IRequestHandler<GetEarningsCallsRe
             query = query.Where(x => EF.Functions.Like(x.Name, $"%{request.Text}%")
                                      || EF.Functions.Like(x.Symbol, $"%{request.Text}%"));
 
-        var vms = await query.MapToVm().ToListAsync(cancellationToken);
+        var vms = await query.MapToVm()
+            .OrderBy(x => x.Release)
+            .ToListAsync(cancellationToken);
 
         foreach (var vm in vms)
             if (vm.Sources.HasFlag(InformationSource.AktienFinder))

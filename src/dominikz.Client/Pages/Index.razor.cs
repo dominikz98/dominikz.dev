@@ -8,13 +8,13 @@ public partial class Index
 {
     [Inject] public NavigationManager? NavigationManager { get; set; }
     
-    private static readonly Random _rnd = new();
+    private static readonly Random Rnd = new();
     private const int RandomGenresCount = 3;
 
     private string GetRandomGenres()
     {
         var allGenres = Enum.GetValues<MovieGenresFlags>().ToList();
-        var ix = _rnd.Next(0, allGenres.Count - RandomGenresCount);
+        var ix = Rnd.Next(0, allGenres.Count - RandomGenresCount);
         var genres=  allGenres.GetRange(ix, RandomGenresCount);
         return string.Join(", ", EnumFormatter.ToString(genres));
     }

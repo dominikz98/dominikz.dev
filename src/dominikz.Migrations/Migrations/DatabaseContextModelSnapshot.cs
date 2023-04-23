@@ -132,7 +132,7 @@ namespace dominikz.Migrations.Migrations
                     b.Property<Guid>("FoodId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Release")
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
@@ -141,7 +141,7 @@ namespace dominikz.Migrations.Migrations
                     b.Property<string>("Store")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("FoodId", "Release");
+                    b.HasKey("FoodId", "Timestamp");
 
                     b.ToTable("food_snapshots", (string)null);
                 });

@@ -1,5 +1,4 @@
-﻿using dominikz.Client.Theme;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Components.Buttons;
 

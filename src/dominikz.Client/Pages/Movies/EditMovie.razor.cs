@@ -1,4 +1,4 @@
-using dominikz.Client.Wrapper;
+using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Structs;
@@ -51,7 +51,7 @@ public partial class EditMovie
         if (file == null)
             return true;
 
-        _data.Image.Add(file.Value);
+        _data.Images.Add(file.Value);
         return true;
     }
 
@@ -93,7 +93,7 @@ public partial class EditMovie
             _genreRecommendations = _genreRecommendations.Where(x => _data.ViewModel.Genres.ContainsCleaned(x) == false).ToList();
         }
 
-        if (_data.Image.Count == 0 && _posterFiles.Count == 0)
+        if (_data.Images.Count == 0 && _posterFiles.Count == 0)
         {
             foreach (var posterUrl in data.PosterUrls)
             {
@@ -107,7 +107,7 @@ public partial class EditMovie
             if (_posterFiles.Count > 0)
             {
                 var toSelect = _posterFiles.First();
-                _data.Image.Add(toSelect);
+                _data.Images.Add(toSelect);
                 _posterFiles.Remove(toSelect);
             }
         }
@@ -116,15 +116,15 @@ public partial class EditMovie
     private async Task OnSaveClicked()
     {
         // Set File Ids
-        for (var i = 0; i < _data.Image.Count; i++)
-            _data.Image[i] = _data.Image[i].CopyTo(_data.ViewModel.Id.ToString());
+        for (var i = 0; i < _data.Images.Count; i++)
+            _data.Images[i] = _data.Images[i].CopyTo(_data.ViewModel.Id.ToString());
 
         if (_editContext == null || _editContext.Validate() == false)
             return;
 
         var movie = MovieId == null
-            ? await MovieEndpoints!.Add(_data.ViewModel, _data.Image)
-            : await MovieEndpoints!.Update(_data.ViewModel, _data.Image);
+            ? await MovieEndpoints!.Add(_data.ViewModel, _data.Images)
+            : await MovieEndpoints!.Update(_data.ViewModel, _data.Images);
 
         if (movie == null)
             return;

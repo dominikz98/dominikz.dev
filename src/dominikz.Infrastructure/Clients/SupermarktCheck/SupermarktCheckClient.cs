@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using AngleSharp;
 using AngleSharp.Dom;
-using Polly;
 using PuppeteerSharp;
 
 namespace dominikz.Infrastructure.Clients.SupermarktCheck;
@@ -15,17 +14,9 @@ public class SupermarktCheckClient
     {
         try
         {
-            return (await Policy
-                    .Handle<WaitTaskTimeoutException>()
-                    .WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(1))
-                    .ExecuteAndCaptureAsync(async () =>
-                    {
-                        var page = await GetPageFromWebsite(productId, cancellationToken);
-                        var product = ParseToVm(productId, page);
-                        return product;
-                        ;
-                    }))
-                .Result;
+            var page = await GetPageFromWebsite(productId, cancellationToken);
+            var product = ParseToVm(productId, page);
+            return product;
         }
         catch (InvalidCastException)
         {

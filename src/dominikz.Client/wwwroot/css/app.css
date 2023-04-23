@@ -1,4 +1,4 @@
-﻿
+
 html, body {
     font-family: 'Roboto', Arial, sans-serif;
     margin: 0;
@@ -28,10 +28,10 @@ div {
     padding: 8px;
 }
 
-    .appmenue a:hover {
-        background-color: var(--theme-onprimary);
-        transition: ease-in-out 0.1s;
-    }
+.appmenue a:hover {
+    background-color: var(--theme-onprimary);
+    transition: ease-in-out 0.1s;
+}
 
 .active {
     background-color: #5f7d8f;

@@ -136,8 +136,8 @@ else
                 </div>
 
                 <div class="flex-column gap">
-                    <FilePicker @bind-Selected="_data.Image" @bind-Files="_posterFiles" MaxFiles="10" MaxSelectedFiles="1"/>
-                    <ValidationMessage For="@(() => _data.Image)"/>
+                    <FilePicker @bind-Selected="_data.Images" @bind-Files="_posterFiles" MaxFiles="10" MaxSelectedFiles="1"/>
+                    <ValidationMessage For="@(() => _data.Images)"/>
                 </div>
             </div>
 

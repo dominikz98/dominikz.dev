@@ -10,7 +10,7 @@
     </div>
 
     <div class="trades-container-item-tall">
-        <CardGrid>
+        <div class="card-grid">
             @foreach (var call in _earningsCalls)
             {
                 <div class="trade-card flex-row-no-wrap gap spacing surface" @onclick="() => SelectEarningCall(call.Id)">
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             }
-        </CardGrid>
+        </div>
     </div>
 
 </div>

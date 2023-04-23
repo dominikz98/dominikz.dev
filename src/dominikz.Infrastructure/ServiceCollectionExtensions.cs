@@ -16,7 +16,7 @@ namespace dominikz.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApiClient(this IServiceCollection services, string url)
+    public static IServiceCollection AddApiClient(this IServiceCollection services)
         => services.AddSingleton<BlogEndpoints>()
             .AddSingleton<MovieEndpoints>()
             .AddSingleton<DownloadEndpoints>()
@@ -26,9 +26,16 @@ public static class ServiceCollectionExtensions
             .AddHttpClient<ApiClient>((sp, client) =>
             {
                 var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
-                client.BaseAddress = new Uri(url);
-                client.DefaultRequestHeaders.Add(ApiClient.ApiKeyHeaderName, options.Key);
+                client.BaseAddress = new Uri(options.ApiUrl);
+                client.DefaultRequestHeaders.Add(ApiClient.ApiKeyHeaderName, options.ApiKey);
             }).Services;
+
+    public static IServiceCollection AddFinancialClients(this IServiceCollection services)
+        => services.AddScoped<FinanceBrowser>()
+            .AddScoped<EarningsWhispersClient>()
+            .AddScoped<OnVistaClient>()
+            .AddScoped<AktienFinderClient>()
+            .AddScoped<FinanzenNetClient>();
 
     public static IServiceCollection AddJustWatchClient(this IServiceCollection services)
         => services.AddScoped<JustWatchClient>()
@@ -42,13 +49,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMedlanClient(this IServiceCollection services)
         => services.AddScoped<MedlanClient>();
 
-    public static IServiceCollection AddFinancialClients(this IServiceCollection services)
-        => services.AddScoped<FinanceBrowser>()
-            .AddScoped<EarningsWhispersClient>()
-            .AddScoped<OnVistaClient>()
-            .AddScoped<AktienFinderClient>()
-            .AddScoped<FinanzenNetClient>();
-    
     public static IServiceCollection AddNoobitClient(this IServiceCollection services)
         => services.AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
@@ -68,4 +68,5 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
         => services.AddSingleton<IStorageProvider>(_ => new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
+
 }

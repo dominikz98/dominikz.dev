@@ -26,7 +26,7 @@ public class MovieEndpoints
             return null;
 
         // attach image api keys
-        vm.AttachApiKey(_options.Value.Key);
+        vm.AttachApiKey(_options.Value.ApiKey);
         return vm;
     }
 
@@ -39,14 +39,14 @@ public class MovieEndpoints
     public async Task<List<MoviePreviewVm>> GetPreview(CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<MoviePreviewVm>($"{Endpoint}/preview", cancellationToken);
-        vmList.AttachApiKey(_options.Value.Key);
+        vmList.AttachApiKey(_options.Value.ApiKey);
         return vmList;
     }
 
     public async Task<List<MovieVm>> Search(MoviesFilter filter, CancellationToken cancellationToken = default)
     {
         var vmList = await _client.Get<MovieVm>($"{Endpoint}/search", filter, cancellationToken);
-        vmList.AttachApiKey(_options.Value.Key);
+        vmList.AttachApiKey(_options.Value.ApiKey);
         return vmList;
     }
 

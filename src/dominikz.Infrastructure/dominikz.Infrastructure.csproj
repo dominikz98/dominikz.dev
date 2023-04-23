@@ -25,7 +25,6 @@
         <PackageReference Include="PuppeteerSharp" Version="9.0.2" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
         <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
-        <PackageReference Include="YahooFinanceApi" Version="2.1.2" />
     </ItemGroup>
 
     <ItemGroup>

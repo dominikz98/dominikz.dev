@@ -8,6 +8,5 @@ public enum PermissionFlags
     Blog = 2,
     Movies = 4,
     Account = 8,
-    Cookbook = 16,
-    Trades = 32
+    Cookbook = 16
 }

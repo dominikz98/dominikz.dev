@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Client", "src\dominikz.Client\dominikz.Client.csproj", "{FE758019-51F9-415B-9FDD-3B4AB4712A3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Infrastructure", "src\dominikz.Infrastructure\dominikz.Infrastructure.csproj", "{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Migrations", "src\dominikz.Migrations\dominikz.Migrations.csproj", "{265AF26D-3D62-44BA-A9DA-93F393E881CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Tests", "src\dominikz.Tests\dominikz.Tests.csproj", "{F59FAC3A-455A-4231-A845-603D038A52EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Domain", "src\dominikz.Domain\dominikz.Domain.csproj", "{11D1CB08-C032-4806-9AD5-0576B96FD7D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Api", "src\dominikz.Api\dominikz.Api.csproj", "{8D69ED00-9C48-4AC2-A4F5-955174A688F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE758019-51F9-415B-9FDD-3B4AB4712A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE758019-51F9-415B-9FDD-3B4AB4712A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE758019-51F9-415B-9FDD-3B4AB4712A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE758019-51F9-415B-9FDD-3B4AB4712A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{265AF26D-3D62-44BA-A9DA-93F393E881CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{265AF26D-3D62-44BA-A9DA-93F393E881CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{265AF26D-3D62-44BA-A9DA-93F393E881CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{265AF26D-3D62-44BA-A9DA-93F393E881CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F59FAC3A-455A-4231-A845-603D038A52EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F59FAC3A-455A-4231-A845-603D038A52EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F59FAC3A-455A-4231-A845-603D038A52EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F59FAC3A-455A-4231-A845-603D038A52EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D1CB08-C032-4806-9AD5-0576B96FD7D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D1CB08-C032-4806-9AD5-0576B96FD7D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D1CB08-C032-4806-9AD5-0576B96FD7D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D1CB08-C032-4806-9AD5-0576B96FD7D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D69ED00-9C48-4AC2-A4F5-955174A688F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D69ED00-9C48-4AC2-A4F5-955174A688F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D69ED00-9C48-4AC2-A4F5-955174A688F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D69ED00-9C48-4AC2-A4F5-955174A688F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE758019-51F9-415B-9FDD-3B4AB4712A3B} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{092F0D41-7F3A-47A7-B385-06A5C10ECB3D} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{265AF26D-3D62-44BA-A9DA-93F393E881CD} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{F59FAC3A-455A-4231-A845-603D038A52EA} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{11D1CB08-C032-4806-9AD5-0576B96FD7D3} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{8D69ED00-9C48-4AC2-A4F5-955174A688F6} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+	EndGlobalSection
+EndGlobal

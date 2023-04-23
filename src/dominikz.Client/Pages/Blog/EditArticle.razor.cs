@@ -1,6 +1,7 @@
-using dominikz.Client.Wrapper;
+using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Blog;
+using dominikz.Domain.ViewModels.Blog;
 using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -15,7 +16,7 @@ public partial class EditArticle
     [Inject] internal NavigationManager? NavManager { get; set; }
 
     private EditContext? _editContext;
-    private EditArticleWrapper _vm = new();
+    private EditWithImageWrapper<EditArticleVm> _data = new();
 
     private bool _isEnabled;
     private bool _isDraft;
@@ -26,20 +27,20 @@ public partial class EditArticle
         var articleLoaded = await LoadArticleIfRequired();
         if (articleLoaded == false)
         {
-            _vm.Id = Guid.NewGuid();
-            _vm.PublishDate = DateTime.UtcNow.AddDays(1);   
+            _data.ViewModel.Id = Guid.NewGuid();
+            _data.ViewModel.PublishDate = DateTime.UtcNow.AddDays(1);
         }
 
         await LoadRecommendations();
-        _editContext = new EditContext(_vm);
+        _editContext = new EditContext(_data);
         _isEnabled = true;
     }
 
     private async Task LoadRecommendations()
     {
-        var recommendations = await BlogEndpoints!.GetTagsByCategory(_vm.Category);
+        var recommendations = await BlogEndpoints!.GetTagsByCategory(_data.ViewModel.Category);
         _tagRecommendations = recommendations
-            .Except(_vm.Tags)
+            .Except(_data.ViewModel.Tags)
             .ToList();
     }
 
@@ -52,21 +53,13 @@ public partial class EditArticle
         if (article == null)
             return false;
 
-        _vm = new EditArticleWrapper()
-        {
-            Id = _vm.Id,
-            Category = _vm.Category,
-            Tags = _vm.Tags,
-            PublishDate = _vm.PublishDate,
-            Title = _vm.Title,
-            HtmlText = _vm.HtmlText
-        };
-
+        _data.ViewModel = article;
+        
         var file = await DownloadEndpoints!.Image(article.Id, ImageSizeEnum.Original);
         if (file == null)
             return true;
 
-        _vm.Images.Add(file.Value);
+        _data.Images.Add(file.Value);
         return true;
     }
 
@@ -75,19 +68,19 @@ public partial class EditArticle
         _isDraft = isDraft;
         if (_isDraft == false)
         {
-            _vm.PublishDate ??= DateTime.UtcNow.AddDays(1);
+            _data.ViewModel.PublishDate ??= DateTime.UtcNow.AddDays(1);
             return;
         }
 
-        _vm.PublishDate = null;
+        _data.ViewModel.PublishDate = null;
     }
 
     private async Task OnCategoryChanged(ArticleCategoryEnum category)
     {
-        if (category == _vm.Category)
+        if (category == _data.ViewModel.Category)
             return;
 
-        _vm.Category = category;
+        _data.ViewModel.Category = category;
         await LoadRecommendations();
     }
 
@@ -97,8 +90,8 @@ public partial class EditArticle
             return;
 
         var article = ArticleId == null
-            ? await BlogEndpoints!.Add(_vm, _vm.Images)
-            : await BlogEndpoints!.Update(_vm, _vm.Images);
+            ? await BlogEndpoints!.Add(_data.ViewModel, _data.Images)
+            : await BlogEndpoints!.Update(_data.ViewModel, _data.Images);
 
         if (article == null)
             return;

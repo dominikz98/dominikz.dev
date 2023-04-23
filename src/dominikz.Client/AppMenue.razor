@@ -1,0 +1,53 @@
+﻿
+<div class="appmenue @(IsExpanded ? "appmenue-expanded" : "appmenue-collapsed")">
+
+    <NavLink href="/" Match="NavLinkMatch.All">
+        <span class="fa-solid fa-home"></span>
+        @if (IsExpanded)
+        {
+            <span class="appmenue-entry-text">Home</span>
+        }
+    </NavLink>
+
+    @foreach (var entry in Pages)
+    {
+        <NavLink href="@entry.Url" Match="NavLinkMatch.Prefix">
+            <span class="fa-solid @entry.Icon"></span>
+            @if (IsExpanded)
+            {
+                <span class="appmenue-entry-text">@entry.Title</span>
+            }
+        </NavLink>
+    }
+
+</div>
+
+@code
+{
+    [Parameter]
+    public bool IsExpanded { get; set; }
+
+    [Inject]
+    protected NavigationManager? Navigation { get; set; }
+
+    private static readonly List<MenueEntry> Pages = new()
+    {
+        new MenueEntry("fa-rss", "Blog", "/blog"),
+        new MenueEntry("fa-film", "Movies", "/movies"),
+        new MenueEntry("fa-arrow-trend-up", "Trades", "/trades"),
+        new MenueEntry("fa-compact-disc", "Songs", "/songs"),
+        new MenueEntry("fa-lemon", "Cookbook", "/cookbook")
+    };
+
+    protected override void OnInitialized()
+        => Navigation!.LocationChanged += LocationChanged;
+
+    private void LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+    // Change expand state
+        IsExpanded = false;
+        StateHasChanged();
+    }
+    
+    public record MenueEntry(string Icon, string Title, string Url);
+}

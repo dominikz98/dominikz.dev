@@ -40,8 +40,8 @@ else
                 </div>
 
                 <div class="flex-column gap">
-                    <FilePicker @bind-Selected="_data.Image" MaxFiles="1" MaxSelectedFiles="1" HideUploadIfCompleted="true"/>
-                    <ValidationMessage For="@(() => _data.Image)"/>
+                    <FilePicker @bind-Selected="_data.Images" MaxFiles="1" MaxSelectedFiles="1" HideUploadIfCompleted="true"/>
+                    <ValidationMessage For="@(() => _data.Images)"/>
                 </div>
             </div>
 

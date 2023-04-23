@@ -57,7 +57,7 @@ public class BlogEndpoints
     private void AttachApiKey(ArticleVm? vm)
     {
         if (vm?.ImageUrl.StartsWith(_client.BaseUrl) ?? false)
-            vm.AttachApiKey(_options.Value.Key);
+            vm.AttachApiKey(_options.Value.ApiKey);
     }
 
     public string CurlSearch(ArticleFilter filter)

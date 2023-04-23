@@ -1,4 +1,4 @@
-using System.Web;
+﻿using System.Web;
 using dominikz.Client.Extensions;
 using dominikz.Domain.ViewModels.Auth;
 using dominikz.Infrastructure.Clients.Api;

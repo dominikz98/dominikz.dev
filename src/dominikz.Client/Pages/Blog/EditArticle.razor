@@ -12,7 +12,7 @@
 }
 else
 {
-    <PageTitle>@_vm.Title</PageTitle>
+    <PageTitle>@_data.ViewModel.Title</PageTitle>
     
     <EditForm EditContext="@_editContext" OnSubmit="@OnSaveClicked">
         <DataAnnotationsValidator/>
@@ -30,10 +30,10 @@ else
                 </div>
                 <div class="flex-column">
                     <EnumPicker T="@ArticleCategoryEnum"
-                              Selected="@_vm.Category"
+                              Selected="@_data.ViewModel.Category"
                               SelectedChanged="OnCategoryChanged"
                               Values="@(Enum.GetValues<ArticleCategoryEnum>()[..^1].ToList())"/>
-                    <ValidationMessage For="@(() => _vm.Category)"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Category)"/>
                 </div>
 
                 @* Draft *@
@@ -47,8 +47,8 @@ else
                     <span>Publish Date:</span>
                 </div>
                 <div class="flex-column">
-                    <DatePicker Disabled="_isDraft" @bind-Date="_vm.PublishDate"/>
-                    <ValidationMessage For="@(() => _vm.PublishDate)"/>
+                    <DatePicker Disabled="_isDraft" @bind-Date="_data.ViewModel.PublishDate"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.PublishDate)"/>
                 </div>
             </div>
 
@@ -61,8 +61,8 @@ else
 
                 @* Tags *@
                 <div class="flex-column">
-                    <ChipBucket @bind-Values="@_vm.Tags" Recommendations="@_tagRecommendations"/>
-                    <ValidationMessage For="@(() => _vm.Tags)"/>
+                    <ChipBucket @bind-Values="@_data.ViewModel.Tags" Recommendations="@_tagRecommendations"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Tags)"/>
                 </div>
             </div>
 
@@ -76,14 +76,14 @@ else
 
                 @* Title  *@
                 <div class="flex-column grid-item-span">
-                    <TextBox Placeholder="Title" @bind-Value="_vm.Title"/>
-                    <ValidationMessage For="@(() => _vm.Title)"/>
+                    <TextBox Placeholder="Title" @bind-Value="_data.ViewModel.Title"/>
+                    <ValidationMessage For="@(() => _data.ViewModel.Title)"/>
                 </div>
 
                 @* Html *@
                 <div class="flex-column grid-item-span">
-                    <TextArea placeholder="..." @bind-Value="_vm.HtmlText"></TextArea>
-                    <ValidationMessage For="@(() => _vm.HtmlText)"/>
+                    <TextArea placeholder="..." @bind-Value="_data.ViewModel.HtmlText"></TextArea>
+                    <ValidationMessage For="@(() => _data.ViewModel.HtmlText)"/>
                 </div>
             </div>
 
@@ -96,8 +96,8 @@ else
                 </div>
 
                 <div>
-                    <FilePicker @bind-Files="_vm.Images" MaxFiles="1"/>
-                    <ValidationMessage For="@(() => _vm.Images)"/>
+                    <FilePicker @bind-Files="_data.Images" MaxFiles="1"/>
+                    <ValidationMessage For="@(() => _data.Images)"/>
                 </div>
             </div>
 

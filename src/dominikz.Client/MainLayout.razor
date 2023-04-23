@@ -1,0 +1,30 @@
+﻿@inherits LayoutComponentBase
+
+<ThemeProvider/>
+
+<Toast/>
+
+<div>
+    <AppBar OnExpandClicked="OnExpandClicked"/>
+
+
+    <div class="content">
+
+        <AppMenue IsExpanded="_isMenuOpen"/>
+
+        <main>
+            @Body
+        </main>
+
+    </div>
+
+</div>
+
+@code {
+
+    private bool _isMenuOpen;
+
+    private void OnExpandClicked()
+        => _isMenuOpen = !_isMenuOpen;
+
+}

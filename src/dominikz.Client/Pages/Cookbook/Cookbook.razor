@@ -64,7 +64,7 @@
     }
     else
     {
-        <CardGrid>
+        <div class="card-grid">
             @foreach (var recipe in _recipes)
             {
                 <div class="card surface" @onclick="() => NavigateToDetail(recipe.Id)">
@@ -106,6 +106,6 @@
 
                 </div>
             }
-        </CardGrid>
+        </div>
     }
 </div>

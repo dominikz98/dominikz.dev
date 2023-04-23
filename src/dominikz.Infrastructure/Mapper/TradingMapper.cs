@@ -5,21 +5,6 @@ namespace dominikz.Infrastructure.Mapper;
 
 public static class TradingMapper
 {
-    public static TradeDetailVm MapToVm(this Trade source)
-        => new()
-        {
-            Id = source.Id,
-            Name = source.Name,
-            Date = source.Date,
-            Timestamp = source.Timestamp,
-            Symbol = source.Symbol,
-            ISIN = source.ISIN,
-            Fee = source.Fee,
-            Tax = source.Tax,
-            BuyIn = source.BuyIn,
-            BuyOut = source.BuyOut
-        };
-
     public static IQueryable<EarningCallVm> MapToVm(this IQueryable<EarningCall> source)
         => source.Select(x => new EarningCallVm()
         {

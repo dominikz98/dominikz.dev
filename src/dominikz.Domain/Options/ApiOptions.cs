@@ -2,5 +2,6 @@ namespace dominikz.Domain.Options;
 
 public class ApiOptions
 {
-    public string Key { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
+    public string ApiUrl { get; set; } = string.Empty;
 }

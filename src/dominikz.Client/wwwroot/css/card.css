@@ -53,14 +53,21 @@
     font-weight: bold;
 }
 
-@media (max-width: 640.98px) {
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 300px);
+    grid-gap: 12px;
+}
+
+@media (max-width: 600px) {
 
     .card-grid {
-        grid-template-columns: repeat(auto-fill, 100%) !important;
+        width: 100%;
+        grid-template-columns: repeat(auto-fill, 100%)!important;
     }
 
     .card-header img {
         width: 100%;
     }
-
 }

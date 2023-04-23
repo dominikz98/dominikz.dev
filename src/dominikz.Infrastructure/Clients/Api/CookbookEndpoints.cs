@@ -67,6 +67,6 @@ public class CookbookEndpoints
     private void AttachApiKey(IHasImageUrl? vm)
     {
         if (vm?.ImageUrl.StartsWith(_client.BaseUrl) ?? false)
-            vm.AttachApiKey(_options.Value.Key);
+            vm.AttachApiKey(_options.Value.ApiKey);
     }
 }

@@ -1,4 +1,4 @@
-using dominikz.Client.Wrapper;
+using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Cookbook;
 using dominikz.Domain.ViewModels.Cookbook;
@@ -53,7 +53,7 @@ public partial class EditRecipe
         if (file == null)
             return true;
 
-        _data.Image.Add(file.Value);
+        _data.Images.Add(file.Value);
         return true;
     }
 
@@ -95,10 +95,10 @@ public partial class EditRecipe
         if (_editContext == null || _editContext.Validate() == false)
             return;
 
-        _data.Image[0] = _data.Image[0].CopyTo(_data.ViewModel.Id.ToString());
+        _data.Images[0] = _data.Images[0].CopyTo(_data.ViewModel.Id.ToString());
         var recipe = RecipeId == null
-            ? await Endpoints!.Add(_data.ViewModel, _data.Image)
-            : await Endpoints!.Update(_data.ViewModel, _data.Image);
+            ? await Endpoints!.Add(_data.ViewModel, _data.Images)
+            : await Endpoints!.Update(_data.ViewModel, _data.Images);
 
         if (recipe == null)
             return;

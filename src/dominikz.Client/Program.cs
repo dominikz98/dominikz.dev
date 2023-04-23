@@ -1,17 +1,17 @@
 using Blazored.LocalStorage;
-using dominikz.Client;
-using dominikz.Infrastructure;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using dominikz.Client;
+using dominikz.Client.Extensions;
+using dominikz.Infrastructure;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.AddOptions();
-
-builder.Services.AddBlazoredLocalStorageAsSingleton()
-    .AddApiClient(builder.HostEnvironment.BaseAddress)
-    .AddServices();
+builder.Services.AddApiClient()
+    .AddApiOptions(builder.Configuration)
+    .AddServices()
+    .AddBlazoredLocalStorageAsSingleton();
 
 await builder.Build().RunAsync();

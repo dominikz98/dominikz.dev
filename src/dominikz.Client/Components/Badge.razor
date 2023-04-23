@@ -1,0 +1,19 @@
+﻿
+    <div class="surface spacing flex-row-no-wrap">
+        <span class="badge-key">@Key</span>
+
+        <div class="flex-row-no-wrap gap-small">
+            @ChildContent
+        </div>
+
+    </div>
+
+@code {
+
+    [Parameter]
+    public string Key { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

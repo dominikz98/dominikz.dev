@@ -35,13 +35,10 @@ public static class ServiceCollectionExtensions
     public static void AddOptions(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)))
-            .Configure<MedlanOptions>(builder.Configuration.GetSection(nameof(MedlanOptions)))
-            .Configure<NoobitOptions>(builder.Configuration.GetSection(nameof(NoobitOptions)))
-            .Configure<ImdbOptions>(builder.Configuration.GetSection(nameof(ImdbOptions)))
-            .Configure<JustWatchOptions>(builder.Configuration.GetSection(nameof(JustWatchOptions)))
+            .Configure<ExternalUrlsOptions>(builder.Configuration.GetSection(nameof(ExternalUrlsOptions)))
+            .Configure<ApiKeysOptions>(builder.Configuration.GetSection(nameof(ApiKeysOptions)))
             .Configure<PasswordOptions>(builder.Configuration.GetSection(nameof(PasswordOptions)))
-            .Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)))
-            .Configure<ApiKeyOptions>(builder.Configuration.GetSection(nameof(ApiKeyOptions)));
+            .Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
     }
 
     public static void AddJwtAuth(this WebApplicationBuilder builder)

@@ -1,4 +1,6 @@
 using System.Web;
+using dominikz.Domain.Options;
+using Microsoft.Extensions.Options;
 using Polly;
 using PuppeteerSharp;
 
@@ -7,10 +9,12 @@ namespace dominikz.Infrastructure.Clients.Finance;
 public class FinanzenNetClient
 {
     private readonly FinanceBrowser _browser;
+    private readonly IOptions<ExternalUrlsOptions> _options;
 
-    public FinanzenNetClient(FinanceBrowser browser)
+    public FinanzenNetClient(FinanceBrowser browser, IOptions<ExternalUrlsOptions> options)
     {
         _browser = browser;
+        _options = options;
     }
 
     public async Task<string?> GetISINBySymbolAndKeyword(string symbol, string keyword)
@@ -25,7 +29,7 @@ public class FinanzenNetClient
         var cleanedKeyword = keyword.Replace(".", "")
             .Replace(",", "");
 
-        var url = $"https://www.finanzen.net/suchergebnis.asp?_search={HttpUtility.UrlEncode(cleanedKeyword)}";
+        var url = $"{_options.Value.FinanzenNet}suchergebnis.asp?_search={HttpUtility.UrlEncode(cleanedKeyword)}";
         await using var page = await _browser.OpenPage(url);
 
         // Wait for the page to load
@@ -65,8 +69,11 @@ public class FinanzenNetClient
 
                 if (isin.Contains(symbol, StringComparison.OrdinalIgnoreCase) == false)
                     continue;
-
-                var result = await ExtractISINFromStockPage($"https://www.finanzen.net{link}");
+                
+                // 012345
+                // https/
+                
+                var result = await ExtractISINFromStockPage($"{_options.Value.FinanzenNet.Substring(0, _options.Value.FinanzenNet.Length - 1)}{link}");
                 if (string.IsNullOrWhiteSpace(result))
                     continue;
 

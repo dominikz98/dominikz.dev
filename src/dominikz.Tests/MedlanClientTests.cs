@@ -9,9 +9,9 @@ public class MedlanClientTests
     [Fact]
     public async Task TestArchivCrawl()
     {
-        var client = new MedlanClient(Options.Create(new MedlanOptions()
+        var client = new MedlanClient(Options.Create(new ExternalUrlsOptions()
         {
-            Url = "https://www.medlan.de/"
+            Medlan = "https://www.medlan.de/"
         }));
 
         var results = await client.GetArticles(default);

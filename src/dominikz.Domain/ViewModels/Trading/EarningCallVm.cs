@@ -13,7 +13,7 @@ public class EarningCallVm
     public decimal? Surprise { get; set; }
     public string? ISIN { get; set; } = string.Empty;
     public InformationSource Sources { get; set; }
-    public string LogoUrl { get; set; }
+    public string? LogoUrl { get; set; }
     public string? OnVistaLink { get; set; }
     public string? OnVistaNewsLink { get; set; }
 }

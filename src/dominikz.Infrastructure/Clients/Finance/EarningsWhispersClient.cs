@@ -1,4 +1,6 @@
 using System.Globalization;
+using dominikz.Domain.Options;
+using Microsoft.Extensions.Options;
 using Polly;
 using PuppeteerSharp;
 using PuppeteerSharp.Input;
@@ -8,10 +10,12 @@ namespace dominikz.Infrastructure.Clients.Finance;
 public class EarningsWhispersClient
 {
     private readonly FinanceBrowser _browser;
+    private readonly IOptions<ExternalUrlsOptions> _options;
 
-    public EarningsWhispersClient(FinanceBrowser browser)
+    public EarningsWhispersClient(FinanceBrowser browser, IOptions<ExternalUrlsOptions> options)
     {
         _browser = browser;
+        _options = options;
     }
 
     public async Task<IReadOnlyCollection<EwCall>> GetEarningsCallsOfToday()
@@ -23,7 +27,7 @@ public class EarningsWhispersClient
 
     private async Task<IReadOnlyCollection<EwCall>> GetEarningsCallsOfTodayInternal()
     {
-        await using var page = await _browser.OpenPage($"https://www.earningswhispers.com/calendar");
+        await using var page = await _browser.OpenPage($"{_options.Value.EarningsWhispers}calendar");
 
         // switch to list view
         await page.EvaluateExpressionAsync("gotolistview()");
@@ -102,8 +106,22 @@ public class EarningsWhispersClient
             return;
 
         var rawTime = await page.EvaluateFunctionAsync<string>("e => e.textContent", element);
-        if (rawTime.Contains(':') == false)
+        if (rawTime.Contains("AMC") == false)
+        {
+            callVm.Release = new TimeOnly(16, 0, 0);
+        }
+
+        if (rawTime.Contains("DMC") == false)
+        {
+            callVm.Release = new TimeOnly(9, 30, 0);
             return;
+        }
+
+        if (rawTime.Contains("BMO") == false)
+        {
+            callVm.Release = new TimeOnly(9, 30, 0);
+            return;
+        }
 
         var easternTime = DateTime.ParseExact(rawTime.Remove(rawTime.Length - 3, 3), "h:mm tt", CultureInfo.InvariantCulture);
         var easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
@@ -116,7 +134,7 @@ public class EwCall
 {
     public string Symbol { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public TimeOnly? Release { get; set; }
+    public TimeOnly Release { get; set; }
     public decimal? Growth { get; set; }
     public decimal? Surprise { get; set; }
 }

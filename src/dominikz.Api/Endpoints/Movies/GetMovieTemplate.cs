@@ -39,16 +39,16 @@ public record GetMovieTemplateQuery(string ImdbId) : IRequest<MovieTemplateVm?>;
 
 public class GetMovieTemplateHandler : IRequestHandler<GetMovieTemplateQuery, MovieTemplateVm?>
 {
-    private readonly IOptions<ImdbOptions> _options;
+    private readonly IOptions<ApiKeysOptions> _options;
     
-    public GetMovieTemplateHandler(IOptions<ImdbOptions> options)
+    public GetMovieTemplateHandler(IOptions<ApiKeysOptions> options)
     {
         _options = options;
     }
 
     public async Task<MovieTemplateVm?> Handle(GetMovieTemplateQuery request, CancellationToken cancellationToken)
     {
-        var client = new ApiLib(_options.Value.ApiKey);
+        var client = new ApiLib(_options.Value.Imdb);
         var imdbData = await client.TitleAsync(request.ImdbId, Language.en, "Posters");
 
         if (string.IsNullOrWhiteSpace(imdbData?.Title))

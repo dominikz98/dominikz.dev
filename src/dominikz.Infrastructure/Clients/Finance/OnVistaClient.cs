@@ -1,4 +1,6 @@
 using System.Net.Http.Json;
+using dominikz.Domain.Options;
+using Microsoft.Extensions.Options;
 
 // ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -7,9 +9,16 @@ namespace dominikz.Infrastructure.Clients.Finance;
 
 public class OnVistaClient
 {
+    private readonly IOptions<ExternalUrlsOptions> _options;
+
+    public OnVistaClient(IOptions<ExternalUrlsOptions> options)
+    {
+        _options = options;
+    }
+    
     public async Task<OvResult?> GetStockByISIN(string isin, CancellationToken cancellationToken)
     {
-        var url = $"https://api.onvista.de/api/v1/instruments/search/facet?perType=10&searchValue={isin}";
+        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={isin}";
         var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
 
         return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))
@@ -25,7 +34,7 @@ public class OnVistaClient
             .Replace("Corp", "")
             .Replace("Inc", "");
    
-        var url = $"https://api.onvista.de/api/v1/instruments/search/facet?perType=10&searchValue={cleanedName}";
+        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={cleanedName}";
         var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
 
         return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))
@@ -35,7 +44,7 @@ public class OnVistaClient
 
     private async Task<OvResult?> GetAndValidateBySymbol(string symbol, string keyword, CancellationToken cancellationToken)
     {
-        var url = $"https://api.onvista.de/api/v1/instruments/search/facet?perType=10&searchValue={keyword}";
+        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={keyword}";
         var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
 
         return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))

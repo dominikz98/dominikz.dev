@@ -8,10 +8,10 @@ public class EarningCall
     public DateOnly Date { get; set; }
     public string Symbol { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public TimeOnly? Release { get; set; } = new();
+    public TimeOnly Release { get; set; }
     public decimal? Growth { get; set; }
     public decimal? Surprise { get; set; }
-    public string? ISIN { get; set; } = string.Empty;
+    public string? ISIN { get; set; }
     public string? OnVistaLink { get; set; }
     public string? OnVistaNewsLink { get; set; }
     public InformationSource Sources { get; set; }

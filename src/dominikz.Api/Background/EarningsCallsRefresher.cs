@@ -13,11 +13,12 @@ public class EarningsCallsRefresher : ITimeTriggeredWorker
 {
     // At minute 0 past every hour from 6 through 16 on every day-of-week from Monday through Friday.
     public CronSchedule Schedule { get; } = new("0 6-23 * * 1-5");
-    
+
     private readonly EarningsWhispersClient _eaClient;
     private readonly OnVistaClient _onVistaClient;
     private readonly AktienFinderClient _aktienFinderClient;
     private readonly FinanzenNetClient _finanzenNetClient;
+    private readonly FinnhubClient _finnhubClient;
     private readonly IStorageProvider _storage;
     private readonly DatabaseContext _database;
 
@@ -25,6 +26,7 @@ public class EarningsCallsRefresher : ITimeTriggeredWorker
         OnVistaClient onVistaClient,
         AktienFinderClient aktienFinderClient,
         FinanzenNetClient finanzenNetClient,
+        FinnhubClient finnhubClient,
         IStorageProvider storage,
         DatabaseContext database)
     {
@@ -32,6 +34,7 @@ public class EarningsCallsRefresher : ITimeTriggeredWorker
         _onVistaClient = onVistaClient;
         _aktienFinderClient = aktienFinderClient;
         _finanzenNetClient = finanzenNetClient;
+        _finnhubClient = finnhubClient;
         _storage = storage;
         _database = database;
     }
@@ -101,7 +104,6 @@ public class EarningsCallsRefresher : ITimeTriggeredWorker
 
         call.Surprise = ewCall.Surprise;
         call.Growth = ewCall.Growth;
-        call.Release = ewCall.Release;
         call.Updated = DateTime.UtcNow;
         _database.Update(call);
         await _database.SaveChangesAsync(cancellationToken);
@@ -110,7 +112,16 @@ public class EarningsCallsRefresher : ITimeTriggeredWorker
 
     private async Task DownloadLogo(EarningCall call, CancellationToken cancellationToken)
     {
-        var logoUrl = await _aktienFinderClient.GetLogoByISIN(call.ISIN!);
+        string? logoUrl = null;
+        if (string.IsNullOrWhiteSpace(call.ISIN) == false)
+            logoUrl = (await _finnhubClient.TryGetCompanyByISIN(call.ISIN, cancellationToken))?.Logo;
+        
+        logoUrl ??= (await _finnhubClient.TryGetCompanyBySymbol(call.Symbol, cancellationToken))?.Logo;
+        if (string.IsNullOrWhiteSpace(logoUrl) == false)
+            call.Sources |= InformationSource.Finnhub;
+        else
+            logoUrl = await _aktienFinderClient.GetLogoByISIN(call.ISIN!);
+
         if (string.IsNullOrWhiteSpace(logoUrl))
             return;
 

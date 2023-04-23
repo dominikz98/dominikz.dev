@@ -11,17 +11,17 @@ namespace dominikz.Infrastructure.Clients;
 
 public class MedlanClient
 {
-    private readonly IOptions<MedlanOptions> _options;
+    private readonly IOptions<ExternalUrlsOptions> _options;
     private static readonly Guid DefaultImageId = Guid.Parse("6887b330-7e26-11ed-8afc-ccf04caa7138");
 
-    public MedlanClient(IOptions<MedlanOptions> options)
+    public MedlanClient(IOptions<ExternalUrlsOptions> options)
     {
         _options = options;
     }
 
     public async Task<IReadOnlyCollection<ExtArticleShadow>> GetArticles(CancellationToken cancellationToken)
     {
-        using var reader = XmlReader.Create($"{_options.Value.Url}?feed=rss2", new XmlReaderSettings()
+        using var reader = XmlReader.Create($"{_options.Value.Medlan}?feed=rss2", new XmlReaderSettings()
         {
             Async = true,
             DtdProcessing = DtdProcessing.Parse
@@ -60,11 +60,11 @@ public class MedlanClient
             .ToList() ?? throw new InvalidCastException($"Cant parse category! ({url})");
 
         var thumbnailImages = document.QuerySelector("article")?.QuerySelectorAll("img").ToList() ?? new List<IElement>();
-        var thumbnailSrc = thumbnailImages.Select(x => x.GetAttribute("data-src-cmplz"))
+        var thumbnailSrc = thumbnailImages
+            .Select(x => x.GetAttribute("data-src-cmplz"))
             .Union(thumbnailImages.Select(x => x.GetAttribute("src")))
             .Where(x => string.IsNullOrWhiteSpace(x) == false)
-            .Where(x => !excludeThumbnailUrls.Contains(x))
-            .FirstOrDefault();
+            .FirstOrDefault(x => !excludeThumbnailUrls.Contains(x));
 
         var shadow = new ExtArticleShadow()
         {

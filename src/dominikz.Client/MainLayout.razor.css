@@ -13,9 +13,6 @@ main {
     margin-top: 60px;
     width: 100%;
     padding: 8px;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .scroll-to-top-button {

@@ -6,5 +6,6 @@ public enum InformationSource
     EarningsWhispers = 1,
     OnVista = 2,
     FinanzenNet = 4,
-    AktienFinder = 8
+    AktienFinder = 8,
+    Finnhub = 16
 }

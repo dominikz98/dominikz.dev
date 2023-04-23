@@ -1,6 +1,6 @@
 
 .trade-card {
-    width: 100%;
+    width: 225px;
     height: 100%;
     opacity: 1.0;
 }
@@ -10,24 +10,15 @@
     transition: opacity 0.1s ease-in-out;
 }
 
-.trade-card-body {
-    height: 100%;
-    justify-content: space-between;
-}
-
-.generation-frame {
-    /*display: none;*/
-}
-
 .trades-container {
     display: flex;
     flex-direction: row;
 }
 
 .trades-container-item-small {
-    width: 25%;
+    width: 20%;
 }
 
 .trades-container-item-tall {
-    width: 75%;
+    width: 60%;
 }

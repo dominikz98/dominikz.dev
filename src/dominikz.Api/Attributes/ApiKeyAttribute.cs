@@ -23,7 +23,7 @@ public class ApiKeyAttribute : Attribute, IAuthorizationFilter
         }
 
         // check client api key
-        var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeyOptions>>();
+        var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeysOptions>>();
         var isClientValid = IsApiKeyValid(options.Value.Client, submittedApiKey!);
         if (RequiresMasterKey == false && isClientValid)
             return;

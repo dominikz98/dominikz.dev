@@ -35,14 +35,21 @@ public static class ServiceCollectionExtensions
             .AddScoped<EarningsWhispersClient>()
             .AddScoped<OnVistaClient>()
             .AddScoped<AktienFinderClient>()
-            .AddScoped<FinanzenNetClient>();
+            .AddScoped<FinanzenNetClient>()
+            .AddScoped<FinnhubClient>()
+            .AddHttpClient<FinnhubClient>((sp, client) =>
+            {
+                var options = sp.GetRequiredService<IOptions<ExternalUrlsOptions>>();
+                client.BaseAddress = new Uri(options.Value.Finnhub);
+            })
+            .Services;
 
     public static IServiceCollection AddJustWatchClient(this IServiceCollection services)
         => services.AddScoped<JustWatchClient>()
             .AddHttpClient<JustWatchClient>((sp, client) =>
             {
-                var options = sp.GetRequiredService<IOptions<JustWatchOptions>>();
-                client.BaseAddress = new Uri(options.Value.Url);
+                var options = sp.GetRequiredService<IOptions<ExternalUrlsOptions>>();
+                client.BaseAddress = new Uri(options.Value.JustWatch);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("JW DZ Client");
             }).Services;
 
@@ -53,20 +60,21 @@ public static class ServiceCollectionExtensions
         => services.AddScoped<NoobitClient>()
             .AddHttpClient<NoobitClient>((sp, client) =>
             {
-                var options = sp.GetRequiredService<IOptions<NoobitOptions>>();
-                client.BaseAddress = new Uri(options.Value.Url);
+                var options = sp.GetRequiredService<IOptions<ExternalUrlsOptions>>();
+                client.BaseAddress = new Uri(options.Value.Noobit);
             }).Services;
 
     public static IServiceCollection AddSupermarktCheckClient(this IServiceCollection services)
         => services.AddScoped<SupermarktCheckClient>();
 
-    public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration, bool useDevelopmentEnv)
+    public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration,
+        bool useDevelopmentEnv)
         => services.AddDbContext<DatabaseContext>(options =>
             options.UseSqlite(configuration.GetConnectionString(nameof(DatabaseContext)))
                 .EnableDetailedErrors(useDevelopmentEnv)
                 .EnableSensitiveDataLogging(useDevelopmentEnv));
 
     public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
-        => services.AddSingleton<IStorageProvider>(_ => new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
-
+        => services.AddSingleton<IStorageProvider>(_ =>
+            new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
 }

@@ -31,9 +31,14 @@ public class StorageProvider : IStorageProvider
 
         var path = Path.Combine(_rootPath, request.Name);
         await using var fs = new FileStream(path, FileMode.OpenOrCreate);
-        data.Position = 0;
+        
+        if (data.CanSeek)
+            data.Position = 0;
+        
         await data.CopyToAsync(fs, cancellationToken);
-        data.Position = 0;
+        
+        if (data.CanSeek)
+            data.Position = 0;
     }
 
     public async Task<Stream?> Download(IStorageDownloadRequest request, CancellationToken cancellationToken)

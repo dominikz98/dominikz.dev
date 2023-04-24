@@ -7,6 +7,7 @@ using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
+using ImageMagick;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,9 +72,10 @@ public class EditArticleRequestHandler : IRequestHandler<EditArticleRequest, Act
         var file = request.Files.First();
         var image = file.OpenReadStream();
         image.Position = 0;
+        var format = MagickFormatInfo.Create(file.FileName)?.Format ?? MagickFormat.Jpg;
         await _storage.TryDelete(new DeleteImageRequest(request.ViewModel.Id), cancellationToken);
-        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, image), cancellationToken);
-        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, image, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, image, format), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, image, format, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
 
         // apply changes
         original.ApplyChanges(request.ViewModel);

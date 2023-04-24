@@ -8,6 +8,7 @@ using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
+using ImageMagick;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -74,11 +75,12 @@ public class AddArticleRequestHandler : IRequestHandler<AddArticleRequest, Actio
         var file = request.Files.GetBySingleOrId(request.ViewModel.Id);
         if (file == null)
             return new("Invalid article image");
-        
+
         var stream = file.OpenReadStream();
         stream.Position = 0;
-        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream), cancellationToken);
-        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
+        var format = MagickFormatInfo.Create(file.FileName)?.Format ?? MagickFormat.Jpg;
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, format), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, format, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
 
         // save article
         var toAdd = new Article().ApplyChanges(request.ViewModel);

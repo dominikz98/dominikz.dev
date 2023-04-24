@@ -15,36 +15,11 @@ public class OnVistaClient
     {
         _options = options;
     }
-    
-    public async Task<OvResult?> GetStockByISIN(string isin, CancellationToken cancellationToken)
-    {
-        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={isin}";
-        var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
 
-        return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))
-            .SelectMany(x => x.Results ?? new List<OvResult>())
-            .FirstOrDefault(x => x.ISIN == isin);
-    }
-    
-    public async Task<OvResult?> GetStockBySymbolAndName(string symbol, string name, CancellationToken cancellationToken)
+    public async Task<OvResult?> SearchStockBySymbol(string symbol, CancellationToken cancellationToken)
     {
         // cleanup name
-        var cleanedName = name.Replace(".", "")
-            .Replace(",", "")
-            .Replace("Corp", "")
-            .Replace("Inc", "");
-   
-        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={cleanedName}";
-        var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
-
-        return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))
-            .SelectMany(x => x.Results ?? new List<OvResult>())
-            .FirstOrDefault(x => x.Symbol == symbol);
-    }
-
-    private async Task<OvResult?> GetAndValidateBySymbol(string symbol, string keyword, CancellationToken cancellationToken)
-    {
-        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={keyword}";
+        var url = $"{_options.Value.OnVista}api/v1/instruments/search/facet?perType=10&searchValue={symbol}";
         var result = await new HttpClient().GetFromJsonAsync<OvQueryResult>(url, cancellationToken);
 
         return result?.Facets?.Where(x => x.Type.Equals("Stock", StringComparison.OrdinalIgnoreCase))

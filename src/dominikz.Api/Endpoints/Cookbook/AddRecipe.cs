@@ -8,6 +8,7 @@ using dominikz.Infrastructure.Mapper;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
+using ImageMagick;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -88,8 +89,9 @@ public class EditRecipeRequestHandler : IRequestHandler<AddRecipeRequest, Action
         // upload thumbnail
         var stream = file.OpenReadStream();
         stream.Position = 0;
-        await _storage.Upload(new UploadImageRequest(recipe.Id, stream), cancellationToken);
-        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
+        var format = MagickFormatInfo.Create(file.FileName)?.Format ?? MagickFormat.Jpg;
+        await _storage.Upload(new UploadImageRequest(recipe.Id, stream, format), cancellationToken);
+        await _storage.Upload(new UploadImageRequest(request.ViewModel.Id, stream, format, ImageSizeEnum.ThumbnailHorizontal), cancellationToken);
 
         // map to viewmodel
         var vm = await _mediator.Send(new GetRecipeQuery(recipe.Id), cancellationToken);

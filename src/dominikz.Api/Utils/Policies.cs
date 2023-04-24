@@ -8,4 +8,5 @@ public static class Policies
     public const string Blog = "HasBlogPermission";
     public const string Cookbook = "HasCookbookPermission";
     public const string Account = "HasAccountPermission";
+    public const string Trades = "HasTradesPermission";
 }

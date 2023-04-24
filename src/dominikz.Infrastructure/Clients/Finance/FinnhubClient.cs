@@ -23,13 +23,29 @@ public class FinnhubClient
         _options = options;
     }
 
+    public async Task<IReadOnlyCollection<FhEarningSuprise>> GetEpsSurprises(string symbol, CancellationToken cancellationToken)
+        => (await _client.GetFromJsonAsync<FhEarningSuprise[]>(
+            $"api/v1/stock/earnings?symbol={symbol}&limit=1&token={_options.Value.Finnhub}",
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
+            cancellationToken))!;
+
+    public async Task<FhEarningList> GetEarningsCalendar(DateOnly timestamp, CancellationToken cancellationToken)
+    {
+        var to = timestamp.ToDateTime(new TimeOnly());
+        var from = timestamp.AddDays(-1);
+        return (await _client.GetFromJsonAsync<FhEarningList>(
+            $"api/v1/calendar/earnings?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}&token={_options.Value.Finnhub}",
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
+            cancellationToken))!;
+    }
+
     public async Task<FhQuote?> GetQuoteBySymbol(string symbol, CancellationToken cancellationToken)
         => await _client.GetFromJsonAsync<FhQuote>(
             $"api/v1/stock/candle?symbol={symbol}&exchange={LxExchange}&token={_options.Value.Finnhub}",
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
             cancellationToken);
 
-    public async Task<FhCandle?> GetCandlesByISIN(string symbol, DateTime timestamp, CancellationToken cancellationToken)
+    public async Task<FhCandle?> GetCandles(string symbol, DateTime timestamp, CancellationToken cancellationToken)
     {
         var from = timestamp.AddMinutes(-15).ToUnixTimestamp();
         var to = timestamp.AddMinutes(15).ToUnixTimestamp();
@@ -40,35 +56,11 @@ public class FinnhubClient
             cancellationToken);
     }
 
-    public async Task<FhCompany?> TryGetCompanyBySymbol(string symbol, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await _client.GetFromJsonAsync<FhCompany>(
-                $"api/v1/stock/profile2?symbol={symbol}&token={_options.Value.Finnhub}",
-                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-                cancellationToken);
-        }
-        catch (HttpRequestException)
-        {
-            return null;
-        }
-    }
-
-    public async Task<FhCompany?> TryGetCompanyByISIN(string isin, CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await _client.GetFromJsonAsync<FhCompany>(
-                $"api/v1/stock/profile2?isin={isin}&token={_options.Value.Finnhub}",
-                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-                cancellationToken);
-        }
-        catch (HttpRequestException)
-        {
-            return null;
-        }
-    }
+    public async Task<FhCompany?> GetCompany(string symbol, CancellationToken cancellationToken)
+        => await _client.GetFromJsonAsync<FhCompany>(
+            $"api/v1/stock/profile2?symbol={symbol}&token={_options.Value.Finnhub}",
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
+            cancellationToken);
 }
 
 public record FhCompany(
@@ -79,27 +71,54 @@ public record FhCompany(
     decimal MarketCapitalization,
     string Name,
     string Phone,
-    double ShareOutstanding,
+    decimal ShareOutstanding,
     string Ticker,
     string Weburl,
     string Logo,
     string FinnhubIndustry
 );
 
+public record FhEarningList(
+    FhEarning[] EarningsCalendar
+);
+
+public record FhEarning(
+    DateTime Date,
+    decimal? EpsActual,
+    decimal? EpsEstimate,
+    string Hour,
+    int Quarter,
+    long? RevenueActual,
+    long? RevenueEstimate,
+    string Symbol,
+    int Year
+);
+
 public record FhCandle(
     int[] T,
-    double[] O,
-    double[] H,
-    double[] L,
-    double[] C,
+    decimal[] O,
+    decimal[] H,
+    decimal[] L,
+    decimal[] C,
     int[] V
 );
 
 public record FhQuote(
-    double C,
-    double H,
-    double L,
-    double O,
-    double Pc,
+    decimal C,
+    decimal H,
+    decimal L,
+    decimal O,
+    decimal Pc,
     int T
+);
+
+public record FhEarningSuprise(
+    decimal Actual,
+    decimal Estimate,
+    string Period,
+    int Quarter,
+    decimal Surprise,
+    decimal SurprisePercent,
+    string Symbol,
+    int Year
 );

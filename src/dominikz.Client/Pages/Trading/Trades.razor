@@ -1,111 +1,111 @@
-@page "/trades"
-@using dominikz.Client.Utils
-@using dominikz.Domain.Enums.Trades
-
-<PageTitle>Trades</PageTitle>
-
-<div class="trades-container">
-
-    @* timeline *@
-    <div class="trades-container-item-small">
-        <Timeline OnClick="SelectEarningCall" Events="_events"/>
-    </div>
-
-    @* results *@
-    <div class="trades-container-item-small">
-        <div class="flex-row gap">
-            @foreach (var call in _released)
-            {
-                <div class="trade-card flex-row-no-wrap gap spacing surface" @onclick="() => SelectEarningCall(call)">
-                    <div class="avatar">
-                        @if (string.IsNullOrWhiteSpace(call.LogoUrl) == false)
-                        {
-                            <img height="150" width="150" src="@call.LogoUrl" alt="Logo"/>
-                        }
-                        else
-                        {
-                            <div style="background-color: @Colorizer.CreateColorDarkByText(call.Symbol)" class="avatar-placeholder">
-                                <span>@call.Symbol[..Math.Min(2, call.Symbol.Length)]</span>
-                            </div>
-                        }
-                    </div>
-                    <div class="flex-column gap">
-
-                        <span>@call.Symbol</span>
-
-                        <div class="flex-row gap">
-                            <span style="color: @Colorizer.GetColoredNumberValue(call.Growth)">@($"{call.Growth ?? 0} %")</span>
-                            <span style="color: @Colorizer.GetColoredNumberValue(call.Surprise)">@($"{call.Surprise ?? 0} %")</span>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-
-    @* details *@
-    <div class="trades-container-item-tall">
-        @if (_selected != null)
-        {
-            <h2>@_selected.Name</h2>
-
-            <div class="flex-row gap">
-                <Badge Key="Sources">
-                    @if (_selected.Sources.HasFlag(InformationSource.EarningsWhispers))
-                    {
-                        <img height="20" width="20" src="assets/icons/earningswhipsers.ico" alt="Logo"/>
-                    }
-                    @if (_selected.Sources.HasFlag(InformationSource.OnVista))
-                    {
-                        <img height="20" width="20" src="assets/icons/onvista.png" alt="Logo"/>
-                    }
-                    @if (_selected.Sources.HasFlag(InformationSource.FinanzenNet))
-                    {
-                        <img height="20" width="20" src="assets/icons/finanzenNet.ico" alt="Logo"/>
-                    }
-                    @if (_selected.Sources.HasFlag(InformationSource.AktienFinder))
-                    {
-                        <img height="20" width="20" src="assets/icons/aktienfinder.png" alt="Logo"/>
-                    }
-                    @if (_selected.Sources.HasFlag(InformationSource.Finnhub))
-                    {
-                        <img height="20" width="20" src="assets/icons/finnhub.png" alt="Logo"/>
-                    }
-                </Badge>
-
-                <Badge Key="Symbol">
-                    <span>@_selected.Symbol</span>
-                </Badge>
-
-                @if (_selected.ISIN != null)
-                {
-                    <Badge Key="ISIN">
-                        <span>@_selected.ISIN</span>
-                    </Badge>
-                }
-
-                @if (_selected.Growth != null || _selected.Surprise != null)
-                {
-                    <Badge Key="Growth">
-                        <span style="color: @Colorizer.GetColoredNumberValue(_selected.Growth)">@($"{_selected.Growth ?? 0} %")</span>
-                    </Badge>
-
-                    <Badge Key="Suprise">
-                        <span style="color: @Colorizer.GetColoredNumberValue(_selected.Surprise)">@($"{_selected.Surprise ?? 0} %")</span>
-                    </Badge>
-                }
-
-                @if (_selected.Release != null)
-                {
-                    <Badge Key="Release">
-                        <span>@(_selected.Release?.ToString("HH:mm"))</span>
-                    </Badge>
-                }
-
-                <ChartJsLine CanvasId="myChart" Config="@config" />
-                
-            </div>
-        }
-    </div>
-
-</div>
+@* @page "/trades" *@
+@* @using dominikz.Client.Utils *@
+@* @using dominikz.Domain.Enums.Trades *@
+@* *@
+@* <PageTitle>Trades</PageTitle> *@
+@* *@
+@* <div class="trades-container"> *@
+@* *@
+@*     $1$ timeline #1# *@
+@*     <div class="trades-container-item-small"> *@
+@*         <Timeline OnClick="SelectEarningCall" Events="_events"/> *@
+@*     </div> *@
+@* *@
+@*     $1$ results #1# *@
+@*     <div class="trades-container-item-small"> *@
+@*         <div class="flex-row gap"> *@
+@*             @foreach (var call in _released) *@
+@*             { *@
+@*                 <div class="trade-card flex-row-no-wrap gap spacing surface" @onclick="() => SelectEarningCall(call)"> *@
+@*                     <div class="avatar"> *@
+@*                         @if (string.IsNullOrWhiteSpace(call.LogoUrl) == false) *@
+@*                         { *@
+@*                             <img height="150" width="150" src="@call.LogoUrl" alt="Logo"/> *@
+@*                         } *@
+@*                         else *@
+@*                         { *@
+@*                             <div style="background-color: @Colorizer.CreateColorDarkByText(call.Symbol)" class="avatar-placeholder"> *@
+@*                                 <span>@call.Symbol[..Math.Min(2, call.Symbol.Length)]</span> *@
+@*                             </div> *@
+@*                         } *@
+@*                     </div> *@
+@*                     <div class="flex-column gap"> *@
+@* *@
+@*                         <span>@call.Symbol</span> *@
+@* *@
+@*                         <div class="flex-row gap"> *@
+@*                             <span style="color: @Colorizer.GetColoredNumberValue(call.Growth)">@($"{call.Growth ?? 0} %")</span> *@
+@*                             <span style="color: @Colorizer.GetColoredNumberValue(call.Surprise)">@($"{call.Surprise ?? 0} %")</span> *@
+@*                         </div> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             } *@
+@*         </div> *@
+@*     </div> *@
+@* *@
+@*     $1$ details #1# *@
+@*     <div class="trades-container-item-tall"> *@
+@*         @if (_selected != null) *@
+@*         { *@
+@*             <h2>@_selected.Name</h2> *@
+@* *@
+@*             <div class="flex-row gap"> *@
+@*                 <Badge Key="Sources"> *@
+@*                     @if (_selected.Sources.HasFlag(InformationSource.EarningsWhispers)) *@
+@*                     { *@
+@*                         <img height="20" width="20" src="assets/icons/earningswhipsers.ico" alt="Logo"/> *@
+@*                     } *@
+@*                     @if (_selected.Sources.HasFlag(InformationSource.OnVista)) *@
+@*                     { *@
+@*                         <img height="20" width="20" src="assets/icons/onvista.png" alt="Logo"/> *@
+@*                     } *@
+@*                     @if (_selected.Sources.HasFlag(InformationSource.FinanzenNet)) *@
+@*                     { *@
+@*                         <img height="20" width="20" src="assets/icons/finanzenNet.ico" alt="Logo"/> *@
+@*                     } *@
+@*                     @if (_selected.Sources.HasFlag(InformationSource.AktienFinder)) *@
+@*                     { *@
+@*                         <img height="20" width="20" src="assets/icons/aktienfinder.png" alt="Logo"/> *@
+@*                     } *@
+@*                     @if (_selected.Sources.HasFlag(InformationSource.Finnhub)) *@
+@*                     { *@
+@*                         <img height="20" width="20" src="assets/icons/finnhub.png" alt="Logo"/> *@
+@*                     } *@
+@*                 </Badge> *@
+@* *@
+@*                 <Badge Key="Symbol"> *@
+@*                     <span>@_selected.Symbol</span> *@
+@*                 </Badge> *@
+@* *@
+@*                 @if (_selected.ISIN != null) *@
+@*                 { *@
+@*                     <Badge Key="ISIN"> *@
+@*                         <span>@_selected.ISIN</span> *@
+@*                     </Badge> *@
+@*                 } *@
+@* *@
+@*                 @if (_selected.Growth != null || _selected.Surprise != null) *@
+@*                 { *@
+@*                     <Badge Key="Growth"> *@
+@*                         <span style="color: @Colorizer.GetColoredNumberValue(_selected.Growth)">@($"{_selected.Growth ?? 0} %")</span> *@
+@*                     </Badge> *@
+@* *@
+@*                     <Badge Key="Suprise"> *@
+@*                         <span style="color: @Colorizer.GetColoredNumberValue(_selected.Surprise)">@($"{_selected.Surprise ?? 0} %")</span> *@
+@*                     </Badge> *@
+@*                 } *@
+@* *@
+@*                 @if (_selected.Release != null) *@
+@*                 { *@
+@*                     <Badge Key="Release"> *@
+@*                         <span>@(_selected.Release?.ToString("HH:mm"))</span> *@
+@*                     </Badge> *@
+@*                 } *@
+@* *@
+@*                 $1$ <ChartJsLine CanvasId="myChart" Config="@config" /> #1# *@
+@*                  *@
+@*             </div> *@
+@*         } *@
+@*     </div> *@
+@* *@
+@* </div> *@

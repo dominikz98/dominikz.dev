@@ -6,6 +6,7 @@ using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
+using ImageMagick;
 using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.Api.Background;
@@ -49,7 +50,7 @@ public class ExternalArticleShadowRefresher : ITimeTriggeredWorker
             if (shadow.Image is null || shadow.ImageId == Guid.Empty)
                 continue;
 
-            await _storage.Upload(new UploadImageRequest(shadow.ImageId, shadow.Image, ImageSizeEnum.ThumbnailHorizontal), default);
+            await _storage.Upload(new UploadImageRequest(shadow.ImageId, shadow.Image, MagickFormat.Unknown, ImageSizeEnum.ThumbnailHorizontal), default);
         }
 
         if (shadows.Count == 0)

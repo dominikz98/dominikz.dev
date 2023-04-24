@@ -31,11 +31,7 @@ public static class ServiceCollectionExtensions
             }).Services;
 
     public static IServiceCollection AddFinancialClients(this IServiceCollection services)
-        => services.AddScoped<FinanceBrowser>()
-            .AddScoped<EarningsWhispersClient>()
-            .AddScoped<OnVistaClient>()
-            .AddScoped<AktienFinderClient>()
-            .AddScoped<FinanzenNetClient>()
+        => services.AddScoped<OnVistaClient>()
             .AddScoped<FinnhubClient>()
             .AddHttpClient<FinnhubClient>((sp, client) =>
             {

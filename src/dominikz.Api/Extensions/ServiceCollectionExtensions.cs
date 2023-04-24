@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
                 options.AddPolicy(Policies.Movies, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Movies)));
                 options.AddPolicy(Policies.Cookbook, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Cookbook)));
                 options.AddPolicy(Policies.Account, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Account)));
+                options.AddPolicy(Policies.Trades, policy => policy.RequireAssertion(context => HasPermission(context, PermissionFlags.Trades)));
             })
             .AddScoped<CredentialsProvider>();
 
@@ -109,8 +110,7 @@ public static class ServiceCollectionExtensions
         => services.AddSingleton<PeriodicHostedService>()
             .AddHostedService(provider => provider.GetRequiredService<PeriodicHostedService>())
             .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>()
-            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowRefresher>()
-            .AddScoped<ITimeTriggeredWorker, EarningsCallsRefresher>();
+            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowRefresher>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

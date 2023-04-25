@@ -5,7 +5,7 @@ namespace dominikz.Api.Background;
 
 public interface ITimeTriggeredWorker
 {
-    CronSchedule Schedule { get; }
+    CronSchedule[] Schedules { get; }
 
     Task<bool> Execute(WorkerLog log, CancellationToken cancellationToken);
 }

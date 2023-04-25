@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddFinancialClients(this IServiceCollection services)
         => services.AddScoped<OnVistaClient>()
+            .AddScoped<EarningsWhispersClient>()
             .AddScoped<FinnhubClient>()
             .AddHttpClient<FinnhubClient>((sp, client) =>
             {
@@ -63,8 +64,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSupermarktCheckClient(this IServiceCollection services)
         => services.AddScoped<SupermarktCheckClient>();
 
-    public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration,
-        bool useDevelopmentEnv)
+    public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration, bool useDevelopmentEnv)
         => services.AddDbContext<DatabaseContext>(options =>
             options.UseSqlite(configuration.GetConnectionString(nameof(DatabaseContext)))
                 .EnableDetailedErrors(useDevelopmentEnv)

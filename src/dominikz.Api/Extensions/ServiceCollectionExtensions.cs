@@ -107,10 +107,13 @@ public static class ServiceCollectionExtensions
             });
 
     public static void AddWorker(this IServiceCollection services)
-        => services.AddSingleton<PeriodicHostedService>()
-            .AddHostedService(provider => provider.GetRequiredService<PeriodicHostedService>())
+        => services.AddHostedService<PeriodicHostedService>()
+            .AddSingleton<PeriodicHostedService>()
             .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>()
-            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowRefresher>();
+            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowMirror>()
+            .AddScoped<ITimeTriggeredWorker, WhispersMirror>()
+            .AddScoped<ITimeTriggeredWorker, FinnhubMirror>()
+            .AddScoped<ITimeTriggeredWorker, TestService>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

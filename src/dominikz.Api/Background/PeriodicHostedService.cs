@@ -5,7 +5,7 @@ namespace dominikz.Api.Background;
 
 class PeriodicHostedService : BackgroundService
 {
-    private readonly TimeSpan _period = TimeSpan.FromMinutes(7.5);
+    private readonly TimeSpan _period = TimeSpan.FromSeconds(15);
     private readonly ILogger<PeriodicHostedService> _logger;
     private readonly IServiceScopeFactory _factory;
 
@@ -23,6 +23,8 @@ class PeriodicHostedService : BackgroundService
 
         while (cancellationToken.IsCancellationRequested == false && await timer.WaitForNextTickAsync(cancellationToken))
         {
+
+            _logger.LogInformation("Polling Worker Schedules");
             try
             {
                 await using var scope = _factory.CreateAsyncScope();
@@ -31,19 +33,19 @@ class PeriodicHostedService : BackgroundService
 
                 foreach (var worker in workerList)
                 {
-                    if (worker.Schedule.IsTime(DateTime.Now) == false)
+                    if (worker.Schedules.All(x => x.IsTime(DateTime.Now) == false))
                         continue;
 
                     var log = new WorkerLog()
                     {
                         Worker = worker.GetType().Name
                     };
-                    
+
                     try
                     {
-                        _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Start Executing: {worker.GetType().Name}");
+                        _logger.LogInformation("Start Executing: {Name}", worker.GetType().Name);
                         log.Success = await worker.Execute(log, cancellationToken);
-                        _logger.LogInformation($"[{nameof(PeriodicHostedService)}] Finished Executing: {worker.GetType().Name}");
+                        _logger.LogInformation("Finished Executing: {Name}", worker.GetType().Name);
                     }
                     catch (Exception e)
                     {
@@ -51,7 +53,7 @@ class PeriodicHostedService : BackgroundService
                         log.Log ??= string.Empty;
                         log.Log += e.Message + Environment.NewLine;
                         log.Log += e.StackTrace;
-                        _logger.LogError($"[{nameof(PeriodicHostedService)}] Failed Executing: {worker.GetType().Name}");
+                        _logger.LogError("Failed Executing: {Name}", worker.GetType().Name);
                     }
                     finally
                     {
@@ -63,7 +65,7 @@ class PeriodicHostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError($"[{nameof(PeriodicHostedService)}] Exception: {ex.Message}");
+                _logger.LogError("Exception: {ExMessage}", ex.Message);
             }
         }
     }

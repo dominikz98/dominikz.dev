@@ -11,17 +11,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.Api.Background;
 
-public class ExternalArticleShadowRefresher : ITimeTriggeredWorker
+public class ExternalArticleShadowMirror : ITimeTriggeredWorker
 {
     private readonly DatabaseContext _database;
     private readonly IStorageProvider _storage;
     private readonly NoobitClient _noobitClient;
     private readonly MedlanClient _medlanClient;
 
-    // At 06:00 everyday
-    public CronSchedule Schedule { get; } = new("0 5 * * *");
-
-    public ExternalArticleShadowRefresher(DatabaseContext database, IStorageProvider storage, NoobitClient noobitClient, MedlanClient medlanClient)
+    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    {
+        // At 06:00
+        new("0 5 * * *")
+    };
+    
+    public ExternalArticleShadowMirror(DatabaseContext database, IStorageProvider storage, NoobitClient noobitClient, MedlanClient medlanClient)
     {
         _database = database;
         _storage = storage;

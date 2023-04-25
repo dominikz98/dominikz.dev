@@ -8,9 +8,12 @@ namespace dominikz.Api.Background;
 
 public class FoodPriceSnapshotCreator : ITimeTriggeredWorker
 {
-    // At 02:00 on Monday
-    public CronSchedule Schedule { get; } = new("0 2 * * 1");
-
+    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    {
+        // At 02:00 on Monday
+        new("0 2 * * 1")
+    };
+    
     private readonly DatabaseContext _database;
     private readonly SupermarktCheckClient _client;
 

@@ -1,5 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using dominikz.Domain.Options;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
@@ -13,6 +15,9 @@ namespace dominikz.Infrastructure.Clients.Finance;
 /// </summary>
 public class FinnhubClient
 {
+    public bool WithWhenLimitReached { get; set; }
+
+    private static int _retryCount;
     private readonly HttpClient _client;
     private readonly IOptions<ApiKeysOptions> _options;
     private const string LxExchange = "LSNG";
@@ -23,44 +28,60 @@ public class FinnhubClient
         _options = options;
     }
 
-    public async Task<IReadOnlyCollection<FhEarningSuprise>> GetEpsSurprises(string symbol, CancellationToken cancellationToken)
-        => (await _client.GetFromJsonAsync<FhEarningSuprise[]>(
-            $"api/v1/stock/earnings?symbol={symbol}&limit=1&token={_options.Value.Finnhub}",
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-            cancellationToken))!;
+    public async Task<FhSocialScore> GetSocialScores(string symbol, CancellationToken cancellationToken)
+        => (await Get<FhSocialScore>($"api/v1/stock/social-sentiment?symbol={symbol}", cancellationToken))!;
 
-    public async Task<FhEarningList> GetEarningsCalendar(DateOnly timestamp, CancellationToken cancellationToken)
-    {
-        var to = timestamp.ToDateTime(new TimeOnly());
-        var from = timestamp.AddDays(-1);
-        return (await _client.GetFromJsonAsync<FhEarningList>(
-            $"api/v1/calendar/earnings?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}&token={_options.Value.Finnhub}",
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-            cancellationToken))!;
-    }
+    public async Task<IReadOnlyCollection<FhRecommendation>> GetRecommendations(string symbol, CancellationToken cancellationToken)
+        => (await Get<FhRecommendation[]>($"api/v1/stock/recommendation?symbol={symbol}", cancellationToken))!;
+
+    public async Task<IReadOnlyCollection<FhEarningSuprise>> GetEpsSurprises(string symbol, CancellationToken cancellationToken)
+        => (await Get<FhEarningSuprise[]>($"api/v1/stock/earnings?symbol={symbol}&limit=1", cancellationToken))!;
+
+    public async Task<FhEarningList> GetEarningsCalendar(DateTime from, DateTime to, CancellationToken cancellationToken)
+        => (await Get<FhEarningList>($"api/v1/calendar/earnings?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}", cancellationToken))!;
 
     public async Task<FhQuote?> GetQuoteBySymbol(string symbol, CancellationToken cancellationToken)
-        => await _client.GetFromJsonAsync<FhQuote>(
-            $"api/v1/stock/candle?symbol={symbol}&exchange={LxExchange}&token={_options.Value.Finnhub}",
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-            cancellationToken);
+        => await Get<FhQuote>($"api/v1/stock/candle?symbol={symbol}&exchange={LxExchange}", cancellationToken);
 
-    public async Task<FhCandle?> GetCandles(string symbol, DateTime timestamp, CancellationToken cancellationToken)
+    public async Task<FhCandle> GetCandles(string symbol, DateTime utcTimestamp, CancellationToken cancellationToken)
     {
-        var from = timestamp.AddMinutes(-15).ToUnixTimestamp();
-        var to = timestamp.AddMinutes(15).ToUnixTimestamp();
+        var from = utcTimestamp.AddMinutes(-15).ToUnixTimestamp();
+        var to = utcTimestamp.AddMinutes(15).ToUnixTimestamp();
         var resolution = 1;
-        return await _client.GetFromJsonAsync<FhCandle>(
-            $"api/v1/stock/candle?symbol={symbol}&resolution={resolution}&from={from}&to={to}&exchange={LxExchange}&token={_options.Value.Finnhub}",
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-            cancellationToken);
+        return (await Get<FhCandle>($"api/v1/stock/candle?symbol={symbol}&resolution={resolution}&from={from}&to={to}&exchange={LxExchange}", cancellationToken))!;
     }
 
     public async Task<FhCompany?> GetCompany(string symbol, CancellationToken cancellationToken)
-        => await _client.GetFromJsonAsync<FhCompany>(
-            $"api/v1/stock/profile2?symbol={symbol}&token={_options.Value.Finnhub}",
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-            cancellationToken);
+        => await Get<FhCompany>($"api/v1/stock/profile2?symbol={symbol}", cancellationToken);
+
+    private async Task<T?> Get<T>(string url, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _client.GetFromJsonAsync<T>(
+                $"{url}&token={_options.Value.Finnhub}",
+                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
+                cancellationToken);
+
+            _retryCount = 0;
+            return result;
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode != HttpStatusCode.TooManyRequests)
+                throw;
+
+            if (WithWhenLimitReached == false)
+                throw;
+
+            if (_retryCount > 0)
+                throw;
+
+            _retryCount++;
+            await Task.Delay(TimeSpan.FromSeconds(65), cancellationToken);
+            return await Get<T>(url, cancellationToken);
+        }
+    }
 }
 
 public record FhCompany(
@@ -94,14 +115,15 @@ public record FhEarning(
     int Year
 );
 
-public record FhCandle(
-    int[] T,
-    decimal[] O,
-    decimal[] H,
-    decimal[] L,
-    decimal[] C,
-    int[] V
-);
+public class FhCandle
+{
+    [JsonPropertyName("t")] public int[] Timestamp { get; set; } = Array.Empty<int>();
+    [JsonPropertyName("o")] public decimal[] Open { get; set; } = Array.Empty<decimal>();
+    [JsonPropertyName("h")] public decimal[] High { get; set; } = Array.Empty<decimal>();
+    [JsonPropertyName("l")] public decimal[] Low { get; set; } = Array.Empty<decimal>();
+    [JsonPropertyName("c")] public decimal[] Close { get; set; } = Array.Empty<decimal>();
+    [JsonPropertyName("v")] public int[] Volume { get; set; } = Array.Empty<int>();
+}
 
 public record FhQuote(
     decimal C,
@@ -113,12 +135,38 @@ public record FhQuote(
 );
 
 public record FhEarningSuprise(
-    decimal Actual,
-    decimal Estimate,
-    string Period,
+    decimal? Actual,
+    decimal? Estimate,
+    DateTime Period,
     int Quarter,
-    decimal Surprise,
-    decimal SurprisePercent,
+    decimal? Surprise,
+    decimal? SurprisePercent,
     string Symbol,
     int Year
+);
+
+public record FhRecommendation(
+    DateTime Period,
+    int Hold,
+    int Buy,
+    int StrongBuy,
+    int Sell,
+    int StrongSell,
+    string Symbol
+);
+
+public record FhSocialScore(
+    FhSocialMedia[] Reddit,
+    FhSocialMedia[] Twitter,
+    string Symbol
+);
+
+public record FhSocialMedia(
+    DateTime AtTime,
+    int Mention,
+    decimal PositiveScore,
+    decimal NegativeScore,
+    int PositiveMention,
+    int NegativeMention,
+    decimal Score
 );

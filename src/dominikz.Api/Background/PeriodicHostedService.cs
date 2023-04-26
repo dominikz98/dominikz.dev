@@ -5,7 +5,7 @@ namespace dominikz.Api.Background;
 
 class PeriodicHostedService : BackgroundService
 {
-    private readonly TimeSpan _period = TimeSpan.FromSeconds(15);
+    private readonly TimeSpan _period = TimeSpan.FromSeconds(59);
     private readonly ILogger<PeriodicHostedService> _logger;
     private readonly IServiceScopeFactory _factory;
 

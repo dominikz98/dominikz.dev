@@ -1,6 +1,7 @@
 ﻿using dominikz.Domain.Models;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Finance;
+using dominikz.Infrastructure.Extensions;
 using dominikz.Infrastructure.Provider.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,11 +16,11 @@ public class FinnhubMirror : ITimeTriggeredWorker
 
     public CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
-        // At 02:45 PM
-        new("45 14 * * *"),
+        // At 02:55 PM
+        new("55 14 * * *"),
 
-        // At 11:45 PM
-        new("45 23 * * *")
+        // At 11:55 PM
+        new("55 23 * * *")
     };
 
     public FinnhubMirror(FinnhubClient finnhub, OnVistaClient onVista, DatabaseContext context)
@@ -35,6 +36,9 @@ public class FinnhubMirror : ITimeTriggeredWorker
         var shadows = await AddNewShadows(cancellationToken);
         await AttachTradeFlags(shadows, cancellationToken);
 
+        await _context.AddRangeAsync(shadows, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
         log.Log = $"{shadows.Count} shadow(s) created.";
         return true;
     }
@@ -46,7 +50,7 @@ public class FinnhubMirror : ITimeTriggeredWorker
         var to = date.ToDateTime(new TimeOnly(23, 59, 59));
 
         var existing = await _context.From<FinnhubShadow>()
-            .Where(x => x.Date == DateOnly.FromDateTime(DateTime.Now))
+            .Where(x => x.Date == date)
             .Select(x => new { x.Symbol, x.Date })
             .ToListAsync(cancellationToken);
 
@@ -114,8 +118,6 @@ public class FinnhubMirror : ITimeTriggeredWorker
             });
         }
 
-        await _context.AddRangeAsync(shadows, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
         return shadows;
     }
 
@@ -130,22 +132,34 @@ public class FinnhubMirror : ITimeTriggeredWorker
             if (call.Quarters.Length > 0)
                 call.PeakFlag = call.Quarters.First() == call.Quarters.Max(x => x);
 
-            if (call.Release is not null)
-            {
-                // only check if release is 15 overdue
-                var utcTimestamp = call.Date.ToDateTime(call.Release.Value);
-                if (utcTimestamp < DateTime.UtcNow.AddMinutes(15))
-                {
-                    var candles = await _finnhub.GetCandles(call.Symbol, utcTimestamp, cancellationToken);
-                    var start = candles.Close.First();
-                    var close = candles.Close.Last();
-                    call.ChartFlag = (close - start) / Math.Abs(start) * 100 > 1;
-                }
-            }
+            // only do more checks if release timestamp is known
+            if (call.Release is null)
+                continue;
 
-            _context.Update(call);
+            // only check if release is 15 overdue
+            var utcTimestamp = call.Date.ToDateTime(call.Release.Value);
+            if (utcTimestamp >= DateTime.UtcNow.AddMinutes(15))
+                continue;
+
+            var releaseUtcTimestamp = call!.Date.ToDateTime(call!.Release!.Value);
+            // use release - 4h or ls exchange open + 30min
+            var from = new[] { releaseUtcTimestamp.AddHours(-4), call!.Date.ToDateTime(new TimeOnly(6, 0, 0)) }.Max();
+            // use release + 2h, ls exchange close or now
+            var to = new[] { releaseUtcTimestamp.AddHours(2), call!.Date.ToDateTime(new TimeOnly(21, 0, 0)), DateTime.UtcNow }.Min();
+
+            var candles = await _finnhub.GetCandles(call!.Symbol, from, to, cancellationToken);
+            if (candles.Close.Length <= 0)
+                continue;
+
+            // only data before or after release
+            if (candles.Timestamp.All(x => x.FromUnixTimestamp() < releaseUtcTimestamp)
+                || candles.Timestamp.All(x => x.FromUnixTimestamp() > releaseUtcTimestamp))
+                continue;
+
+            var start = candles.Close.First();
+            var close = candles.Close.Last();
+            var percent = (close - start) / Math.Abs(start) * 100;
+            call.ChartFlag = percent > 1.5m;
         }
-
-        await _context.SaveChangesAsync(cancellationToken);
     }
 }

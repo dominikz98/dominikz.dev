@@ -112,8 +112,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>()
             .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowMirror>()
             .AddScoped<ITimeTriggeredWorker, WhispersMirror>()
-            .AddScoped<ITimeTriggeredWorker, FinnhubMirror>()
-            .AddScoped<ITimeTriggeredWorker, TestService>();
+            .AddScoped<ITimeTriggeredWorker, FinnhubMirror>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

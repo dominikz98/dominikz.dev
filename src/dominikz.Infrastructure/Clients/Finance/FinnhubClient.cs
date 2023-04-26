@@ -43,12 +43,10 @@ public class FinnhubClient
     public async Task<FhQuote?> GetQuoteBySymbol(string symbol, CancellationToken cancellationToken)
         => await Get<FhQuote>($"api/v1/stock/candle?symbol={symbol}&exchange={LxExchange}", cancellationToken);
 
-    public async Task<FhCandle> GetCandles(string symbol, DateTime utcTimestamp, CancellationToken cancellationToken)
+    public async Task<FhCandle> GetCandles(string symbol, DateTime fromUtc, DateTime toUtc, CancellationToken cancellationToken)
     {
-        var from = utcTimestamp.AddMinutes(-15).ToUnixTimestamp();
-        var to = utcTimestamp.AddMinutes(15).ToUnixTimestamp();
         var resolution = 1;
-        return (await Get<FhCandle>($"api/v1/stock/candle?symbol={symbol}&resolution={resolution}&from={from}&to={to}&exchange={LxExchange}", cancellationToken))!;
+        return (await Get<FhCandle>($"api/v1/stock/candle?symbol={symbol}&resolution={resolution}&from={fromUtc.ToUnixTimestamp()}&to={toUtc.ToUnixTimestamp()}&exchange={LxExchange}", cancellationToken))!;
     }
 
     public async Task<FhCompany?> GetCompany(string symbol, CancellationToken cancellationToken)

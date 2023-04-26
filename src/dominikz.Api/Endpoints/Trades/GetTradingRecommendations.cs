@@ -45,15 +45,18 @@ public class GetTradingRecommendationsRequestHandler : IRequestHandler<GetTradin
 
     public async Task<MemoryStream> Handle(GetTradingRecommendationsRequest request, CancellationToken cancellationToken)
     {
+        var date = request.Date ?? DateOnly.FromDateTime(DateTime.Now);
         var shadows = await _context.From<FinnhubShadow>()
-            .Where(x => x.Date == request.Date)
+            .Where(x => x.Date == date)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
+
+        var recommendations = shadows.Where(x => ((x.ChartFlag ? 1 : 0) + (x.IncreaseFlag ? 1 : 0) + (x.PeakFlag ? 1 : 0)) > 1).ToList();
 
         var ms = new MemoryStream();
         var streamWriter = new StreamWriter(ms, Encoding.UTF8);
         var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture);
-        await csvWriter.WriteRecordsAsync((IEnumerable)shadows, cancellationToken);
+        await csvWriter.WriteRecordsAsync((IEnumerable)recommendations, cancellationToken);
         await csvWriter.FlushAsync();
         ms.Position = 0;
         return ms;

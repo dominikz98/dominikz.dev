@@ -34,7 +34,7 @@ public class WhispersMirror : ITimeTriggeredWorker
                 Symbol = x.Symbol
             }).ToList();
 
-        await _context.AddRangeAsync(calls, cancellationToken);
+        await _context.AddRangeAsync(shadows, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         log.Log = $"{shadows.Count} shadow(s) created.";
         return true;

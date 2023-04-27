@@ -141,13 +141,13 @@ public class FinnhubMirror : ITimeTriggeredWorker
             if (utcTimestamp >= DateTime.UtcNow.AddMinutes(15))
                 continue;
 
-            var releaseUtcTimestamp = call!.Date.ToDateTime(call!.Release!.Value);
+            var releaseUtcTimestamp = call.Date.ToDateTime(call.Release!.Value);
             // use release - 4h or ls exchange open + 30min
-            var from = new[] { releaseUtcTimestamp.AddHours(-4), call!.Date.ToDateTime(new TimeOnly(6, 0, 0)) }.Max();
+            var from = new[] { releaseUtcTimestamp.AddHours(-4), call.Date.ToDateTime(new TimeOnly(6, 0, 0)) }.Max();
             // use release + 2h, ls exchange close or now
-            var to = new[] { releaseUtcTimestamp.AddHours(2), call!.Date.ToDateTime(new TimeOnly(21, 0, 0)), DateTime.UtcNow }.Min();
+            var to = new[] { releaseUtcTimestamp.AddHours(2), call.Date.ToDateTime(new TimeOnly(21, 0, 0)), DateTime.UtcNow }.Min();
 
-            var candles = await _finnhub.GetCandles(call!.Symbol, from, to, cancellationToken);
+            var candles = await _finnhub.GetCandles(call.Symbol, from, to, cancellationToken);
             if (candles.Close.Length <= 0)
                 continue;
 

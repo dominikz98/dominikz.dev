@@ -15,7 +15,7 @@ namespace dominikz.Infrastructure.Clients.Finance;
 /// </summary>
 public class FinnhubClient
 {
-    public bool WithWhenLimitReached { get; set; }
+    public bool WaitWhenLimitReached { get; set; }
 
     private static int _retryCount;
     private readonly HttpClient _client;
@@ -69,7 +69,7 @@ public class FinnhubClient
             if (ex.StatusCode != HttpStatusCode.TooManyRequests)
                 throw;
 
-            if (WithWhenLimitReached == false)
+            if (WaitWhenLimitReached == false)
                 throw;
 
             if (_retryCount > 0)

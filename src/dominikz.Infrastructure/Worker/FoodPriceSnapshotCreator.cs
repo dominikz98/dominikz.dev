@@ -3,51 +3,58 @@ using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.SupermarktCheck;
 using dominikz.Infrastructure.Provider.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace dominikz.Api.Background;
+namespace dominikz.Infrastructure.Worker;
 
-public class FoodPriceSnapshotCreator : ITimeTriggeredWorker
+public class FoodPriceSnapshotCreator : TimeTriggeredWorker
 {
-    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 02:00 on Monday
         new("0 2 * * 1")
     };
-    
+
     private readonly DatabaseContext _database;
     private readonly SupermarktCheckClient _client;
+    private readonly ILogger<FoodPriceSnapshotCreator> _logger;
 
-    public FoodPriceSnapshotCreator(DatabaseContext database, SupermarktCheckClient client)
+    public FoodPriceSnapshotCreator(DatabaseContext database,
+        SupermarktCheckClient client,
+        ILogger<FoodPriceSnapshotCreator> logger)
     {
         _database = database;
         _client = client;
+        _logger = logger;
     }
 
-    public async Task<bool> Execute(WorkerLog log, CancellationToken cancellationToken)
+    public override async Task Execute(CancellationToken cancellationToken)
     {
         var foods = await _database.From<Food>()
             .Where(x => x.SupermarktCheckId != null)
             .Select(x => new { x.Id, x.SupermarktCheckId })
             .ToListAsync(cancellationToken);
 
+        var snapshots = new List<FoodSnapshot>();
         foreach (var food in foods)
         {
             var prices = (await _client.GetProductById(food.SupermarktCheckId!.Value, cancellationToken))?.Prices ?? Array.Empty<ProductPriceVm>();
             if (prices.Count == 0)
                 continue;
 
-            await _database.AddRangeAsync(prices.Select(x => new FoodSnapshot()
+            snapshots.AddRange(prices.Select(x => new FoodSnapshot()
             {
                 Price = Math.Round(x.Price, 2, MidpointRounding.AwayFromZero),
                 Store = x.Store,
                 Timestamp = DateTime.Now,
                 FoodId = food.Id
-            }), cancellationToken);
+            }));
 
-            await _database.SaveChangesAsync(cancellationToken);
             await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
         }
 
-        return true;
+        await _database.AddRangeAsync(snapshots, cancellationToken);
+        await _database.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("{Count} shadow(s) created", snapshots.Count);
     }
 }

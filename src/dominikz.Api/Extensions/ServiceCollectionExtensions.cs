@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Threading.RateLimiting;
-using dominikz.Api.Background;
 using dominikz.Api.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Options;
@@ -105,14 +104,6 @@ public static class ServiceCollectionExtensions
                 var factory = sp.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(accessor.ActionContext!);
             });
-
-    public static void AddWorker(this IServiceCollection services)
-        => services.AddHostedService<PeriodicHostedService>()
-            .AddSingleton<PeriodicHostedService>()
-            .AddScoped<ITimeTriggeredWorker, FoodPriceSnapshotCreator>()
-            .AddScoped<ITimeTriggeredWorker, ExternalArticleShadowMirror>()
-            .AddScoped<ITimeTriggeredWorker, WhispersMirror>()
-            .AddScoped<ITimeTriggeredWorker, FinnhubMirror>();
 
     public static IServiceCollection AddUtils(this IServiceCollection services)
         => services.AddScoped<ILinkCreator, LinkCreator>()

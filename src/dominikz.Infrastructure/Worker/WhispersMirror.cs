@@ -2,27 +2,32 @@
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Provider.Database;
+using Microsoft.Extensions.Logging;
 
-namespace dominikz.Api.Background;
+namespace dominikz.Infrastructure.Worker;
 
-public class WhispersMirror : ITimeTriggeredWorker
+public class WhispersMirror : TimeTriggeredWorker
 {
     private readonly EarningsWhispersClient _client;
     private readonly DatabaseContext _context;
+    private readonly ILogger<WhispersMirror> _logger;
 
-    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 07:01
         new("1 7 * * *")
     };
 
-    public WhispersMirror(EarningsWhispersClient client, DatabaseContext context)
+    public WhispersMirror(EarningsWhispersClient client,
+        DatabaseContext context,
+        ILogger<WhispersMirror> logger)
     {
         _client = client;
         _context = context;
+        _logger = logger;
     }
 
-    public async Task<bool> Execute(WorkerLog log, CancellationToken cancellationToken)
+    public override async Task Execute(CancellationToken cancellationToken)
     {
         var calls = await _client.GetEarningsCallsOfToday();
         var shadows = calls
@@ -36,7 +41,6 @@ public class WhispersMirror : ITimeTriggeredWorker
 
         await _context.AddRangeAsync(shadows, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        log.Log = $"{shadows.Count} shadow(s) created.";
-        return true;
+        _logger.LogInformation("{Count} shadow(s) created", shadows.Count);
     }
 }

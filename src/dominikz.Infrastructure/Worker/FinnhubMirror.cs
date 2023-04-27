@@ -4,43 +4,48 @@ using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Extensions;
 using dominikz.Infrastructure.Provider.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace dominikz.Api.Background;
+namespace dominikz.Infrastructure.Worker;
 
-public class FinnhubMirror : ITimeTriggeredWorker
+public class FinnhubMirror : TimeTriggeredWorker
 {
     private readonly FinnhubClient _finnhub;
     private readonly OnVistaClient _onVista;
     private readonly DatabaseContext _context;
+    private readonly ILogger<FinnhubMirror> _logger;
 
-
-    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 02:55 PM
         new("55 14 * * *"),
 
         // At 11:55 PM
-        new("55 23 * * *")
+        new("50 23 * * *")
     };
 
-    public FinnhubMirror(FinnhubClient finnhub, OnVistaClient onVista, DatabaseContext context)
+    public FinnhubMirror(FinnhubClient finnhub,
+        OnVistaClient onVista,
+        DatabaseContext context,
+        ILogger<FinnhubMirror> logger)
     {
         _finnhub = finnhub;
-        _finnhub.WithWhenLimitReached = true;
         _onVista = onVista;
         _context = context;
+        _logger = logger;
     }
 
-    public async Task<bool> Execute(WorkerLog log, CancellationToken cancellationToken)
+    public override async Task Execute(CancellationToken cancellationToken)
     {
+        _finnhub.WaitWhenLimitReached = true;
+
         var shadows = await AddNewShadows(cancellationToken);
         await AttachTradeFlags(shadows, cancellationToken);
 
         await _context.AddRangeAsync(shadows, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        log.Log = $"{shadows.Count} shadow(s) created.";
-        return true;
+        _logger.LogInformation("{ShadowsCount} shadow(s) created", shadows.Count);
     }
 
     private async Task<IReadOnlyCollection<FinnhubShadow>> AddNewShadows(CancellationToken cancellationToken)
@@ -60,6 +65,8 @@ public class FinnhubMirror : ITimeTriggeredWorker
             .ToListAsync(cancellationToken);
 
         var positiveCalls = (await _finnhub.GetEarningsCalendar(from, to, cancellationToken)).EarningsCalendar
+            .GroupBy(x => new { x.Symbol, x.Date })
+            .Select(x => x.FirstOrDefault(y => y.Hour.Equals("bmo", StringComparison.OrdinalIgnoreCase)) ?? x.First())
             .Where(x => x.EpsActual != null)
             .Where(x => x.EpsEstimate != null)
             .Where(x => x.RevenueActual != null)

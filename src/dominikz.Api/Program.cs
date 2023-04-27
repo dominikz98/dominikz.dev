@@ -27,7 +27,6 @@ builder.Services.AddContext(builder.Configuration, builder.Environment.IsDevelop
 builder.Services.AddStorage(builder.Configuration);
 builder.Services.AddUrlHelper();
 builder.Services.AddUtils();
-builder.Services.AddWorker();
 builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.AddOptions();
 builder.AddRateLimit();

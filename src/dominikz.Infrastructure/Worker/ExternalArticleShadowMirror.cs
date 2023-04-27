@@ -8,31 +8,38 @@ using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
 using ImageMagick;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace dominikz.Api.Background;
+namespace dominikz.Infrastructure.Worker;
 
-public class ExternalArticleShadowMirror : ITimeTriggeredWorker
+public class ExternalArticleShadowMirror : TimeTriggeredWorker
 {
     private readonly DatabaseContext _database;
     private readonly IStorageProvider _storage;
     private readonly NoobitClient _noobitClient;
     private readonly MedlanClient _medlanClient;
+    private readonly ILogger<ExternalArticleShadowMirror> _logger;
 
-    public CronSchedule[] Schedules { get; } = new CronSchedule[]
+    public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 06:00
         new("0 5 * * *")
     };
-    
-    public ExternalArticleShadowMirror(DatabaseContext database, IStorageProvider storage, NoobitClient noobitClient, MedlanClient medlanClient)
+
+    public ExternalArticleShadowMirror(DatabaseContext database,
+        IStorageProvider storage,
+        NoobitClient noobitClient,
+        MedlanClient medlanClient,
+        ILogger<ExternalArticleShadowMirror> logger)
     {
         _database = database;
         _storage = storage;
         _noobitClient = noobitClient;
         _medlanClient = medlanClient;
+        _logger = logger;
     }
 
-    public async Task<bool> Execute(WorkerLog log, CancellationToken cancellationToken)
+    public override async Task Execute(CancellationToken cancellationToken)
     {
         var existing = await _database.From<ExtArticleShadow>()
             .AsNoTracking()
@@ -41,7 +48,7 @@ public class ExternalArticleShadowMirror : ITimeTriggeredWorker
         var shadows = new List<ExtArticleShadow>();
         var noobitShadows = await _noobitClient.GetArticles(cancellationToken);
         var medlanShadows = await _medlanClient.GetArticles(cancellationToken);
-        
+
         foreach (var shadow in noobitShadows.Union(medlanShadows))
         {
             var exits = existing.Any(x => x.Title == shadow.Title && x.Date == shadow.Date);
@@ -56,12 +63,8 @@ public class ExternalArticleShadowMirror : ITimeTriggeredWorker
             await _storage.Upload(new UploadImageRequest(shadow.ImageId, shadow.Image, MagickFormat.Unknown, ImageSizeEnum.ThumbnailHorizontal), default);
         }
 
-        if (shadows.Count == 0)
-            return true;
-
-        log.Log += $"{shadows.Count} article(s) added";
         await _database.AddRangeAsync(shadows, cancellationToken);
         await _database.SaveChangesAsync(cancellationToken);
-        return true;
+        _logger.LogInformation("{ShadowsCount} article(s) created", shadows.Count);
     }
 }

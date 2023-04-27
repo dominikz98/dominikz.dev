@@ -24,7 +24,7 @@ class PeriodicHostedService : BackgroundService
         while (cancellationToken.IsCancellationRequested == false && await timer.WaitForNextTickAsync(cancellationToken))
         {
 
-            _logger.LogInformation("Polling Worker Schedules");
+            _logger.LogWarning("Polling Worker Schedules");
             try
             {
                 await using var scope = _factory.CreateAsyncScope();
@@ -38,19 +38,27 @@ class PeriodicHostedService : BackgroundService
 
                     var log = new WorkerLog()
                     {
-                        Worker = worker.GetType().Name
+                        Worker = worker.GetType().Name,
+                        Timestamp = DateTime.Now 
                     };
 
                     try
                     {
-                        _logger.LogInformation("Start Executing: {Name}", worker.GetType().Name);
+                        _logger.LogWarning("Start Executing: {Name}", worker.GetType().Name);
                         log.Success = await worker.Execute(log, cancellationToken);
-                        _logger.LogInformation("Finished Executing: {Name}", worker.GetType().Name);
+                        _logger.LogWarning("Finished Executing: {Name}", worker.GetType().Name);
                     }
                     catch (Exception e)
                     {
                         database.ChangeTracker.Clear();
                         log.Log ??= string.Empty;
+
+                        if (string.IsNullOrWhiteSpace(e.InnerException?.Message) == false)
+                        {
+                            log.Log += e.InnerException.Message + Environment.NewLine;
+                            log.Log += e.InnerException.StackTrace + Environment.NewLine;    
+                        }
+                        
                         log.Log += e.Message + Environment.NewLine;
                         log.Log += e.StackTrace;
                         _logger.LogError("Failed Executing: {Name}", worker.GetType().Name);

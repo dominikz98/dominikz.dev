@@ -25,7 +25,14 @@ public class EarningsWhispersClient
 
     private async Task<IReadOnlyCollection<EwCall>> GetEarningsCallsOfTodayInternal()
     {
-        await using var page = await CreateBrowser($"{_options.Value.EarningsWhispers}calendar");
+        using var fetcher = new BrowserFetcher();
+        await fetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
+        await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        {
+            Headless = true
+        });
+        await using var page = await browser!.NewPageAsync();
+        await page.GoToAsync($"{_options.Value.EarningsWhispers}calendar", waitUntil: WaitUntilNavigation.Load);
 
         // Wait for any network activity to finish
         await page.WaitForNetworkIdleAsync();
@@ -99,18 +106,6 @@ public class EarningsWhispersClient
         var easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
         var utcTime = TimeZoneInfo.ConvertTimeToUtc(easternTime, easternZone);
         callVm.Release = TimeOnly.FromDateTime(utcTime);
-    }
-
-    private async Task<IPage> CreateBrowser(string url)
-    {
-        await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
-        var browser = await Puppeteer.LaunchAsync(new LaunchOptions
-        {
-            Headless = true
-        });
-        var page = await browser!.NewPageAsync();
-        await page.GoToAsync(url, waitUntil: WaitUntilNavigation.Load);
-        return page;
     }
 }
 

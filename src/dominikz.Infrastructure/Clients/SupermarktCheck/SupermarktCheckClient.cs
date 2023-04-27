@@ -31,13 +31,13 @@ public class SupermarktCheckClient
         await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
 
         // Launch a headless browser
-        var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
         {
             Headless = true
         });
 
         // Create a new page in the browser
-        var page = await browser.NewPageAsync();
+        await using var page = await browser.NewPageAsync();
 
         // Navigate to the URL and wait for any JavaScript redirects to complete
         var url = $"https://www.supermarktcheck.de/product/{productId}";

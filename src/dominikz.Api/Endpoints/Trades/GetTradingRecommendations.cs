@@ -23,9 +23,9 @@ public class GetTradingRecommendations : EndpointController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Execute(CancellationToken cancellationToken)
+    public async Task<IActionResult> Execute([FromQuery] GetTradingRecommendationsRequest request, CancellationToken cancellationToken)
     {
-        var csv = await _mediator.Send(new GetTradingRecommendationsRequest(), cancellationToken);
+        var csv = await _mediator.Send(request, cancellationToken);
         return File(csv, "text/csv", $"trade_recommendations_{DateTime.Now:yyyy_MM_dd}.csv");
     }
 }
@@ -45,7 +45,7 @@ public class GetTradingRecommendationsRequestHandler : IRequestHandler<GetTradin
 
     public async Task<MemoryStream> Handle(GetTradingRecommendationsRequest request, CancellationToken cancellationToken)
     {
-        var date = request.Date ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        var date = request.Date ?? DateOnly.FromDateTime(DateTime.Now);
         var shadows = await _context.From<FinnhubShadow>()
             .Where(x => x.Date == date)
             .AsNoTracking()

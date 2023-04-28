@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Threading.RateLimiting;
 using dominikz.Api.Utils;
 using dominikz.Domain.Enums;
@@ -38,7 +39,8 @@ public static class ServiceCollectionExtensions
             .Configure<ExternalUrlsOptions>(builder.Configuration.GetSection(nameof(ExternalUrlsOptions)))
             .Configure<ApiKeysOptions>(builder.Configuration.GetSection(nameof(ApiKeysOptions)))
             .Configure<PasswordOptions>(builder.Configuration.GetSection(nameof(PasswordOptions)))
-            .Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+            .Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)))
+            .Configure<EmailOptions>(builder.Configuration.GetSection(nameof(EmailOptions)));
     }
 
     public static void AddJwtAuth(this WebApplicationBuilder builder)
@@ -57,7 +59,7 @@ public static class ServiceCollectionExtensions
             config.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = options.ValidateIssuerSigningKey,
-                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(options.IssuerSigningKey)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.IssuerSigningKey)),
                 ValidateIssuer = options.ValidateIssuer,
                 ValidIssuer = options.ValidIssuer,
                 ValidateAudience = options.ValidateAudience,

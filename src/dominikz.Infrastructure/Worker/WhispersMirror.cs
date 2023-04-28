@@ -15,7 +15,7 @@ public class WhispersMirror : TimeTriggeredWorker
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 07:01
-        new("1 7 * * *")
+        new("1 7 * * 1-5")
     };
 
     public WhispersMirror(EarningsWhispersClient client,

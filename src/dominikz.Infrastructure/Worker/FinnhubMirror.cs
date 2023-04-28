@@ -1,5 +1,11 @@
-﻿using dominikz.Domain.Models;
+﻿using System.Collections;
+using System.Globalization;
+using System.Net.Mail;
+using System.Text;
+using CsvHelper;
+using dominikz.Domain.Models;
 using dominikz.Domain.Structs;
+using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Extensions;
 using dominikz.Infrastructure.Provider.Database;
@@ -13,25 +19,28 @@ public class FinnhubMirror : TimeTriggeredWorker
     private readonly FinnhubClient _finnhub;
     private readonly OnVistaClient _onVista;
     private readonly DatabaseContext _context;
+    private readonly EmailClient _email;
     private readonly ILogger<FinnhubMirror> _logger;
 
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 02:55 PM
-        new("55 14 * * *"),
+        new("55 14 * * 1-5"),
 
         // At 11:55 PM
-        new("50 23 * * *")
+        new("50 23 * * 1-5")
     };
 
     public FinnhubMirror(FinnhubClient finnhub,
         OnVistaClient onVista,
         DatabaseContext context,
+        EmailClient email,
         ILogger<FinnhubMirror> logger)
     {
         _finnhub = finnhub;
         _onVista = onVista;
         _context = context;
+        _email = email;
         _logger = logger;
     }
 
@@ -39,13 +48,18 @@ public class FinnhubMirror : TimeTriggeredWorker
     {
         _finnhub.WaitWhenLimitReached = true;
 
+        // create and attach flags
         var shadows = await AddNewShadows(cancellationToken);
         await AttachTradeFlags(shadows, cancellationToken);
 
+        // save in db
         await _context.AddRangeAsync(shadows, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-
         _logger.LogInformation("{ShadowsCount} shadow(s) created", shadows.Count);
+
+        // create csv and send email
+        await SendMail(shadows, cancellationToken);
+        _logger.LogInformation("Email sent");
     }
 
     private async Task<IReadOnlyCollection<FinnhubShadow>> AddNewShadows(CancellationToken cancellationToken)
@@ -168,5 +182,19 @@ public class FinnhubMirror : TimeTriggeredWorker
             var percent = (close - start) / Math.Abs(start) * 100;
             call.ChartFlag = percent > 1.5m;
         }
+    }
+
+    private async Task SendMail(IReadOnlyCollection<FinnhubShadow> shadows, CancellationToken cancellationToken)
+    {
+        var recommendations = shadows.Where(x => (x.ChartFlag ? 1 : 0) + (x.IncreaseFlag ? 1 : 0) + (x.PeakFlag ? 1 : 0) > 1).ToList();
+
+        var ms = new MemoryStream();
+        var streamWriter = new StreamWriter(ms, Encoding.UTF8);
+        var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture);
+        await csvWriter.WriteRecordsAsync((IEnumerable)recommendations, cancellationToken);
+        await csvWriter.FlushAsync();
+        ms.Position = 0;
+
+        _email.Send($"WORKER - {nameof(FinnhubMirror)}: Recommendations", $"Count: {shadows.Count}", new[] { new Attachment(ms, $"trades_{DateTime.Now:yyyy_MM_dd}.csv") });
     }
 }

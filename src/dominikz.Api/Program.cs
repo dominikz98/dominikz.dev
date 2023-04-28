@@ -1,5 +1,6 @@
 using dominikz.Api.Extensions;
 using dominikz.Infrastructure;
+using dominikz.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddStorage(builder.Configuration);
 builder.Services.AddUrlHelper();
 builder.Services.AddUtils();
 builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddScoped<EmailClient>();
 builder.AddOptions();
 builder.AddRateLimit();
 builder.AddJwtAuth();

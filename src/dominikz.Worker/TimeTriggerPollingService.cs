@@ -1,4 +1,5 @@
-﻿using dominikz.Infrastructure.Worker;
+﻿using dominikz.Infrastructure.Clients;
+using dominikz.Infrastructure.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -13,15 +14,18 @@ public class TimeTriggerPollingService
 
     private readonly ILogger<TimeTriggerPollingService> _logger;
     private readonly IServiceProvider _services;
+    private readonly EmailClient _email;
     private readonly IReadOnlyCollection<Type> _worker;
     private bool _startup = true;
 
     public TimeTriggerPollingService(ILogger<TimeTriggerPollingService> logger,
         IServiceProvider services,
+        EmailClient email,
         IReadOnlyCollection<Type> worker)
     {
         _logger = logger;
         _services = services;
+        _email = email;
         _worker = worker;
     }
 
@@ -34,18 +38,20 @@ public class TimeTriggerPollingService
         {
             _startup = false;
 
-            _logger.LogInformation($"Polling Worker Schedules");
-            try
-            {
-                foreach (var worker in _worker)
-                    await StartWorkerWithRetryPolicyIfRequired(worker, cancellationToken);
+            _logger.LogDebug($"Polling Worker Schedules");
 
-                await Task.Delay(1000, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Critical Exception: {ExMessage}", ex.Message);
-            }
+            foreach (var worker in _worker)
+                try
+                {
+                    await StartWorkerWithRetryPolicyIfRequired(worker, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Critical Exception: {ExMessage} StackTrace: {ExStackTrace}", ex.Message, ex.StackTrace);
+                    _email.Send($"WORKER - {worker.Name}: Exception", ex);
+                }
+
+            await Task.Delay(1000, cancellationToken);
         }
 
         _logger.LogInformation("Polling Worker stopped");

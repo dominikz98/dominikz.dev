@@ -1,4 +1,5 @@
-﻿using dominikz.Infrastructure.Worker;
+﻿using dominikz.Infrastructure.Clients;
+using dominikz.Infrastructure.Worker;
 using dominikz.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +25,12 @@ await new ServiceCollection()
     .AddWorker(timeTriggeredWorker)
     .AddExternalClients()
     .AddProvider(configuration)
+    .AddSingleton<EmailClient>()
     .AddSingleton((sp) =>
     {
         var logger = sp.GetRequiredService<ILogger<TimeTriggerPollingService>>();
-        return new TimeTriggerPollingService(logger, sp, timeTriggeredWorker);
+        var email = sp.GetRequiredService<EmailClient>();
+        return new TimeTriggerPollingService(logger, sp, email, timeTriggeredWorker);
     })
     .BuildServiceProvider(true)
     .GetRequiredService<TimeTriggerPollingService>()

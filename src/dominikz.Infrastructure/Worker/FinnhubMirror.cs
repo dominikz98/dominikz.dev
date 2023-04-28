@@ -55,11 +55,16 @@ public class FinnhubMirror : TimeTriggeredWorker
         // save in db
         await _context.AddRangeAsync(shadows, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("{ShadowsCount} shadow(s) created", shadows.Count);
+        _logger.LogInformation("{Count} shadow(s) created", shadows.Count);
 
         // create csv and send email
-        await SendMail(shadows, cancellationToken);
-        _logger.LogInformation("Email sent");
+        if (TimeOnly.FromDateTime(DateTime.Now) <= new TimeOnly(15, 30, 0))
+        {
+            await SendMail(cancellationToken);
+            _logger.LogInformation("Email sent");
+        }
+        else
+            _logger.LogInformation("Email not required");
     }
 
     private async Task<IReadOnlyCollection<FinnhubShadow>> AddNewShadows(CancellationToken cancellationToken)
@@ -184,9 +189,24 @@ public class FinnhubMirror : TimeTriggeredWorker
         }
     }
 
-    private async Task SendMail(IReadOnlyCollection<FinnhubShadow> shadows, CancellationToken cancellationToken)
+    private async Task SendMail(CancellationToken cancellationToken)
     {
-        var recommendations = shadows.Where(x => (x.ChartFlag ? 1 : 0) + (x.IncreaseFlag ? 1 : 0) + (x.PeakFlag ? 1 : 0) > 1).ToList();
+        var dates = await _context.From<FinnhubShadow>()
+            .Select(x => x.Date)
+            .Distinct()
+            .OrderByDescending(x => x)
+            .Take(2)
+            .ToListAsync(cancellationToken);
+
+        var recommendations = (await _context.From<FinnhubShadow>()
+                .Where(x => dates.Count <= 1
+                            || x.Date == dates[0]
+                            || (x.Date == dates[1] && EF.Functions.Like(x.Hour, "amc")))
+                .ToListAsync(cancellationToken))
+            .Where(x => (x.ChartFlag ? 1 : 0) + (x.IncreaseFlag ? 1 : 0) + (x.PeakFlag ? 1 : 0) > 1)
+            .OrderBy(x => x.Date)
+            .ThenBy(x => x.Hour)
+            .ToList();
 
         var ms = new MemoryStream();
         var streamWriter = new StreamWriter(ms, Encoding.UTF8);
@@ -195,6 +215,6 @@ public class FinnhubMirror : TimeTriggeredWorker
         await csvWriter.FlushAsync();
         ms.Position = 0;
 
-        _email.Send($"WORKER - {nameof(FinnhubMirror)}: Recommendations", $"Count: {shadows.Count}", new[] { new Attachment(ms, $"trades_{DateTime.Now:yyyy_MM_dd}.csv") });
+        _email.Send($"WORKER - {nameof(FinnhubMirror)}: Recommendations", $"Recommended: {recommendations.Count}", new[] { new Attachment(ms, $"trades_{DateTime.Now:yyyy_MM_dd}.csv") });
     }
 }

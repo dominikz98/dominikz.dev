@@ -1,10 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using dominikz.Api.Attributes;
+using dominikz.Domain.Models;
 using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Worker;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace dominikz.Api.Endpoints.Admin;
 

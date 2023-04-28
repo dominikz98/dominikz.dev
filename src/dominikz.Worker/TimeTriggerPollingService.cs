@@ -1,4 +1,5 @@
-﻿using dominikz.Infrastructure.Clients;
+﻿using System.Diagnostics;
+using dominikz.Infrastructure.Clients;
 using dominikz.Infrastructure.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ namespace dominikz.Worker;
 
 public class TimeTriggerPollingService
 {
-    private const int PeriodInSec = 30;
+    private const int PeriodInSec = 59;
     private const int RetryCount = 5;
     private const int RetrySleepInSec = 30;
 
@@ -37,7 +38,6 @@ public class TimeTriggerPollingService
         while (_startup || cancellationToken.IsCancellationRequested == false && await timer.WaitForNextTickAsync(cancellationToken))
         {
             _startup = false;
-
             _logger.LogDebug($"Polling Worker Schedules");
 
             foreach (var worker in _worker)
@@ -71,9 +71,12 @@ public class TimeTriggerPollingService
                 (exception, timeSpan, retryCount, _) => { _logger.LogWarning("Retry {RetryCount} due to exception {ExceptionMessage}. Waiting {TimeSpan} before retrying", retryCount, exception.Message, timeSpan); })
             .ExecuteAsync(async () =>
             {
+                var sw = new Stopwatch();
+                sw.Start();
                 _logger.LogInformation("Start Executing: {Name}", worker.Name);
                 await Task.Run(async () => await instance.Execute(cancellationToken), cancellationToken);
-                _logger.LogInformation("Finished Executing: {Name}", worker.Name);
+                sw.Stop();
+                _logger.LogInformation("Finished Executing: {Name} in {Seconds} seconds", worker.Name, sw.Elapsed.TotalSeconds);
             });
     }
 }

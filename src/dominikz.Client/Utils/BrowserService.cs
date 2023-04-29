@@ -16,4 +16,7 @@ public class BrowserService
 
     public async Task ChangeCarouselScrollLeft(bool add)
         => await _jsRuntime.InvokeVoidAsync("changeCarouselScrollLeft", add);
+    
+    public async Task<bool> IsStreamingModeEnabled()
+        => (await _jsRuntime!.InvokeAsync<string>("getUserAgent", default)).Contains("Silk/");
 }

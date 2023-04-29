@@ -10,6 +10,7 @@ using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Movies;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace dominikz.Client.Pages.Movies;
 
@@ -30,6 +31,15 @@ public partial class Movies : ComponentBase
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;
     private const int LoadingPackageSize = 50;
     private readonly List<CancellationTokenSource> _cancellationSources = new();
+    private bool _streamingMode;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        _streamingMode = await Browser!.IsStreamingModeEnabled();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,14 +99,14 @@ public partial class Movies : ComponentBase
         {
             if (cancellationSource.IsCancellationRequested)
                 break;
-            
+
             filter.Start = i;
             filter.Count = Math.Min(LoadingPackageSize, count - i);
             var movies = await Endpoints!.Search(filter, cancellationSource.Token);
             _movies.AddRange(movies);
             StateHasChanged();
         }
-        
+
         _cancellationSources.Remove(cancellationSource);
     }
 

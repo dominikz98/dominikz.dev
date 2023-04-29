@@ -10,7 +10,10 @@
 
 <div class="movies">
 
-    <MovieCarousel Data="_previews"/>
+    @if (_streamingMode == false)
+    {
+        <MovieCarousel Data="_previews"/>
+    }
 
     <TextBox @ref="_searchBox"
              DelayInputTrigger="true"
@@ -25,26 +28,29 @@
                 SelectedChanged="@(value => NavManager!.AttachOrUpdateQueryParam<MovieGenresFlags>(QueryNames.Movies.Genre, value.Count > 0 ? value.First() : null))"
                 Values="Enum.GetValues<MovieGenresFlags>()[1..].ToList()"/>
 
-    <div class="flex-row gap">
+    @if (_streamingMode == false)
+    {
+        <div class="flex-row gap">
 
-        @if (_hasCreatePermission)
-        {
-            <div class="admin-menu-element gap">
-                <IconButton OnClick="@(() => NavManager!.NavigateTo("/movies/edit"))" Icon="fa-solid fa-circle-plus"/>
+            @if (_hasCreatePermission)
+            {
+                <div class="admin-menu-element gap">
+                    <IconButton OnClick="@(() => NavManager!.NavigateTo("/movies/edit"))" Icon="fa-solid fa-circle-plus"/>
+                </div>
+            }
+
+            <div class="menu-element gap">
+                <i class="fa-solid fa-border-top-left"></i>
+                <Switch @bind-State="_isTableView"/>
+                <i class="fa-solid fa-bars-staggered"></i>
             </div>
-        }
 
-        <div class="menu-element gap">
-            <i class="fa-solid fa-border-top-left"></i>
-            <Switch @bind-State="_isTableView"/>
-            <i class="fa-solid fa-bars-staggered"></i>
+            <div class="menu-element">
+                <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
+                <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
+            </div>
         </div>
-
-        <div class="menu-element">
-            <IconButton OnClick="OnCopyLinkClicked" Icon="fa-solid fa-link"/>
-            <IconButton OnClick="OnCreateCURLClicked" Icon="fa-solid fa-code"/>
-        </div>
-    </div>
+    }
 
     @if (_isTableView)
     {

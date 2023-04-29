@@ -51,5 +51,5 @@ public class DownloadEndpoints
         => CreateStreamingUrl(StreamTokenPrefix.Trailer, movieId, token);
 
     private string CreateStreamingUrl(StreamTokenPrefix prefix, Guid id, string token)
-        => $"{ApiClient.Prefix}/{Endpoint}/stream/{(int)prefix}/{id}?{ApiClient.ApiKeyHeaderName}={_options.Value.ApiKey}&token={token}";
+        => $"{_options.Value.ApiUrl}/{ApiClient.Prefix}/{Endpoint}/stream/{(int)prefix}/{id}?{ApiClient.ApiKeyHeaderName}={_options.Value.ApiKey}&token={token}";
 }

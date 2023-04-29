@@ -1,7 +1,7 @@
 ﻿using System.Web;
+using dominikz.Client.Api;
 using dominikz.Client.Extensions;
 using dominikz.Domain.ViewModels.Auth;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 

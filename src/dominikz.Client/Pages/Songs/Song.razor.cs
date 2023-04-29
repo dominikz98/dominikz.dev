@@ -1,6 +1,6 @@
+using dominikz.Client.Api;
 using dominikz.Client.Components.Instruments;
 using dominikz.Domain.ViewModels.Songs;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages.Songs;

@@ -1,7 +1,7 @@
 using dominikz.Domain.Enums;
 using dominikz.Domain.ViewModels.Auth;
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public interface ICredentialStorage
 {

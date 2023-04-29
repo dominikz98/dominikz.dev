@@ -1,4 +1,5 @@
-﻿using dominikz.Client.Components;
+﻿using dominikz.Client.Api;
+using dominikz.Client.Components;
 using dominikz.Client.Components.Chips;
 using dominikz.Client.Components.Toast;
 using dominikz.Client.Extensions;
@@ -8,7 +9,6 @@ using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Blog;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages.Blog;

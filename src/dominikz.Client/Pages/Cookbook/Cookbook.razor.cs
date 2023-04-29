@@ -1,3 +1,4 @@
+using dominikz.Client.Api;
 using dominikz.Client.Components;
 using dominikz.Client.Components.Chips;
 using dominikz.Client.Components.Toast;
@@ -8,7 +9,6 @@ using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Cookbook;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Cookbook;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages.Cookbook;

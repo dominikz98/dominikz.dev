@@ -5,7 +5,7 @@ using dominikz.Domain.Structs;
 using dominikz.Domain.ViewModels.Movies;
 using Microsoft.Extensions.Options;
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public class DownloadEndpoints
 {

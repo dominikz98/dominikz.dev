@@ -1,5 +1,5 @@
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public class TradesEndpoints
 {

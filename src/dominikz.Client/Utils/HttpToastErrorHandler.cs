@@ -1,6 +1,6 @@
 using System.Net;
+using dominikz.Client.Api;
 using dominikz.Client.Components.Toast;
-using dominikz.Infrastructure.Clients.Api;
 
 namespace dominikz.Client.Utils;
 

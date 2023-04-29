@@ -1,6 +1,6 @@
-﻿using dominikz.Domain.Enums;
+﻿using dominikz.Client.Api;
+using dominikz.Domain.Enums;
 using dominikz.Domain.ViewModels.Movies;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages.Movies;

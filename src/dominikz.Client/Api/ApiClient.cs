@@ -7,7 +7,7 @@ using dominikz.Domain.Structs;
 using dominikz.Domain.ViewModels.Auth;
 using HeyRed.Mime;
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public class ApiClient
 {

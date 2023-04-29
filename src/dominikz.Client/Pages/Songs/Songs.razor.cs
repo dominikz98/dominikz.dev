@@ -1,9 +1,9 @@
+using dominikz.Client.Api;
 using dominikz.Client.Components;
 using dominikz.Client.Extensions;
 using dominikz.Client.Tables;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Songs;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 
 namespace dominikz.Client.Pages.Songs;

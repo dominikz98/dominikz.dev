@@ -1,7 +1,7 @@
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Songs;
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public class SongsEndpoints
 {

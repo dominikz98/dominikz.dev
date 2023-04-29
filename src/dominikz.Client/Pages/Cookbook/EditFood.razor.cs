@@ -1,6 +1,6 @@
+using dominikz.Client.Api;
 using dominikz.Client.Utils;
 using dominikz.Domain.ViewModels.Cookbook;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 

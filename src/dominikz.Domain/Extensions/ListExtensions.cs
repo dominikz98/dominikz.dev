@@ -1,4 +1,4 @@
-namespace dominikz.Infrastructure.Extensions;
+namespace dominikz.Domain.Extensions;
 
 public static class ListExtensions
 {

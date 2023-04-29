@@ -1,7 +1,7 @@
 using Blazored.LocalStorage;
+using dominikz.Client.Api;
 using dominikz.Domain.Enums;
 using dominikz.Domain.ViewModels.Auth;
-using dominikz.Infrastructure.Clients.Api;
 
 namespace dominikz.Client.Utils;
 

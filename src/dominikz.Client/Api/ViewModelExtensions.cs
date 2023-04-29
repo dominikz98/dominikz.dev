@@ -1,8 +1,7 @@
 using System.Web;
 using dominikz.Domain.Contracts;
-using dominikz.Infrastructure.Clients.Api;
 
-namespace dominikz.Infrastructure.Extensions;
+namespace dominikz.Client.Api;
 
 public static class ViewModelExtensions
 {

@@ -1,7 +1,7 @@
 using dominikz.Domain.Enums.Files;
 using HeyRed.Mime;
 
-namespace dominikz.Infrastructure.Utils;
+namespace dominikz.Domain.Enums;
 
 public static class FileIdentifier
 {

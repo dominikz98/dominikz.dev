@@ -1,6 +1,5 @@
 using dominikz.Domain.Options;
 using dominikz.Infrastructure.Clients;
-using dominikz.Infrastructure.Clients.Api;
 using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Clients.JustWatch;
 using dominikz.Infrastructure.Clients.Noobit;
@@ -16,20 +15,6 @@ namespace dominikz.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApiClient(this IServiceCollection services)
-        => services.AddSingleton<BlogEndpoints>()
-            .AddSingleton<MovieEndpoints>()
-            .AddSingleton<DownloadEndpoints>()
-            .AddSingleton<TradesEndpoints>()
-            .AddSingleton<SongsEndpoints>()
-            .AddSingleton<CookbookEndpoints>()
-            .AddHttpClient<ApiClient>((sp, client) =>
-            {
-                var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
-                client.BaseAddress = new Uri(options.ApiUrl);
-                client.DefaultRequestHeaders.Add(ApiClient.ApiKeyHeaderName, options.ApiKey);
-            }).Services;
-
     public static IServiceCollection AddFinancialClients(this IServiceCollection services)
         => services.AddScoped<OnVistaClient>()
             .AddScoped<EarningsWhispersClient>()

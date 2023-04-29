@@ -1,8 +1,8 @@
+using dominikz.Client.Api;
 using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Blog;
 using dominikz.Domain.ViewModels.Blog;
-using dominikz.Infrastructure.Clients.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 

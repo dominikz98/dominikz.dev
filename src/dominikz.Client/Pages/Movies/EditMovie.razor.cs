@@ -1,10 +1,10 @@
+using dominikz.Client.Api;
 using dominikz.Client.Utils;
 using dominikz.Domain.Enums;
 using dominikz.Domain.Enums.Movies;
+using dominikz.Domain.Extensions;
 using dominikz.Domain.Structs;
 using dominikz.Domain.ViewModels.Movies;
-using dominikz.Infrastructure.Clients.Api;
-using dominikz.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 

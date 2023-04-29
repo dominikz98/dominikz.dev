@@ -3,10 +3,9 @@ using dominikz.Domain.Filter;
 using dominikz.Domain.Options;
 using dominikz.Domain.Structs;
 using dominikz.Domain.ViewModels.Blog;
-using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace dominikz.Infrastructure.Clients.Api;
+namespace dominikz.Client.Api;
 
 public class BlogEndpoints
 {

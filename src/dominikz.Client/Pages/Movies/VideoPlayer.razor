@@ -1,0 +1,50 @@
+﻿@page "/movies/stream/{id:guid}"
+
+@using dominikz.Client.Api
+@using dominikz.Domain.Enums
+@using dominikz.Domain.ViewModels.Movies
+
+<PageTitle>@(_movie?.Title ?? "Stream")</PageTitle>
+
+<div class="video-container">
+    <video id="stream" width="100%" height="100%" src="@_streamUrl" controls="controls" autoplay="autoplay"></video>
+</div>
+
+@code {
+
+    [Inject]
+    protected MovieEndpoints? MovieEndpoints { get; set; }
+
+    [Inject]
+    protected DownloadEndpoints? DownloadEndpoints { get; set; }
+
+    [Inject]
+    protected ICredentialStorage? Credentials { get; set; }
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private MovieDetailVm? _movie;
+    private string? _streamUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var hasStreamPermission = await Credentials!.HasRight(PermissionFlags.Movies);
+        if (hasStreamPermission == false)
+            return;
+
+        _movie = await MovieEndpoints!.GetById(Id);
+        if (_movie == null)
+            return;
+
+        if (_movie.IsStreamAvailable == false)
+            return;
+
+        var stream = await DownloadEndpoints!.CreateMovieStreamingToken(Id);
+        if (string.IsNullOrWhiteSpace(stream?.Token))
+            return;
+
+        _streamUrl = DownloadEndpoints!.CreateMovieStreamingUrl(Id, stream.Token);
+    }
+
+}

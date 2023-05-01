@@ -8,18 +8,26 @@
         <PageTitle>@_movie.Title</PageTitle>
 
         <div>
-            <h2>@_movie.Title</h2>
 
-            @if (_hasCreatePermission)
-            {
-                <div class="flex-row">
+            <div class="flex-row-no-wrap gap">
+
+                @if (_hasCreatePermission)
+                {
                     <div class="admin-menu-element gap">
                         <IconButton OnClick="@(() => NavManager!.NavigateTo($"/movies/edit/{_movie.Id}"))" Icon="fa-solid fa-pen-to-square"/>
                     </div>
-                </div>
+                }
 
-                <hr/>
-            }
+                @if (_hasStreamPermission && _movie.IsStreamAvailable)
+                {
+                    <div class="admin-menu-element gap">
+                        <IconButton OnClick="@(() => NavManager!.NavigateTo($"/movies/stream/{_movie.Id}"))" Icon="fa-solid fa-play"/>
+                    </div>
+                }
+
+                <h2>@_movie.Title</h2>
+
+            </div>
 
             <div class="flex-row gap">
 
@@ -38,8 +46,8 @@
         </div>
 
         <div class="movie-preview">
-            <img height="330" src="@_movie.ImageUrl" alt="Movie Poster"/>
-            <video width="587" height="330" src="@_trailerStreamUrl" autoplay="autoplay" controls="controls" muted="muted"></video>
+            <img id="movie-trailer-stream" height="330" src="@_movie.ImageUrl" alt="Movie Poster"/>
+            <video width="587" height="330" src="@_trailerStreamUrl" controls="controls" muted="muted" autoplay="autoplay"></video>
         </div>
 
         @((MarkupString)_movie.Plot)
@@ -50,11 +58,6 @@
                 <img src="assets/icons/dz.png" alt="Author Image"/>
                 @((MarkupString)_movie.Comment)
             </div>
-        }
-
-        @if (_hasStreamPermission && _movie.IsTrailerStreamAvailable)
-        {
-            <video width="100%" height="100%" src="@_movieStreamUrl" controls="controls"></video>
         }
     }
     else

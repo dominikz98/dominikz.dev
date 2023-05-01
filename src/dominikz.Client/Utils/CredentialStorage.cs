@@ -2,19 +2,26 @@ using Blazored.LocalStorage;
 using dominikz.Client.Api;
 using dominikz.Domain.Enums;
 using dominikz.Domain.ViewModels.Auth;
+using Microsoft.JSInterop;
 
 namespace dominikz.Client.Utils;
 
 public class CredentialStorage : ICredentialStorage
 {
     private readonly ILocalStorageService _localStorage;
+    private readonly IJSRuntime _jsRuntime;
     private AuthVm? _credentials;
     private const string AuthTokenKey = "AuthToken";
+    private bool? _streamingMode;
 
-    public CredentialStorage(ILocalStorageService localStorage)
+    public CredentialStorage(ILocalStorageService localStorage, IJSRuntime jsRuntime)
     {
         _localStorage = localStorage;
+        _jsRuntime = jsRuntime;
     }
+
+    public async Task<bool> IsStreamingModeEnabled(CancellationToken cancellationToken = default)
+        => _streamingMode ??= (await _jsRuntime.InvokeAsync<string>("getUserAgent", cancellationToken, default)).Contains("Silk/");
 
     public async Task<string?> GetToken(bool disableExpirationValidation = false, CancellationToken cancellationToken = default)
     {
@@ -51,8 +58,8 @@ public class CredentialStorage : ICredentialStorage
     }
 
     public async Task<bool> IsLoggedIn(CancellationToken cancellationToken = default)
-         => await TryGetFromLocalstorage(cancellationToken) != null;
-        
+        => await TryGetFromLocalstorage(cancellationToken) != null;
+
     public async Task Set(AuthVm credentials, CancellationToken cancellationToken = default)
     {
         _credentials = credentials;
@@ -70,7 +77,7 @@ public class CredentialStorage : ICredentialStorage
         _credentials ??= await _localStorage.GetItemAsync<AuthVm>(AuthTokenKey, cancellationToken);
         if (_credentials is null)
             return null;
-        
+
         var isValid = _credentials.TokenExpiration > DateTime.UtcNow || _credentials.RefreshTokenExpiration > DateTime.UtcNow;
         if (isValid == false)
             return null;

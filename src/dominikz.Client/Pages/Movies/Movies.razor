@@ -63,7 +63,7 @@
             {
                 <HorizontalCard ImageUrl="@movie.ImageUrl"
                                 Title="@movie.Title"
-                                OnClick="() => NavigateToMovie(movie.Id)">
+                                RedirectUrl="@NavigateToMovie(movie.Id)">
 
                     <div class="flex-column gap">
                         <span>@movie.Year</span>

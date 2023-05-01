@@ -1,3 +1,4 @@
+using dominikz.Client.Api;
 using dominikz.Client.Utils;
 using dominikz.Domain.Enums.Movies;
 using Microsoft.AspNetCore.Components;
@@ -7,18 +8,18 @@ namespace dominikz.Client.Pages;
 public partial class Index
 {
     [Inject] public NavigationManager? NavigationManager { get; set; }
-    [Inject] public BrowserService? Browser { get; set; }
+    [Inject] public ICredentialStorage? Credentials { get; set; }
 
     private static readonly Random Rnd = new();
     private const int RandomGenresCount = 3;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    
+    protected override async Task OnInitializedAsync()
     {
-        var streamingMode = await Browser!.IsStreamingModeEnabled();
+        var streamingMode = await Credentials!.IsStreamingModeEnabled();
         if (streamingMode)
             NavigationManager!.NavigateTo("/movies");
     }
-
+    
     private string GetRandomGenres()
     {
         var allGenres = Enum.GetValues<MovieGenresFlags>().ToList();

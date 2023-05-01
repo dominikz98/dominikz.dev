@@ -1,27 +1,23 @@
 ﻿
-<div class="flex-row gap surface">
+<a class="flex-row-no-wrap gap surface horizontal-card" href="@(RedirectUrl ?? string.Empty)">
 
-    <div class="horizontal-card" @onclick="(_ => OnClick.InvokeAsync())">
+    <div class="horizontal-card-header">
 
-        <div class="horizontal-card-header">
+        <img src="@ImageUrl" alt="Preview" loading="lazy"/>
 
-            <img src="@ImageUrl" alt="Preview" loading="lazy" />
-
-            @if (Highlight)
-            {
-                <i class="horizontal-card-header-highlight fa-solid fa-star"></i>
-            }
-
-        </div>
-
-        <div class="horizontal-card-body">
-
-            <span class="horizontal-card-body-title">@Title</span>
-
-            @ChildContent
-
-        </div>
+        @if (Highlight)
+        {
+            <i class="horizontal-card-header-highlight fa-solid fa-star"></i>
+        }
 
     </div>
 
-</div>
+    <div class="horizontal-card-body">
+
+        <span class="horizontal-card-body-title">@Title</span>
+
+        @ChildContent
+
+    </div>
+
+</a>

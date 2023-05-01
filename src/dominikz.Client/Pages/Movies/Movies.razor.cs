@@ -10,7 +10,6 @@ using dominikz.Domain.Enums.Movies;
 using dominikz.Domain.Filter;
 using dominikz.Domain.ViewModels.Movies;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace dominikz.Client.Pages.Movies;
 
@@ -27,22 +26,15 @@ public partial class Movies : ComponentBase
     private bool _hasCreatePermission;
 
     private bool _isTableView;
+    private bool _streamingMode;
     private TextBox? _searchBox;
     private ChipSelect<MovieGenresFlags>? _movieGenreSelect;
     private const int LoadingPackageSize = 50;
     private readonly List<CancellationTokenSource> _cancellationSources = new();
-    private bool _streamingMode;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
-
-        _streamingMode = await Browser!.IsStreamingModeEnabled();
-    }
 
     protected override async Task OnInitializedAsync()
     {
+        _streamingMode = await Credentials!.IsStreamingModeEnabled();
         _hasCreatePermission = await Credentials!.HasRight(PermissionFlags.CreateOrUpdate | PermissionFlags.Movies);
         _previews = await Endpoints!.GetPreview();
 
@@ -110,6 +102,8 @@ public partial class Movies : ComponentBase
         _cancellationSources.Remove(cancellationSource);
     }
 
-    private void NavigateToMovie(Guid movieId)
-        => NavManager!.NavigateTo($"/movies/{movieId}");
+    private string NavigateToMovie(Guid movieId)
+        => _streamingMode
+            ? $"/movies/stream/{movieId}"
+            : $"/movies/{movieId}";
 }

@@ -9,8 +9,8 @@ public partial class Movie
 {
     [Parameter] public Guid MovieId { get; set; }
     [Inject] protected MovieEndpoints? MovieEndpoints { get; set; }
-    [Inject] protected DownloadEndpoints? DownloadEndpoints { get; set; }
     [Inject] protected ICredentialStorage? Credentials { get; set; }
+    [Inject] protected DownloadEndpoints? DownloadEndpoints { get; set; }
     [Inject] protected NavigationManager? NavManager { get; set; }
 
     private MovieDetailVm? _movie;

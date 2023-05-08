@@ -36,13 +36,13 @@
         <div class="flex-row gap">
             @foreach (var song in _songs)
             {
-                <div class="song-card flex-column gap surface" @onclick="@(() => NavManager!.NavigateTo($"/songs/{song.Id}"))">
+                <a class="song-card flex-column gap surface" href="@($"/songs/{song.Id}")">
                     <div class="flex-column gap">
                         <LaneChart Value="song.Top.FirstOrDefault()"/>
                         <LaneChart Value="song.Bottom.FirstOrDefault()"/>
                     </div>
                     <span>@song.Name</span>
-                </div>
+                </a>
             }
         </div>
     }

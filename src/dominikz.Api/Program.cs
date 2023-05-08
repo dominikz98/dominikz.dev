@@ -35,6 +35,7 @@ builder.AddRateLimit();
 builder.AddJwtAuth();
 
 var app = builder.Build();
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -44,7 +45,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseResponseCaching();
-app.UseCors();
 app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseStaticFiles();

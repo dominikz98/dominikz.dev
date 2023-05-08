@@ -1,20 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Client", "src\dominikz.Client\dominikz.Client.csproj", "{FE758019-51F9-415B-9FDD-3B4AB4712A3B}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Client", "src\dominikz.Client\dominikz.Client.csproj", "{FE758019-51F9-415B-9FDD-3B4AB4712A3B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Infrastructure", "src\dominikz.Infrastructure\dominikz.Infrastructure.csproj", "{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Infrastructure", "src\dominikz.Infrastructure\dominikz.Infrastructure.csproj", "{092F0D41-7F3A-47A7-B385-06A5C10ECB3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Migrations", "src\dominikz.Migrations\dominikz.Migrations.csproj", "{265AF26D-3D62-44BA-A9DA-93F393E881CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Migrations", "src\dominikz.Migrations\dominikz.Migrations.csproj", "{265AF26D-3D62-44BA-A9DA-93F393E881CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Tests", "src\dominikz.Tests\dominikz.Tests.csproj", "{F59FAC3A-455A-4231-A845-603D038A52EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Tests", "src\dominikz.Tests\dominikz.Tests.csproj", "{F59FAC3A-455A-4231-A845-603D038A52EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Domain", "src\dominikz.Domain\dominikz.Domain.csproj", "{11D1CB08-C032-4806-9AD5-0576B96FD7D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Domain", "src\dominikz.Domain\dominikz.Domain.csproj", "{11D1CB08-C032-4806-9AD5-0576B96FD7D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Api", "src\dominikz.Api\dominikz.Api.csproj", "{8D69ED00-9C48-4AC2-A4F5-955174A688F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Api", "src\dominikz.Api\dominikz.Api.csproj", "{8D69ED00-9C48-4AC2-A4F5-955174A688F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dominikz.Worker", "src\dominikz.Worker\dominikz.Worker.csproj", "{D8E190A1-9784-4A2C-8142-591581C686E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dominikz.Worker", "src\dominikz.Worker\dominikz.Worker.csproj", "{D8E190A1-9784-4A2C-8142-591581C686E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker", "Worker\Worker.csproj", "{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +55,13 @@ Global
 		{D8E190A1-9784-4A2C-8142-591581C686E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E190A1-9784-4A2C-8142-591581C686E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E190A1-9784-4A2C-8142-591581C686E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FE758019-51F9-415B-9FDD-3B4AB4712A3B} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
@@ -59,5 +71,9 @@ Global
 		{11D1CB08-C032-4806-9AD5-0576B96FD7D3} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
 		{8D69ED00-9C48-4AC2-A4F5-955174A688F6} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
 		{D8E190A1-9784-4A2C-8142-591581C686E0} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+		{F9F0EA62-2F16-48A9-A44F-47FE7D7A0526} = {1BD4EDDA-58B5-4DCF-B62F-316FC28F58FC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CABD347-CF1B-4ABE-B8A8-8888AF2837EC}
 	EndGlobalSection
 EndGlobal

@@ -43,7 +43,7 @@ public class TimeTriggerPollingService
             foreach (var worker in _worker)
                 try
                 {
-                    await StartWorkerWithRetryPolicyIfRequired(worker, cancellationToken);
+                    StartWorkerWithRetryPolicyIfRequired(worker, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +57,7 @@ public class TimeTriggerPollingService
         _logger.LogInformation("Polling Worker stopped");
     }
 
-    private async Task StartWorkerWithRetryPolicyIfRequired(Type worker, CancellationToken cancellationToken)
+    private async void StartWorkerWithRetryPolicyIfRequired(Type worker, CancellationToken cancellationToken)
     {
         var instance = (TimeTriggeredWorker)_services.CreateScope().ServiceProvider.GetRequiredService(worker);
         if (instance.Schedules.All(x => x.IsTime(DateTime.Now) == false))

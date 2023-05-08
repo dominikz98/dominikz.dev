@@ -71,12 +71,12 @@ public partial class Cookbook
             Text = NavManager!.GetQueryParamByKey(QueryNames.Cookbook.Search)
         };
 
-    private void NavigateToDetail(Guid articleId)
+    private string? NavigateToDetail(Guid articleId)
     {
         var article = _recipes.FirstOrDefault(x => x.Id == articleId);
         if (article is null)
-            return;
+            return null;
 
-        NavManager!.NavigateTo($"/cookbook/recipes/{article.Id}");
+        return $"/cookbook/recipes/{article.Id}";
     }
 }

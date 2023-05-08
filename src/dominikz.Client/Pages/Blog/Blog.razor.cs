@@ -51,13 +51,13 @@ public partial class Blog
         var count = await Endpoints!.SearchCount(filter);
         _articles.Clear();
         StateHasChanged();
-        
+
         foreach (var toCancel in _cancellationSources)
             toCancel.Cancel();
 
         var cancellationSource = new CancellationTokenSource();
         _cancellationSources.Add(cancellationSource);
-        
+
         for (var i = 0; i < count; i += LoadingPackageSize)
         {
             if (cancellationSource.IsCancellationRequested)
@@ -102,18 +102,15 @@ public partial class Blog
         Toast!.Show("CURL stored in clipboard", ToastLevel.Success);
     }
 
-    private void NavigateToDetail(Guid articleId)
+    private string? NavigateToDetail(Guid articleId)
     {
         var article = _articles.FirstOrDefault(x => x.Id == articleId);
         if (article is null)
-            return;
+            return null;
 
         if (article.Source != ArticleSourceEnum.Dz)
-        {
-            NavManager!.NavigateTo(article.Path);
-            return;
-        }
+            return article.Path;
 
-        NavManager!.NavigateTo($"/blog/{article.Id}");
+        return $"/blog/{article.Id}";
     }
 }

@@ -63,7 +63,7 @@
         <div class="card-grid">
             @foreach (var article in _articles)
             {
-                <div class="card surface" @onclick="() => NavigateToDetail(article.Id)">
+                <a class="card surface" href="@NavigateToDetail(article.Id)">
 
                     <div class="card-header">
                         <img src="@article.ImageUrl" alt="Preview" loading="lazy"/>
@@ -131,7 +131,7 @@
                         }
                     </div>
 
-                </div>
+                </a>
             }
         </div>
     }

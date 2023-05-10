@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using dominikz.Infrastructure.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Worker.Hubs;
+namespace dominikz.Worker.Hubs;
 
 internal class WorkerHost : IDisposable
 {
@@ -15,19 +15,20 @@ internal class WorkerHost : IDisposable
 
     private const int PollingPeriodInSec = 10;
     private bool _startup = true;
-    private readonly Assembly[] _assemblies = new[] { typeof(WhispersMirror).Assembly, typeof(WorkerHost).Assembly };
 
-    public WorkerHost(ILoggerFactory loggerFactory, CancellationToken cancellationToken)
+    public WorkerHost(ILoggerFactory loggerFactory, IConfigurationRoot configuration, CancellationToken cancellationToken)
     {
         _loggerFactory = loggerFactory;
-        _cancellationToken = cancellationToken;
         _logger = _loggerFactory.CreateLogger(nameof(WorkerHost));
-        _crontabWorkerHub = new CrontabWorkerHub(_loggerFactory, _assemblies);
-        _queueWorkerHub = new QueueWorkerHub(_loggerFactory);
+
+        _cancellationToken = cancellationToken;
+        _crontabWorkerHub = new CrontabWorkerHub(_loggerFactory, configuration);
+        _queueWorkerHub = new QueueWorkerHub(_loggerFactory, configuration);
     }
 
     public async Task Start()
     {
+        // display registered trigger
         _logger.LogInformation("Crontab-Trigger:");
         foreach (var worker in _crontabWorkerHub.List())
             _logger.LogInformation("-{Worker}", worker);
@@ -36,6 +37,7 @@ internal class WorkerHost : IDisposable
         foreach (var worker in QueueWorkerHub.List())
             _logger.LogInformation("-{Worker}", worker);
 
+        // loop polling
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(PollingPeriodInSec));
         while (_startup || _cancellationToken.IsCancellationRequested == false && await timer.WaitForNextTickAsync(_cancellationToken))
         {
@@ -45,9 +47,11 @@ internal class WorkerHost : IDisposable
             {
                 _logger.LogDebug("Polling ...");
 
+                // poll and execute crontab worker
                 var crontabWorkerList = _crontabWorkerHub.Poll();
                 _crontabWorkerHub.TryRun(crontabWorkerList, _cancellationToken);
 
+                // poll and execute queue worker
                 var queueWorkerList = _queueWorkerHub.Poll();
                 _queueWorkerHub.TryRun(queueWorkerList, _cancellationToken);
             }

@@ -1,8 +1,6 @@
-﻿using dominikz.Infrastructure.Clients;
-using dominikz.Infrastructure.Worker;
-using dominikz.Worker;
+﻿using dominikz.Worker.Hubs;
+using dominikz.Worker.Worker;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 // bind to ctrl + c
@@ -15,32 +13,18 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
-// auto register worker
-var timeTriggeredWorker = GetTimeTriggeredWorker();
-
-// create dependency container
-await new ServiceCollection()
-    .AddWorkerLogging()
-    .AddWorkerOptions(configuration)
-    .AddWorker(timeTriggeredWorker)
-    .AddExternalClients()
-    .AddProvider(configuration)
-    .AddSingleton<EmailClient>()
-    .AddSingleton((sp) =>
+var loggerFactory = LoggerFactory.Create(builder => builder
+    .SetMinimumLevel(LogLevel.Information)
+    .AddFile(options =>
     {
-        var logger = sp.GetRequiredService<ILogger<TimeTriggerPollingService>>();
-        var email = sp.GetRequiredService<EmailClient>();
-        return new TimeTriggerPollingService(logger, sp, email, timeTriggeredWorker);
+        options.Directory = "logs";
+        options.UseRollingFiles = true;
+        options.RollingFileTimestampFormat = "yyyy-MM-dd";
+        options.FileExtension = "log";
+        options.FileNamePrefix = "worker";
+        options.MinimumLogLevel = LogLevel.Information;
     })
-    .BuildServiceProvider(true)
-    .GetRequiredService<TimeTriggerPollingService>()
-    .Run(cancellationSource.Token);
+    .AddConsole());
 
-
-static IReadOnlyCollection<Type> GetTimeTriggeredWorker()
-    => typeof(TimeTriggeredWorker)
-        .Assembly
-        .GetTypes()
-        .Where(t => typeof(TimeTriggeredWorker).IsAssignableFrom(t))
-        .Where(x => !x.IsAbstract)
-        .ToArray();
+var host = new WorkerHost(loggerFactory, configuration, cancellationSource.Token);
+await host.Start();

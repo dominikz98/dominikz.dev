@@ -1,4 +1,4 @@
-﻿namespace Worker.Utils;
+﻿namespace dominikz.Worker.Utils;
 
 public static class DateTimeExtensions
 {

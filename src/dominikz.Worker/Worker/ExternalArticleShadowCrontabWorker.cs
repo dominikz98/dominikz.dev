@@ -6,31 +6,48 @@ using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
+using dominikz.Worker.Contracts;
 using ImageMagick;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace dominikz.Infrastructure.Worker;
+namespace dominikz.Worker.Worker;
 
-public class ExternalArticleShadowMirror : TimeTriggeredWorker
+public class ExternalArticleShadowCrontabWorker : CrontabWorker
 {
-    private readonly DatabaseContext _database;
-    private readonly IStorageProvider _storage;
-    private readonly NoobitClient _noobitClient;
-    private readonly MedlanClient _medlanClient;
-    private readonly ILogger<ExternalArticleShadowMirror> _logger;
-
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // At 06:00
         new("0 5 * * *")
     };
 
+    protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
+        => await new ServiceCollection()
+            .AddScoped<ILogger>(_ => logger)
+            .AddWorkerOptions(configuration)
+            .AddProvider(configuration)
+            .AddExternalClients()
+            .AddScoped<ExternalArticleShadowMirror>()
+            .BuildServiceProvider()
+            .GetRequiredService<ExternalArticleShadowMirror>()
+            .Execute(cancellationToken);
+}
+
+public class ExternalArticleShadowMirror
+{
+    private readonly DatabaseContext _database;
+    private readonly IStorageProvider _storage;
+    private readonly NoobitClient _noobitClient;
+    private readonly MedlanClient _medlanClient;
+    private readonly ILogger _logger;
+
     public ExternalArticleShadowMirror(DatabaseContext database,
         IStorageProvider storage,
         NoobitClient noobitClient,
         MedlanClient medlanClient,
-        ILogger<ExternalArticleShadowMirror> logger)
+        ILogger logger)
     {
         _database = database;
         _storage = storage;
@@ -39,7 +56,7 @@ public class ExternalArticleShadowMirror : TimeTriggeredWorker
         _logger = logger;
     }
 
-    public override async Task Execute(CancellationToken cancellationToken)
+    public async Task Execute(CancellationToken cancellationToken)
     {
         var existing = await _database.From<ExtArticleShadow>()
             .AsNoTracking()

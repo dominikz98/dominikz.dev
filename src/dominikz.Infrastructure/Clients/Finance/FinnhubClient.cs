@@ -6,6 +6,8 @@ using dominikz.Domain.Options;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
 
+// ReSharper disable ClassNeverInstantiated.Global
+
 // ReSharper disable NotAccessedPositionalProperty.Global
 
 namespace dominikz.Infrastructure.Clients.Finance;
@@ -34,14 +36,14 @@ public class FinnhubClient
     public async Task<IReadOnlyCollection<FhRecommendation>> GetRecommendations(string symbol, CancellationToken cancellationToken)
         => (await Get<FhRecommendation[]>($"api/v1/stock/recommendation?symbol={symbol}", cancellationToken))!;
 
-    public async Task<IReadOnlyCollection<FhEarningSuprise>> GetEpsSurprises(string symbol, CancellationToken cancellationToken)
-        => (await Get<FhEarningSuprise[]>($"api/v1/stock/earnings?symbol={symbol}&limit=1", cancellationToken))!;
+    public async Task<IReadOnlyCollection<FhEarningSurprise>> GetEpsSurprises(string symbol, CancellationToken cancellationToken)
+        => (await Get<FhEarningSurprise[]>($"api/v1/stock/earnings?symbol={symbol}&limit=1", cancellationToken))!;
 
     public async Task<FhEarningList> GetEarningsCalendar(DateTime from, DateTime to, CancellationToken cancellationToken)
         => (await Get<FhEarningList>($"api/v1/calendar/earnings?from={from:yyyy-MM-dd}&to={to:yyyy-MM-dd}", cancellationToken))!;
 
     public async Task<FhQuote?> GetQuoteBySymbol(string symbol, CancellationToken cancellationToken)
-        => await Get<FhQuote>($"api/v1/stock/candle?symbol={symbol}&exchange={LxExchange}", cancellationToken);
+        => await Get<FhQuote>($"api/v1/quote?symbol={symbol}&exchange={LxExchange}", cancellationToken);
 
     public async Task<FhCandle> GetCandles(string symbol, DateTime fromUtc, DateTime toUtc, CancellationToken cancellationToken)
     {
@@ -54,31 +56,17 @@ public class FinnhubClient
 
     private async Task<T?> Get<T>(string url, CancellationToken cancellationToken)
     {
-        try
+        var response = await _client.GetAsync($"{url}&token={_options.Value.Finnhub}", cancellationToken);
+        if (response.StatusCode == HttpStatusCode.TooManyRequests && WaitWhenLimitReached && _retryCount == 0)
         {
-            var result = await _client.GetFromJsonAsync<T>(
-                $"{url}&token={_options.Value.Finnhub}",
-                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true },
-                cancellationToken);
-
-            _retryCount = 0;
-            return result;
-        }
-        catch (HttpRequestException ex)
-        {
-            if (ex.StatusCode != HttpStatusCode.TooManyRequests)
-                throw;
-
-            if (WaitWhenLimitReached == false)
-                throw;
-
-            if (_retryCount > 0)
-                throw;
-
             _retryCount++;
             await Task.Delay(TimeSpan.FromSeconds(65), cancellationToken);
             return await Get<T>(url, cancellationToken);
         }
+
+        response.EnsureSuccessStatusCode();
+        _retryCount = 0;
+        return await response.Content.ReadFromJsonAsync<T>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }, cancellationToken);
     }
 }
 
@@ -123,16 +111,17 @@ public class FhCandle
     [JsonPropertyName("v")] public int[] Volume { get; set; } = Array.Empty<int>();
 }
 
-public record FhQuote(
-    decimal C,
-    decimal H,
-    decimal L,
-    decimal O,
-    decimal Pc,
-    int T
-);
+public class FhQuote
+{
+    [JsonPropertyName("c")] public decimal Current { get; set; }
+    [JsonPropertyName("h")] public decimal HighestPriceOfDay { get; set; }
+    [JsonPropertyName("l")] public decimal LowestPriceOfDay { get; set; }
+    [JsonPropertyName("o")] public decimal OpenPriceOfDay { get; set; }
+    [JsonPropertyName("pc")] public decimal PreviousClosePrice { get; set; }
+    [JsonPropertyName("t")] public int Timestamp { get; set; }
+}
 
-public record FhEarningSuprise(
+public record FhEarningSurprise(
     decimal? Actual,
     decimal? Estimate,
     DateTime Period,

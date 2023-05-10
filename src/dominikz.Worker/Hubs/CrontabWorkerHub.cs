@@ -1,24 +1,32 @@
-﻿using System.Reflection;
+﻿using dominikz.Worker.Contracts;
+using dominikz.Worker.Worker;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Worker.Contracts;
 
-namespace Worker.Hubs;
+namespace dominikz.Worker.Hubs;
 
 internal class CrontabWorkerHub : IDisposable
 {
     private readonly ILoggerFactory _loggerFactory;
+    private readonly IConfigurationRoot _configuration;
     private readonly ILogger _hubLogger;
 
-    private readonly Assembly[] _assemblies;
+    private readonly List<Type> _worker;
     private readonly IMemoryCache _cache = new MemoryCache(Options.Create(new MemoryCacheOptions()));
 
-    public CrontabWorkerHub(ILoggerFactory loggerFactory, Assembly[] assemblies)
+    public CrontabWorkerHub(ILoggerFactory loggerFactory, IConfigurationRoot configuration)
     {
         _loggerFactory = loggerFactory;
+        _configuration = configuration;
         _hubLogger = _loggerFactory.CreateLogger(nameof(CrontabWorkerHub));
-        _assemblies = assemblies;
+        _worker = typeof(ExternalArticleShadowCrontabWorker).Assembly
+            .GetTypes()
+            .Where(y => typeof(CrontabWorker).IsAssignableFrom(y))
+            .Where(y => !y.IsAbstract)
+            .Distinct()
+            .ToList();
     }
 
     public void TryRun(IReadOnlyCollection<CrontabWorker> workerList, CancellationToken cancellationToken)
@@ -29,25 +37,18 @@ internal class CrontabWorkerHub : IDisposable
             {
                 _hubLogger.LogDebug("{Name} started", worker.GetType().Name);
                 var workerLogger = _loggerFactory.CreateLogger(worker.GetType().Name);
-                worker.Execute(workerLogger, cancellationToken).ConfigureAwait(false);
+                worker.ExecuteInternal(workerLogger, _configuration, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
         {
-            _hubLogger.LogError(ex, "Exception: {ExMessage} StackTrace: {ExStackTrace}", ex.Message, ex.StackTrace);
+            _hubLogger.LogCritical(ex, "Critical Exception: {ExMessage} StackTrace: {ExStackTrace}", ex.Message, ex.StackTrace);
         }
     }
 
     public IReadOnlyCollection<CrontabWorker> Poll()
     {
-        var crontabWorker = _assemblies.SelectMany(x => x
-                .GetTypes()
-                .Where(y => typeof(CrontabWorker).IsAssignableFrom(y))
-                .Where(y => !y.IsAbstract)
-                .ToArray())
-            .ToList();
-
-        var active = crontabWorker.Select(x => new { Type = x, Instance = (CrontabWorker?)Activator.CreateInstance(x) })
+        var active = _worker.Select(x => new { Type = x, Instance = (CrontabWorker?)Activator.CreateInstance(x) })
             .Where(x => x.Instance != null)
             .Where(x => x.Instance!.Schedules.Any(y => y.IsTime(DateTime.Now)))
             .ToList();
@@ -69,13 +70,7 @@ internal class CrontabWorkerHub : IDisposable
     }
 
     public IReadOnlyCollection<string> List()
-        => _assemblies.SelectMany(x => x
-                .GetTypes()
-                .Where(y => typeof(CrontabWorker).IsAssignableFrom(y))
-                .Where(y => !y.IsAbstract)
-                .ToArray())
-            .Select(x => x.Name)
-            .ToList();
+        => _worker.Select(x => x.Name).ToList();
 
     public void Dispose()
         => _cache.Dispose();

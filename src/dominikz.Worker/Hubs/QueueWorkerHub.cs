@@ -1,21 +1,24 @@
 ﻿using System.Text.Json;
+using dominikz.Worker.Contracts;
+using dominikz.Worker.Utils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Worker.Contracts;
-using Worker.Utils;
 
-namespace Worker.Hubs;
+namespace dominikz.Worker.Hubs;
 
 internal class QueueWorkerHub : IDisposable
 {
     private readonly ILoggerFactory _loggerFactory;
+    private readonly IConfigurationRoot _configuration;
     private readonly ILogger _hubLogger;
 
     private const string StackFileName = "trigger_stack.tmp";
     private static List<QueueWorkerEntry> _queue = new();
 
-    public QueueWorkerHub(ILoggerFactory loggerFactory)
+    public QueueWorkerHub(ILoggerFactory loggerFactory, IConfigurationRoot configuration)
     {
         _loggerFactory = loggerFactory;
+        _configuration = configuration;
         _hubLogger = loggerFactory.CreateLogger(nameof(QueueWorkerHub));
         RestoreQueue();
     }
@@ -28,12 +31,12 @@ internal class QueueWorkerHub : IDisposable
             {
                 _hubLogger.LogDebug("{Name} started", entry.GetType().Name);
                 var workerLogger = _loggerFactory.CreateLogger(entry.GetType().Name);
-                entry.Worker.Execute(workerLogger, entry.Payload, cancellationToken).ConfigureAwait(false);
+                entry.Worker.ExecuteInternal(workerLogger, _configuration, entry.Payload, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
         {
-            _hubLogger.LogError(ex, "Exception: {ExMessage} StackTrace: {ExStackTrace}", ex.Message, ex.StackTrace);
+            _hubLogger.LogCritical(ex, "Critical Exception: {ExMessage} StackTrace: {ExStackTrace}", ex.Message, ex.StackTrace);
         }
     }
 

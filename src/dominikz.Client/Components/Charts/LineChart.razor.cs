@@ -89,18 +89,6 @@ public partial class LineChart
                 await _context!.ArcAsync(x, y, 4, 0, 2 * Math.PI);
                 await _context!.FillAsync();
 
-                // Draw chart value above the dot
-                await _context!.SetFillStyleAsync("#FFFFFF");
-                await _context!.SetTextAlignAsync(TextAlign.Center);
-                await _context!.SetFontAsync("12px Arial");
-                await _context!.FillTextAsync(entry.Value, x, y - 10);
-
-                // Draw timestamp below the dot
-                await _context!.SetFillStyleAsync("#FFFFFF");
-                await _context!.SetTextAlignAsync(TextAlign.Center);
-                await _context!.SetFontAsync("12px Arial");
-                await _context!.FillTextAsync(entry.Timestamp.ToString("HH:mm"), x, y + 20);
-
                 if (decimal.TryParse(entry.Value, out var numericValue))
                 {
                     if (previousValue != 0)
@@ -110,19 +98,6 @@ public partial class LineChart
                             lineColor = "#FF0000"; // Set line color to red if current value is lower
                         else
                             lineColor = "#00FF00"; // Set line color to green if current value is higher or equal
-                        
-                        // Calculate the difference between the current and previous values as a percentage
-                        var differencePercentage = (numericValue - previousValue) / previousValue * 100;
-
-                        // Set the fill style for the percentage text
-                        await _context!.SetFillStyleAsync("#FFFFFF");
-                        await _context!.SetTextAlignAsync(TextAlign.Center);
-                        await _context!.SetFontAsync("12px Arial");
-
-                        // Draw the difference percentage in the middle of the line
-                        var textX = (x + previousX) / 2;
-                        var textY = (y + previousY) / 2;
-                        await _context!.FillTextAsync($"{differencePercentage:F1}%", textX, textY);
                     }
 
                     // Update previousValue for the next iteration
@@ -182,7 +157,7 @@ public partial class LineChart
     }
 
     [JSInvokable]
-    public async Task HandleMouseMove(int x)
+    public async Task HandleMouseMove(double x, double y)
     {
         _isHovering = true;
         _hoverX = x;

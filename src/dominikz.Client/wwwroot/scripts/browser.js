@@ -8,7 +8,8 @@ function attachMouseMoveHandler(containerId, dotNetObjRef) {
         container.addEventListener('mousemove', function (event) {
             var rect = container.getBoundingClientRect();
             var x = event.clientX - rect.left;
-            dotNetObjRef.invokeMethodAsync('HandleMouseMove', x);
+            var y = event.clientY - rect.top;
+            dotNetObjRef.invokeMethodAsync('HandleMouseMove', x, y);
         });
     }
 }

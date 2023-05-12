@@ -17,6 +17,8 @@ public partial class Trades
         new(new DateTime(2023, 5, 2, 8, 0, 0), "Event 1", true),
         new(new DateTime(2023, 5, 2, 9, 0, 0), "150.0", false),
         new(new DateTime(2023, 5, 2, 10, 0, 0), "100.0", false),
+        new(new DateTime(2023, 5, 2, 10, 15, 0), "102.50", false),
+        new(new DateTime(2023, 5, 2, 10, 30, 0), "101.25", false),
         new(new DateTime(2023, 5, 2, 14, 0, 0), "Event 2", true),
         new(new DateTime(2023, 5, 2, 15, 0, 0), "120.0", false),
         new(new DateTime(2023, 5, 2, 18, 0, 0), "Event 3", true),

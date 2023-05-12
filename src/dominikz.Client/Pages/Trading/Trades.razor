@@ -1,4 +1,9 @@
-@* @page "/trades" *@
+@page "/trades"
+@using Blazor.Extensions.Canvas
+
+<div>
+    <BECanvas Width="800" Height="400" @ref="_canvasRef"/>
+</div>
 @* @using dominikz.Client.Utils *@
 @* @using dominikz.Domain.Enums.Trades *@
 @* *@

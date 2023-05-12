@@ -9,17 +9,17 @@ namespace dominikz.Client.Pages.Trading;
 public partial class Trades
 {
     [Inject] protected IJSRuntime? JsRuntime { get; set; }
-    
+
     private BECanvasComponent? _canvasRef;
     private Canvas2DContext? _context;
-    
+
     private const int ChartPadding = 20;
     private const int Width = 800;
-    private const int Height = 400;
+    private const int Height = 300;
     private bool _isHovering;
     private double _hoverX;
     private const string ContainerId = "CanvasWrapper";
-    
+
     private readonly List<(DateTime Timestamp, float Value)> _financialData = new()
     {
         (new DateTime(2023, 5, 1, 10, 0, 0), 100.0f),
@@ -50,7 +50,7 @@ public partial class Trades
     private async Task DrawChart()
     {
         await _context!.ClearRectAsync(0, 0, 800, 400);
-        
+
         var chartAreaWidth = Width - 2 * ChartPadding;
         var chartAreaHeight = Height - 2 * ChartPadding;
 
@@ -70,11 +70,17 @@ public partial class Trades
             await _context!.SetFillStyleAsync("#FFFFFF");
             await _context!.FillAsync();
 
-            // Draw financial value below the dot
+            // Draw financial value above the dot
             await _context!.SetFillStyleAsync("#FFFFFF");
             await _context!.SetTextAlignAsync(TextAlign.Center);
             await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(_financialData[i].Value.ToString(CultureInfo.InvariantCulture), x, y + 16);
+            await _context!.FillTextAsync(_financialData[i].Value.ToString(CultureInfo.InvariantCulture), x, y - 10);
+
+            // Draw timestamp below the dot
+            await _context!.SetFillStyleAsync("#FFFFFF");
+            await _context!.SetTextAlignAsync(TextAlign.Center);
+            await _context!.SetFontAsync("12px Arial");
+            await _context!.FillTextAsync(_financialData[i].Timestamp.ToString("HH:mm"), x, y + 20);
 
             // Draw lines connecting financial data points
             if (i > 0)
@@ -99,11 +105,17 @@ public partial class Trades
             await _context!.SetStrokeStyleAsync("#FFA500");
             await _context!.StrokeAsync();
 
-            // Draw event name below the line
+            // Draw event name above the line
             await _context!.SetFillStyleAsync("#FFFFFF");
             await _context!.SetTextAlignAsync(TextAlign.Center);
             await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(eventData.Name, x, Height - 4);
+            await _context!.FillTextAsync(eventData.Name, x, ChartPadding - 10);
+
+            // Draw timestamp below the line
+            await _context!.SetFillStyleAsync("#FFFFFF");
+            await _context!.SetTextAlignAsync(TextAlign.Center);
+            await _context!.SetFontAsync("12px Arial");
+            await _context!.FillTextAsync(eventData.Timestamp.ToString("HH:mm"), x, Height - ChartPadding + 20);
         }
 
         // Draw the vertical stroke on hover

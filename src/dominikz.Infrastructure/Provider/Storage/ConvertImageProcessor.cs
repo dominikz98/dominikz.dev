@@ -29,14 +29,12 @@ internal class ConvertImageProcessor : IStorageProcessor
             ms.Position = 0;
             return ms;
         }
-        catch (MagickImageErrorException e)
+        catch (MagickImageErrorException)
         {
-            Console.WriteLine(e);
             return data;
         }
-        catch (MagickCorruptImageErrorException e)
+        catch (MagickCorruptImageErrorException)
         {
-            Console.WriteLine(e);
             return data;
         }
     }

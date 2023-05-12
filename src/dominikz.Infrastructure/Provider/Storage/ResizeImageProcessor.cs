@@ -37,14 +37,12 @@ public class ResizeImageProcessor : IStorageProcessor
         
             return ms;
         }
-        catch (MagickImageErrorException e)
+        catch (MagickImageErrorException)
         {
-            Console.WriteLine(e);
             return data;
         }
-        catch (MagickCorruptImageErrorException e)
+        catch (MagickCorruptImageErrorException)
         {
-            Console.WriteLine(e);
             return data;
         }
     }

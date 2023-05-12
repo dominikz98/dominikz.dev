@@ -8,4 +8,12 @@ public class EarningCall
     public string Symbol { get; set; } = string.Empty;
     public EarningCallTime Time { get; set; }
     public DateTime Timestamp { get; set; }
+    public decimal EpsActual { get; set; }
+    public decimal EpsEstimate { get; set; }
+    public long RevenueActual { get; set; }
+    public long RevenueEstimate { get; set; }
+    public decimal Q1 { get; set; }
+    public decimal Q2 { get; set; }
+    public decimal Q3 { get; set; }
+    public decimal Q4 { get; set; }
 }

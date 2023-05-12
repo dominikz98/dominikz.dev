@@ -1,5 +1,4 @@
 ﻿using dominikz.Worker.Hubs;
-using dominikz.Worker.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

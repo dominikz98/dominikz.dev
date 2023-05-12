@@ -16,19 +16,24 @@ public class CurrentStockPriceCrontabWorker : CrontabWorker
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
         // Every 15 minutes, between 07:00 AM and 11:59 PM, Monday through Friday
-        new CronSchedule("*/15 7-23 * * 1-5")
+        new("*/15 7-23 * * 1-5")
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
-        => await new ServiceCollection()
+    {
+        using var scope = new ServiceCollection()
             .AddScoped<ILogger>(_ => logger)
             .AddWorkerOptions(configuration)
             .AddProvider(configuration)
             .AddExternalClients()
             .AddScoped<CurrentStockPriceCollector>()
             .BuildServiceProvider()
+            .CreateScope();
+
+        await scope.ServiceProvider
             .GetRequiredService<CurrentStockPriceCollector>()
             .Execute(cancellationToken);
+    }
 }
 
 public class CurrentStockPriceCollector
@@ -49,8 +54,8 @@ public class CurrentStockPriceCollector
         _finnhub.WaitWhenLimitReached = true;
 
         var symbols = await _database.From<EarningCall>()
-            .Where(x => x.Time == EarningCallTime.BMO && x.Timestamp.Date == DateTime.Now.Date
-                        || x.Time == EarningCallTime.AMC && x.Timestamp.Date >= DateTime.Now.AddDays(-1).Date)
+            .Where(x => x.Timestamp.Date == DateTime.Now.Date && x.Timestamp >= DateTime.Now.AddHours(-1) // today, but finance release already finished or 1 hour before
+                        || x.Time == EarningCallTime.AMC && x.Timestamp.Date >= DateTime.Now.AddDays(-1).Date) // yesterday, but after market closing
             .Select(x => x.Symbol)
             .ToListAsync(cancellationToken);
 
@@ -71,6 +76,6 @@ public class CurrentStockPriceCollector
         }
 
         await _database.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("{Count} stock prices saved", counter);
+        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: {Count} stock prices saved", DateTime.Now, counter);
     }
 }

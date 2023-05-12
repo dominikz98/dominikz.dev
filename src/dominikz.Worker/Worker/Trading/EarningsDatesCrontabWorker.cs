@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace dominikz.Worker.Worker;
+namespace dominikz.Worker.Worker.Trading;
 
 public class EarningsDatesCrontabWorker : CrontabWorker
 {
@@ -20,15 +20,20 @@ public class EarningsDatesCrontabWorker : CrontabWorker
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
-        => await new ServiceCollection()
+    {
+        using var scope = new ServiceCollection()
             .AddScoped<ILogger>(_ => logger)
             .AddWorkerOptions(configuration)
             .AddProvider(configuration)
             .AddExternalClients()
             .AddScoped<EarningsDatesCollector>()
             .BuildServiceProvider()
+            .CreateScope();
+
+        await scope.ServiceProvider
             .GetRequiredService<EarningsDatesCollector>()
             .Execute(cancellationToken);
+    }
 }
 
 public class EarningsDatesCollector
@@ -49,8 +54,8 @@ public class EarningsDatesCollector
     public async Task Execute(CancellationToken cancellationToken)
     {
         _finnhub.WaitWhenLimitReached = true;
-        
-        // get calls from finnhub and earnings whispers
+
+        // get earnings whispers
         var whispersCalls = (await _whispers.GetEarningsCallsOfToday())
             .Where(x => x.Release != null)
             .ToList();
@@ -58,35 +63,56 @@ public class EarningsDatesCollector
         if (whispersCalls.Count == 0)
             return;
 
+        // get earnings calls calender from finnhub
+        var finnhubCalls = (await _finnhub.GetEarningsCalendar(DateTime.Now, DateTime.Now, cancellationToken)).EarningsCalendar.ToList();
+        if (finnhubCalls.Count == 0)
+            return;
+
+        // filter calls
+        var finnhubSymbols = finnhubCalls
+            .Select(x => x.Symbol)
+            .Distinct()
+            .ToList();
+
+        var includedInBoth = whispersCalls.Where(x => finnhubSymbols.Contains(x.Symbol)).ToList();
+
         var counter = 0;
-        foreach (var call in whispersCalls)
+        foreach (var call in includedInBoth)
         {
-            // check for fundamental stock data
-            var quote = await _finnhub.GetQuoteBySymbol(call.Symbol, cancellationToken);
-            if ((quote?.Current ?? 0) == 0)
-                continue;
-
-            counter++;
+            // get release time
             var release = DateOnly.FromDateTime(DateTime.Now).ToDateTime(call.Release!.Value, DateTimeKind.Utc).ToLocalTime();
-
             EarningCallTime time;
             if (release < DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(15, 30, 0)))
                 time = EarningCallTime.BMO;
-            else if (release > DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(22, 0, 0)))
+            else if (release >= DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(22, 0, 0)))
                 time = EarningCallTime.AMC;
             else
                 // skip during market is open
                 continue;
 
+            // get last 4 finance quarters
+            var quarters = (await _finnhub.GetEpsSurprises(call.Symbol, cancellationToken))
+                .OrderByDescending(x => x.Year)
+                .ThenByDescending(x => x.Quarter)
+                .ToList();
+
+            if (quarters.Count == 0)
+                continue;
+
+            counter++;
             await _database.AddAsync(new EarningCall()
             {
                 Symbol = call.Symbol,
                 Timestamp = release,
-                Time = time
+                Time = time,
+                Q1 = quarters.Count > 0 ? quarters[0].Surprise ?? 0 : 0,
+                Q2 = quarters.Count > 1 ? quarters[1].Surprise ?? 0 : 0,
+                Q3 = quarters.Count > 2 ? quarters[2].Surprise ?? 0 : 0,
+                Q4 = quarters.Count > 3 ? quarters[3].Surprise ?? 0 : 0,
             }, cancellationToken);
         }
 
         await _database.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("{Count} calls created", counter);
+        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: {Count} calls created", DateTime.Now, counter);
     }
 }

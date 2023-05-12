@@ -19,20 +19,25 @@ public class ExternalArticleShadowCrontabWorker : CrontabWorker
 {
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
-        // At 06:00
+        // At 05:00
         new("0 5 * * *")
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
-        => await new ServiceCollection()
+    {
+        using var scope = new ServiceCollection()
             .AddScoped<ILogger>(_ => logger)
             .AddWorkerOptions(configuration)
             .AddProvider(configuration)
             .AddExternalClients()
             .AddScoped<ExternalArticleShadowMirror>()
             .BuildServiceProvider()
+            .CreateScope();
+
+        await scope.ServiceProvider
             .GetRequiredService<ExternalArticleShadowMirror>()
             .Execute(cancellationToken);
+    }
 }
 
 public class ExternalArticleShadowMirror

@@ -57,7 +57,9 @@ public class FinnhubClient
     private async Task<T?> Get<T>(string url, CancellationToken cancellationToken)
     {
         var response = await _client.GetAsync($"{url}&token={_options.Value.Finnhub}", cancellationToken);
-        if (response.StatusCode == HttpStatusCode.TooManyRequests && WaitWhenLimitReached && _retryCount == 0)
+        if ((response.StatusCode == HttpStatusCode.TooManyRequests || response.StatusCode.ToString().StartsWith("5"))
+            && WaitWhenLimitReached
+            && _retryCount == 0)
         {
             _retryCount++;
             await Task.Delay(TimeSpan.FromSeconds(65), cancellationToken);

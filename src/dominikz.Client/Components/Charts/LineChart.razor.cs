@@ -161,7 +161,23 @@ public partial class LineChart
     {
         _isHovering = true;
         _hoverX = x;
+
+        // Find the closest entry to the hovered position
+        var closestEntry = FindClosestEntry(x);
+
+        // Clear canvas and redraw the chart
+        await _context!.ClearRectAsync(0, 0, 800, 400);
         await DrawChart();
+
+        if (closestEntry != null && !closestEntry.IsEvent)
+        {
+            // Draw value and timestamp above the red hover line
+            await _context!.SetFillStyleAsync("#FFFFFF");
+            await _context!.SetTextAlignAsync(TextAlign.Center);
+            await _context!.SetFontAsync("12px Arial");
+            await _context!.FillTextAsync(closestEntry.Value, (float)x, ChartPadding - 10);
+            await _context!.FillTextAsync(closestEntry.Timestamp.ToString("HH:mm"), (float)x, Height - ChartPadding + 20);
+        }
     }
 
     [JSInvokable]
@@ -169,6 +185,31 @@ public partial class LineChart
     {
         _isHovering = false;
         await DrawChart();
+    }
+    
+    
+    private LineChartValue? FindClosestEntry(double x)
+    {
+        var chartAreaWidth = Width - 2 * ChartPadding;
+        var orderedValues = Values.OrderBy(v => v.Timestamp).ToList();
+
+        // Find the entry with the closest X position to the hovered position
+        var closestEntry = orderedValues.FirstOrDefault();
+        var closestDistance = Math.Abs(MapTimestampToX(closestEntry.Timestamp, chartAreaWidth) + ChartPadding - x);
+
+        foreach (var entry in orderedValues)
+        {
+            var entryX = MapTimestampToX(entry.Timestamp, chartAreaWidth) + ChartPadding;
+            var distance = Math.Abs(entryX - x);
+
+            if (distance < closestDistance)
+            {
+                closestEntry = entry;
+                closestDistance = distance;
+            }
+        }
+
+        return closestEntry;
     }
 }
 

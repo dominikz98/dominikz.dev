@@ -155,7 +155,7 @@
 
                 <BarChart Width="500"
                           Height="200"
-                          Entries="@_vm.PriceSnapshots.OrderBy(x => x.Date).Select(x => new ChartItem() { Name = x.Date.ToString("MM.yyyy"), Value = x.Price }).ToList()"
+                          Values="@_vm.PriceSnapshots.OrderBy(x => x.Date).Select(x => new ChartItem(x.Date.ToString("MM.yyyy"), x.Price)).ToList()"
                           MaxValue="@(_vm.PriceSnapshots.Max(x => x.Price) + 1)"/>
             </div>   
         }

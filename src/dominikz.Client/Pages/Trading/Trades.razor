@@ -1,9 +1,11 @@
 @page "/trades"
-@using Blazor.Extensions.Canvas
 
-<div id="@ContainerId" style="position: relative;">
-    <BECanvas Width="@Width" Height="@Height" @ref="_canvasRef" />
-</div>
+@using dominikz.Client.Components.Charts
+
+<BarChart Values="_quartals" />
+
+<LineChart Values="_data" />
+
 @* @using dominikz.Client.Utils *@
 @* @using dominikz.Domain.Enums.Trades *@
 @* *@

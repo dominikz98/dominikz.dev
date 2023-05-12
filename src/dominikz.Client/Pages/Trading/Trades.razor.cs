@@ -1,164 +1,27 @@
-using System.Globalization;
-using Blazor.Extensions;
-using Blazor.Extensions.Canvas.Canvas2D;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using dominikz.Client.Components.Charts;
 
 namespace dominikz.Client.Pages.Trading;
 
 public partial class Trades
 {
-    [Inject] protected IJSRuntime? JsRuntime { get; set; }
-
-    private BECanvasComponent? _canvasRef;
-    private Canvas2DContext? _context;
-
-    private const int ChartPadding = 20;
-    private const int Width = 800;
-    private const int Height = 300;
-    private bool _isHovering;
-    private double _hoverX;
-    private const string ContainerId = "CanvasWrapper";
-
-    private readonly List<(DateTime Timestamp, float Value)> _financialData = new()
+    private readonly List<ChartItem> _quartals = new()
     {
-        (new DateTime(2023, 5, 1, 10, 0, 0), 100.0f),
-        (new DateTime(2023, 5, 2, 9, 0, 0), 150.0f),
-        (new DateTime(2023, 5, 3, 11, 0, 0), 120.0f),
+        new("Q1", 300.12m),
+        new("Q2", 312.12m),
+        new("Q3", 242.1m),
+        new("Q4", 333.4m)
+    };
+
+    private readonly List<LineChartValue> _data = new()
+    {
+        new(new DateTime(2023, 5, 2, 8, 0, 0), "Event 1", true),
+        new(new DateTime(2023, 5, 2, 9, 0, 0), "150.0", false),
+        new(new DateTime(2023, 5, 2, 10, 0, 0), "100.0", false),
+        new(new DateTime(2023, 5, 2, 14, 0, 0), "Event 2", true),
+        new(new DateTime(2023, 5, 2, 15, 0, 0), "120.0", false),
+        new(new DateTime(2023, 5, 2, 18, 0, 0), "Event 3", true),
         // Add more financial data points here
     };
-
-    private readonly List<(DateTime Timestamp, string Name)> _events = new()
-    {
-        (new DateTime(2023, 5, 1, 12, 0, 0), "Event 1"),
-        (new DateTime(2023, 5, 2, 13, 0, 0), "Event 2"),
-        (new DateTime(2023, 5, 3, 14, 0, 0), "Event 3"),
-        // Add more events here
-    };
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _context = await _canvasRef.CreateCanvas2DAsync();
-            await DrawChart();
-            await JsRuntime!.InvokeVoidAsync("attachMouseMoveHandler", ContainerId, DotNetObjectReference.Create(this));
-            await JsRuntime!.InvokeVoidAsync("attachMouseOutHandler", ContainerId, DotNetObjectReference.Create(this));
-        }
-    }
-
-    private async Task DrawChart()
-    {
-        await _context!.ClearRectAsync(0, 0, 800, 400);
-
-        var chartAreaWidth = Width - 2 * ChartPadding;
-        var chartAreaHeight = Height - 2 * ChartPadding;
-
-        // Calculate the minimum and maximum values
-        var minValue = _financialData.Min(d => d.Value);
-        var maxValue = _financialData.Max(d => d.Value);
-
-        // Draw financial data dots and lines
-        for (var i = 0; i < _financialData.Count; i++)
-        {
-            var x = MapTimestampToX(_financialData[i].Timestamp, chartAreaWidth) + ChartPadding;
-            var y = MapValueToY(_financialData[i].Value, chartAreaHeight, minValue, maxValue) + ChartPadding;
-
-            // Draw financial data dots
-            await _context!.BeginPathAsync();
-            await _context!.ArcAsync(x, y, 4, 0, 2 * Math.PI);
-            await _context!.SetFillStyleAsync("#FFFFFF");
-            await _context!.FillAsync();
-
-            // Draw financial value above the dot
-            await _context!.SetFillStyleAsync("#FFFFFF");
-            await _context!.SetTextAlignAsync(TextAlign.Center);
-            await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(_financialData[i].Value.ToString(CultureInfo.InvariantCulture), x, y - 10);
-
-            // Draw timestamp below the dot
-            await _context!.SetFillStyleAsync("#FFFFFF");
-            await _context!.SetTextAlignAsync(TextAlign.Center);
-            await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(_financialData[i].Timestamp.ToString("HH:mm"), x, y + 20);
-
-            // Draw lines connecting financial data points
-            if (i > 0)
-            {
-                var prevX = MapTimestampToX(_financialData[i - 1].Timestamp, chartAreaWidth) + ChartPadding;
-                var prevY = MapValueToY(_financialData[i - 1].Value, chartAreaHeight, minValue, maxValue) + ChartPadding;
-                await _context!.BeginPathAsync();
-                await _context!.MoveToAsync(prevX, prevY);
-                await _context!.LineToAsync(x, y);
-                await _context!.SetStrokeStyleAsync("#FFFFFF");
-                await _context!.StrokeAsync();
-            }
-        }
-
-        // Draw event lines and names
-        foreach (var eventData in _events)
-        {
-            var x = MapTimestampToX(eventData.Timestamp, chartAreaWidth) + ChartPadding;
-            await _context!.BeginPathAsync();
-            await _context!.MoveToAsync(x, ChartPadding);
-            await _context!.LineToAsync(x, Height - ChartPadding);
-            await _context!.SetStrokeStyleAsync("#FFA500");
-            await _context!.StrokeAsync();
-
-            // Draw event name above the line
-            await _context!.SetFillStyleAsync("#FFFFFF");
-            await _context!.SetTextAlignAsync(TextAlign.Center);
-            await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(eventData.Name, x, ChartPadding - 10);
-
-            // Draw timestamp below the line
-            await _context!.SetFillStyleAsync("#FFFFFF");
-            await _context!.SetTextAlignAsync(TextAlign.Center);
-            await _context!.SetFontAsync("12px Arial");
-            await _context!.FillTextAsync(eventData.Timestamp.ToString("HH:mm"), x, Height - ChartPadding + 20);
-        }
-
-        // Draw the vertical stroke on hover
-        if (_isHovering)
-        {
-            await _context!.BeginPathAsync();
-            await _context!.MoveToAsync(_hoverX, ChartPadding);
-            await _context!.LineToAsync(_hoverX, Height - ChartPadding);
-            await _context!.SetStrokeStyleAsync("#FF0000");
-            await _context!.StrokeAsync();
-        }
-    }
-
-    private float MapTimestampToX(DateTime timestamp, float chartAreaWidth)
-    {
-        // Calculate the X position based on the timestamp and the available chart area width
-        var timeSpan = timestamp - _financialData.Min(d => d.Timestamp);
-        var totalMinutes = timeSpan.TotalMinutes;
-        var minutesRange = _financialData.Max(d => (d.Timestamp - _financialData.Min(t => t.Timestamp)).TotalMinutes);
-        return (float)(totalMinutes / minutesRange * chartAreaWidth);
-    }
-
-    private float MapValueToY(float value, float chartAreaHeight, float minValue, float maxValue)
-    {
-        // Calculate the Y position based on the value and the available chart area height
-        var valueRange = maxValue - minValue;
-        return chartAreaHeight - ((value - minValue) / valueRange * chartAreaHeight);
-    }
-
-    [JSInvokable]
-    public async Task HandleMouseMove(int x)
-    {
-        _isHovering = true;
-        _hoverX = x;
-        await DrawChart();
-    }
-
-    [JSInvokable]
-    public async Task HandleMouseOut()
-    {
-        _isHovering = false;
-        await DrawChart();
-    }
 }
 
 // using ChartJs.Blazor.ChartJS.LineChart;

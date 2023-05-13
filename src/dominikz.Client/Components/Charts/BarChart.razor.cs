@@ -10,7 +10,7 @@ public partial class BarChart
     private Canvas2DContext? _context;
     private BECanvasComponent? _canvasRef;
 
-    [Parameter] public List<ChartItem> Values { get; set; } = new();
+    [Parameter] public List<BarChartItem> Values { get; set; } = new();
     [Parameter] public int Height { get; set; } = 300;
     [Parameter] public int Width { get; set; } = 250;
     [Parameter] public int Minimum { get; set; } = 20;
@@ -73,4 +73,4 @@ public partial class BarChart
     }
 }
 
-public record ChartItem(string Text, decimal Value);
+public record BarChartItem(string Text, decimal Value);

@@ -62,11 +62,11 @@ public partial class LineChart
             if (entry.IsEvent)
             {
                 // Handle event markers
-                await _context!.SetFillStyleAsync("#FFA500");
+                await _context!.SetFillStyleAsync(entry.Color);
                 await _context!.BeginPathAsync();
                 await _context!.MoveToAsync(x, ChartPadding);
                 await _context!.LineToAsync(x, Height - ChartPadding);
-                await _context!.SetStrokeStyleAsync("#FFA500");
+                await _context!.SetStrokeStyleAsync(entry.Color);
                 await _context!.StrokeAsync();
 
                 // Draw event name above the line
@@ -84,7 +84,7 @@ public partial class LineChart
             else
             {
                 // Handle numeric data points
-                await _context!.SetFillStyleAsync("#FFFFFF");
+                await _context!.SetFillStyleAsync(entry.Color);
                 await _context!.BeginPathAsync();
                 await _context!.ArcAsync(x, y, 4, 0, 2 * Math.PI);
                 await _context!.FillAsync();
@@ -213,4 +213,4 @@ public partial class LineChart
     }
 }
 
-public record LineChartValue(DateTime Timestamp, string Value, bool IsEvent);
+public record LineChartValue(DateTime Timestamp, string Value, string Color, bool IsEvent);

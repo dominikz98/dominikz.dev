@@ -105,3 +105,16 @@
 .tooltip:hover .tooltip-text {
     visibility: visible;
 }
+
+
+@media (max-width: 640px) {
+    .hide-on-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 641px) {
+    .hide-on-desktop {
+        display: none;
+    }
+}

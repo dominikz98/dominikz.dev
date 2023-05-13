@@ -1,0 +1,38 @@
+﻿.ec-card {
+    background-color: var(--theme-surface);
+    border-radius: 5px;
+}
+
+.ec-card-symbol {
+    opacity: 0.5;
+}
+
+.ec-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-gap: 10px;
+}
+
+.ec-card-data-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+}
+
+.ec-card-data-name {
+    white-space: nowrap;
+    text-align: left;
+}
+
+.ec-card-data-value {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.ec-card-data-negative {
+    color: red;
+}
+
+.ec-card-data-positive {
+    color: green;
+}

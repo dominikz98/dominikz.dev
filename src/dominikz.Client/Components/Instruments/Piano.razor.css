@@ -85,12 +85,6 @@
     left: 186px;
 }
 
-@media (max-width: 640px) {
-    .hide-on-mobile {
-        display: none;
-    }
-}
-
 .auto-hide {
     display: none;
 }

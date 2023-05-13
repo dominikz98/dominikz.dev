@@ -1,10 +1,47 @@
 @page "/trades"
 
-@using dominikz.Client.Components.Charts
+<div class="gap" style="display: flex; flex-direction: row">
 
-<BarChart Values="_quartals" />
+    @* List  *@
+    <div class="trade-list">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Symbol</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Release</th>
+                </tr>
+                </thead>
+                <tbody>
 
-<LineChart Values="_data" />
+                @foreach (var call in _data)
+                {
+                    <tr @onclick="@(() => OnCallClicked(call))">
+                        <td>@call.Id</td>
+                        <td>@call.Symbol</td>
+                        <td>@call.Company</td>
+                        <td>
+                            @if (call.IsReleased)
+                            {
+                                <span>✅</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* Detail View *@
+    <div class="trade-call">
+        <EarningCall/>
+    </div>
+
+</div>
+
 
 @* @using dominikz.Client.Utils *@
 @* @using dominikz.Domain.Enums.Trades *@

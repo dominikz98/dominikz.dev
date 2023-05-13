@@ -1,29 +1,37 @@
-using dominikz.Client.Components.Charts;
+using dominikz.Client.Api;
+using dominikz.Domain.ViewModels.Trading;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace dominikz.Client.Pages.Trading;
 
 public partial class Trades
 {
-    private readonly List<ChartItem> _quartals = new()
-    {
-        new("Q1", 300.12m),
-        new("Q2", 312.12m),
-        new("Q3", 242.1m),
-        new("Q4", 333.4m)
-    };
+    [Inject] protected TradesEndpoints? Endpoints { get; set; }
+    [Inject] protected NavigationManager? NavManager { get; set; }
+    [Inject] protected IJSRuntime? JsRuntime { get; set; }
 
-    private readonly List<LineChartValue> _data = new()
+    private IReadOnlyCollection<EarningCallListVm> _data = Array.Empty<EarningCallListVm>();
+    private int _selectedId;
+    private bool _isMobileDevice;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        new(new DateTime(2023, 5, 2, 8, 0, 0), "Event 1", true),
-        new(new DateTime(2023, 5, 2, 9, 0, 0), "150.0", false),
-        new(new DateTime(2023, 5, 2, 10, 0, 0), "100.0", false),
-        new(new DateTime(2023, 5, 2, 10, 15, 0), "102.50", false),
-        new(new DateTime(2023, 5, 2, 10, 30, 0), "101.25", false),
-        new(new DateTime(2023, 5, 2, 14, 0, 0), "Event 2", true),
-        new(new DateTime(2023, 5, 2, 15, 0, 0), "120.0", false),
-        new(new DateTime(2023, 5, 2, 18, 0, 0), "Event 3", true),
-        // Add more financial data points here
-    };
+        _isMobileDevice = await JsRuntime!.InvokeAsync<bool>("isMobileDevice");
+        Console.WriteLine(_isMobileDevice);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _data = await Endpoints!.SearchCalls();
+    }
+
+    private void OnCallClicked(EarningCallListVm call)
+    {
+        _selectedId = call.Id;
+        if (_isMobileDevice)
+            NavManager!.NavigateTo($"/trades/earningcall/{call.Id}");
+    }
 }
 
 // using ChartJs.Blazor.ChartJS.LineChart;

@@ -16,8 +16,11 @@ public static class Colorizer
         return string.Empty;
     }
     
-    public static string CreateColorDarkByText(string text)
+    public static string CreateColorDarkByText(string? text)
     {
+        if (string.IsNullOrWhiteSpace(text))
+            return "#FFFFFF";
+            
         using var sha256 = SHA256.Create();
         var inputBytes = Encoding.UTF8.GetBytes(text);
         var hashBytes = sha256.ComputeHash(inputBytes);

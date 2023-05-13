@@ -6,6 +6,9 @@ public class EarningCall
 {
     public int Id { get; set; }
     public string Symbol { get; set; } = string.Empty;
+    public string Company { get; set; } = string.Empty;
+    public string ISIN { get; set; } = string.Empty;
+    public bool LogoAvailable { get; set; }
     public EarningCallTime Time { get; set; }
     public DateTime Timestamp { get; set; }
     public decimal EpsActual { get; set; }

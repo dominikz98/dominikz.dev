@@ -3,7 +3,11 @@ using dominikz.Domain.Models;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Provider.Database;
+using dominikz.Infrastructure.Provider.Storage;
+using dominikz.Infrastructure.Provider.Storage.Requests;
+using dominikz.Infrastructure.Utils;
 using dominikz.Worker.Contracts;
+using ImageMagick;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,13 +45,22 @@ public class EarningsDatesCollector
     private readonly ILogger _logger;
     private readonly FinnhubClient _finnhub;
     private readonly EarningsWhispersClient _whispers;
+    private readonly OnVistaClient _onVista;
+    private readonly StorageProvider _storage;
     private readonly DatabaseContext _database;
 
-    public EarningsDatesCollector(ILogger logger, FinnhubClient finnhub, EarningsWhispersClient whispers, DatabaseContext database)
+    public EarningsDatesCollector(ILogger logger,
+        FinnhubClient finnhub,
+        EarningsWhispersClient whispers,
+        OnVistaClient onVista,
+        StorageProvider storage,
+        DatabaseContext database)
     {
         _logger = logger;
         _finnhub = finnhub;
         _whispers = whispers;
+        _onVista = onVista;
+        _storage = storage;
         _database = database;
     }
 
@@ -79,14 +92,8 @@ public class EarningsDatesCollector
         var counter = 0;
         foreach (var call in includedInBoth)
         {
-            // get release time
-            var release = DateOnly.FromDateTime(DateTime.Now).ToDateTime(call.Release!.Value, DateTimeKind.Utc).ToLocalTime();
-            EarningCallTime time;
-            if (release < DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(15, 30, 0)))
-                time = EarningCallTime.BMO;
-            else if (release >= DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(22, 0, 0)))
-                time = EarningCallTime.AMC;
-            else
+            var (time, release) = GetTimestamps(call);
+            if (time == EarningCallTime.DMO)
                 // skip during market is open
                 continue;
 
@@ -99,10 +106,18 @@ public class EarningsDatesCollector
             if (quarters.Count == 0)
                 continue;
 
+            // collect general information
+            var company = await _finnhub.GetCompany(call.Symbol, cancellationToken);
+            var ovStock = await _onVista.SearchStockBySymbol(call.Symbol, cancellationToken);
+            var logoAvailable = await TryUploadLogo(call.Symbol, company, cancellationToken);
+            
             counter++;
             await _database.AddAsync(new EarningCall()
             {
                 Symbol = call.Symbol,
+                Company = company?.Name ?? ovStock?.Name ?? string.Empty,
+                ISIN = ovStock?.ISIN ?? string.Empty,
+                LogoAvailable = logoAvailable, 
                 Timestamp = release,
                 Time = time,
                 Q1 = quarters.Count > 0 ? quarters[0].Surprise ?? 0 : 0,
@@ -114,5 +129,34 @@ public class EarningsDatesCollector
 
         await _database.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("[{Timestamp:HH:mm:ss}]: {Count} calls created", DateTime.Now, counter);
+    }
+
+    private (EarningCallTime Time, DateTime Release) GetTimestamps(EwCall call)
+    {
+        var release = DateOnly.FromDateTime(DateTime.Now).ToDateTime(call.Release!.Value, DateTimeKind.Utc).ToLocalTime();
+
+        EarningCallTime time;
+        if (release < DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(15, 30, 0)))
+            time = EarningCallTime.BMO;
+        else if (release >= DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(22, 0, 0)))
+            time = EarningCallTime.AMC;
+        else
+            time = EarningCallTime.DMO;
+
+        return (time, release);
+    }
+
+    private async Task<bool> TryUploadLogo(string symbol, FhCompany? company, CancellationToken cancellationToken)
+    {
+        if (company == null)
+            return false;
+
+        var logo = await LogoRetriever.GetLogoAsStream(company.Logo, cancellationToken);
+        logo ??= await LogoRetriever.GetFaviconAsStream(company.Weburl, cancellationToken);
+        if (logo == null)
+            return false;
+
+        await _storage.Upload(new UploadLogoRequest(symbol, logo, MagickFormat.Jpg), cancellationToken);
+        return true;
     }
 }

@@ -1,24 +1,19 @@
 
-.trade-card {
-    width: 225px;
-    height: 100%;
-    opacity: 1.0;
+.trade-list{
+    width: 40%
 }
 
-.trade-card:hover {
-    opacity: 0.8;
-    transition: opacity 0.1s ease-in-out;
+.trade-call{
+    width: 60%
 }
 
-.trades-container {
-    display: flex;
-    flex-direction: row;
-}
+@media (max-width: 640px) {
 
-.trades-container-item-small {
-    width: 20%;
-}
+    .trade-list {
+        width: 100%;
+    }
 
-.trades-container-item-tall {
-    width: 60%;
+    .trade-call {
+        display: none;
+    }
 }

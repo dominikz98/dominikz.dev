@@ -8,43 +8,62 @@ namespace dominikz.Client.Pages.Trading;
 
 public partial class EarningCall
 {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public EarningCallVm? Data { get; set; }
     [Inject] protected TradesEndpoints? Endpoints { get; set; }
 
     private CultureInfo _culture = CultureInfo.GetCultureInfo("de-DE");
-    private EarningCallVm? _data;
+    private List<LineChartValue> _lineChartData = new();
+    private List<BarChartValue> _barChartData = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _data = await Endpoints!.GetCallById(Id);
+        if (Id == null)
+            return;
+
+        Data = await Endpoints!.GetCallById(Id.Value);
+        if (Data == null)
+            return;
+
+        _lineChartData = ConvertToLineChartEntry();
+        _barChartData = ConvertToBarChartEntry();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Data == null)
+            return;
+
+        _lineChartData = ConvertToLineChartEntry();
+        _barChartData = ConvertToBarChartEntry();
     }
 
     private List<LineChartValue> ConvertToLineChartEntry()
-        => (_data?.MarketEvents
+        => (Data?.MarketEvents
                 .Select(x => new LineChartValue(x.Timestamp, x.Name, "#FFA500", true))
                 .ToList() ?? new List<LineChartValue>())
             .Union(
-                _data?.BotEvents
+                Data?.BotEvents
                     .Select(x => new LineChartValue(x.Timestamp, x.Name, "#5f7d8fFF", true))
                     .ToList() ?? new List<LineChartValue>()
             )
             .Union(
-                _data?.BotEvents
+                Data?.BotEvents
                     .Select(x => new LineChartValue(x.Timestamp, $"{x.Value}", "#FFFFFF", false))
                     .ToList() ?? new List<LineChartValue>()
             )
             .Union(
-                _data?.PriceSnapshots
+                Data?.PriceSnapshots
                     .Select(x => new LineChartValue(x.Timestamp, $"{x.Value}", "#FFFFFF", false))
                     .ToList() ?? new List<LineChartValue>()
             )
             .OrderBy(x => x.Timestamp)
             .ToList();
 
-    private List<BarChartItem> ConvertToBarChartEntry()
-        => _data?.Quarters
-            .Select(x => new BarChartItem(x.Name, x.Value))
-            .ToList() ?? new List<BarChartItem>();
+    private List<BarChartValue> ConvertToBarChartEntry()
+        => Data?.Quarters
+            .Select(x => new BarChartValue(x.Name, x.Value))
+            .ToList() ?? new List<BarChartValue>();
 
     private string? GetColorByValue(decimal? value)
         => GetColorByValue(value, 0);
@@ -62,14 +81,14 @@ public partial class EarningCall
 
     private TradeSummaryView CalculateTradeSummaryView()
     {
-        if (_data?.Trade == null
-            || _data.Trade.BuyOut == null)
+        if (Data?.Trade == null
+            || Data.Trade.BuyOut == null)
             return new TradeSummaryView(0, 0, 0, 0, 0);
 
-        var revenue = (_data.Trade.BuyOut.Value - _data.Trade.BuyIn) * _data.Trade.StockCount;
-        var brutto = revenue - (_data.Trade.Fee ?? 0);
-        var netto = brutto - (_data.Trade.Tax ?? 0);
-        return new TradeSummaryView(revenue, brutto, netto, _data.Trade.Tax ?? 0, _data.Trade.Fee ?? 0);
+        var revenue = (Data.Trade.BuyOut.Value - Data.Trade.BuyIn) * Data.Trade.StockCount;
+        var brutto = revenue - (Data.Trade.Fee ?? 0);
+        var netto = brutto - (Data.Trade.Tax ?? 0);
+        return new TradeSummaryView(revenue, brutto, netto, Data.Trade.Tax ?? 0, Data.Trade.Fee ?? 0);
     }
 
     private record TradeSummaryView(decimal Revenue, decimal Brutto, decimal Netto, decimal Tax, decimal Fee);

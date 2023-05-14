@@ -1,4 +1,5 @@
-﻿using Blazor.Extensions;
+﻿using System.Text.Json;
+using Blazor.Extensions;
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -22,17 +23,23 @@ public partial class LineChart
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            _context = await _canvasRef.CreateCanvas2DAsync();
-            await DrawChart();
-            await JsRuntime!.InvokeVoidAsync("attachMouseMoveHandler", ContainerId, DotNetObjectReference.Create(this));
-            await JsRuntime!.InvokeVoidAsync("attachMouseOutHandler", ContainerId, DotNetObjectReference.Create(this));
-        }
+        if (firstRender == false)
+            return;
+
+        _context = await _canvasRef.CreateCanvas2DAsync();
+        await DrawChart();
+        await JsRuntime!.InvokeVoidAsync("attachMouseMoveHandler", ContainerId, DotNetObjectReference.Create(this));
+        await JsRuntime!.InvokeVoidAsync("attachMouseOutHandler", ContainerId, DotNetObjectReference.Create(this));
     }
+
+    protected override async Task OnParametersSetAsync()
+        => await DrawChart();
 
     private async Task DrawChart()
     {
+        if (_context == null)
+            return;
+
         if (Values.Count == 0)
             return;
 
@@ -146,8 +153,8 @@ public partial class LineChart
         if (float.TryParse(value, out var numericValue))
         {
             // Calculate the Y position based on the numeric value and the available chart area height
-            var valueRange = maxValue - minValue;
-            return chartAreaHeight - ((numericValue - minValue) / valueRange * chartAreaHeight);
+            var valueRange = maxValue == minValue ? numericValue : (maxValue - minValue);
+            return chartAreaHeight - (numericValue - minValue) / valueRange * chartAreaHeight;
         }
         else
         {
@@ -186,8 +193,8 @@ public partial class LineChart
         _isHovering = false;
         await DrawChart();
     }
-    
-    
+
+
     private LineChartValue? FindClosestEntry(double x)
     {
         var chartAreaWidth = Width - 2 * ChartPadding;
@@ -195,6 +202,9 @@ public partial class LineChart
 
         // Find the entry with the closest X position to the hovered position
         var closestEntry = orderedValues.FirstOrDefault();
+        if (closestEntry == null)
+            return null;
+
         var closestDistance = Math.Abs(MapTimestampToX(closestEntry.Timestamp, chartAreaWidth) + ChartPadding - x);
 
         foreach (var entry in orderedValues)

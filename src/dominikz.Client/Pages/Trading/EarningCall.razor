@@ -7,19 +7,19 @@
 
     <div class="flex-row-no-wrap gap">
         <div class="avatar">
-            @if (string.IsNullOrWhiteSpace(_data?.LogoUrl) == false)
+            @if (string.IsNullOrWhiteSpace(Data?.LogoUrl) == false)
             {
-                <img style="background-color: @Colorizer.CreateColorDarkByText(_data?.Symbol)" height="150" width="150" src="@_data?.LogoUrl" alt="Logo"/>
+                <img style="background-color: @Colorizer.CreateColorDarkByText(Data?.Symbol)" height="150" width="150" src="@Data?.LogoUrl" alt="Logo"/>
             }
             else
             {
-                <div style="background-color: @Colorizer.CreateColorDarkByText(_data?.Symbol)" class="avatar-placeholder">
-                    <span>@_data?.Symbol[..Math.Min(2, _data.Symbol.Length)]</span>
+                <div style="background-color: @Colorizer.CreateColorDarkByText(Data?.Symbol)" class="avatar-placeholder">
+                    <span>@Data?.Symbol[..Math.Min(2, Data.Symbol.Length)]</span>
                 </div>
             }
         </div>
         <span style="font-size: xx-large">
-            <b>@_data?.Company</b>
+            <b>@Data?.Company</b>
         </span>
     </div>
 
@@ -29,13 +29,13 @@
             <span class="ec-card-symbol">🏛️</span>
             <div class="ec-card-data-container">
                 <span class="ec-card-data-name">Symbol:</span>
-                <span class="ec-card-data-value">@_data?.Symbol</span>
+                <span class="ec-card-data-value">@Data?.Symbol</span>
                 <span class="ec-card-data-name">ISIN:</span>
-                <span class="ec-card-data-value">@_data?.ISIN</span>
+                <span class="ec-card-data-value">@Data?.ISIN</span>
                 <span class="ec-card-data-name">Time:</span>
-                <span class="ec-card-data-value">@_data?.Time</span>
+                <span class="ec-card-data-value">@Data?.Time</span>
                 <span class="ec-card-data-name">Release:</span>
-                <span class="ec-card-data-value">@($"{_data?.Timestamp:HH:mm}")</span>
+                <span class="ec-card-data-value">@($"{Data?.Timestamp:HH:mm}")</span>
             </div>
         </div>
 
@@ -43,13 +43,13 @@
             <span class="ec-card-symbol">📑</span>
             <div class="ec-card-data-container">
                 <span class="ec-card-data-name">Revenue Estimate:</span>
-                <span class="ec-card-data-value ">@($"{_data?.RevenueEstimate.ToString("C", _culture)}")</span>
+                <span class="ec-card-data-value ">@($"{Data?.RevenueEstimate.ToString("C", _culture)}")</span>
                 <span class="ec-card-data-name">Revenue Actual:</span>
-                <span class="ec-card-data-value @GetColorByValue(_data?.RevenueActual, _data?.RevenueEstimate)">@($"{_data?.RevenueActual.ToString("C", _culture)}")</span>
+                <span class="ec-card-data-value @GetColorByValue(Data?.RevenueActual, Data?.RevenueEstimate)">@($"{Data?.RevenueActual.ToString("C", _culture)}")</span>
                 <span class="ec-card-data-name">EPS Estimate:</span>
-                <span class="ec-card-data-value">@($"{_data?.EpsEstimate.ToString("C", _culture)}")</span>
+                <span class="ec-card-data-value">@($"{Data?.EpsEstimate.ToString("C", _culture)}")</span>
                 <span class="ec-card-data-name">EPS Actual:</span>
-                <span class="ec-card-data-value @GetColorByValue(_data?.EpsActual, _data?.EpsEstimate)">@($"{_data?.EpsActual.ToString("C", _culture)}")</span>
+                <span class="ec-card-data-value @GetColorByValue(Data?.EpsActual, Data?.EpsEstimate)">@($"{Data?.EpsActual.ToString("C", _culture)}")</span>
             </div>
         </div>
 
@@ -57,32 +57,32 @@
             <span class="ec-card-symbol">📈</span>
             <div class="ec-card-data-container">
                 <span class="ec-card-data-name">Current Price:</span>
-                <span class="ec-card-data-value">@_data?.LastStockPrice?.ToString("C", _culture)</span>
+                <span class="ec-card-data-value">@Data?.LastStockPrice?.ToString("C", _culture)</span>
                 <span class="ec-card-data-name">Updated:</span>
-                <span class="ec-card-data-value">@($"{_data?.Updated:HH:mm:ss}")</span>
+                <span class="ec-card-data-value">@($"{Data?.Updated:HH:mm:ss}")</span>
                 <span class="ec-card-data-name">Snapshots:</span>
-                <span class="ec-card-data-value">@_data?.Snapshots</span>
+                <span class="ec-card-data-value">@Data?.Snapshots</span>
             </div>
         </div>
 
-        @if (_data?.Trade != null)
+        @if (Data?.Trade != null)
         {
             <div class="ec-card flex-row-no-wrap gap spacing">
                 <span class="ec-card-symbol">🚀</span>
                 <div class="ec-card-data-container">
                     <span class="ec-card-data-name">Buy In:</span>
-                    <span class="ec-card-data-value">@($"{_data.Trade.BuyIn.ToString("C", _culture)} ({_data.Trade.BuyInTimestamp:HH:mm:ss})")</span>
+                    <span class="ec-card-data-value">@($"{Data.Trade.BuyIn.ToString("C", _culture)} ({Data.Trade.BuyInTimestamp:HH:mm:ss})")</span>
                     <span class="ec-card-data-name">Buy Out:</span>
                     <div class="ec-card-data-value">
-                        <span class="@GetColorByValue(_data.Trade.BuyOut, _data.Trade.BuyIn)">@($"{_data.Trade.BuyOut?.ToString("C", _culture)}")</span>
-                        <span>@($"({_data.Trade.BuyOutTimestamp:HH:mm:ss})")</span>
+                        <span class="@GetColorByValue(Data.Trade.BuyOut, Data.Trade.BuyIn)">@($"{Data.Trade.BuyOut?.ToString("C", _culture)}")</span>
+                        <span>@($"({Data.Trade.BuyOutTimestamp:HH:mm:ss})")</span>
                     </div>
                     <span class="ec-card-data-name">Stock Count:</span>
-                    <span class="ec-card-data-value">@_data.Trade.StockCount</span>
+                    <span class="ec-card-data-value">@Data.Trade.StockCount</span>
                     <span class="ec-card-data-name">Fee:</span>
-                    <span class="ec-card-data-value">@_data.Trade.Fee?.ToString("C", _culture)</span>
+                    <span class="ec-card-data-value">@Data.Trade.Fee?.ToString("C", _culture)</span>
                     <span class="ec-card-data-name">Tax:</span>
-                    <span class="ec-card-data-value">@_data.Trade.Tax?.ToString("C", _culture)</span>
+                    <span class="ec-card-data-value">@Data.Trade.Tax?.ToString("C", _culture)</span>
                 </div>
             </div>
 
@@ -103,12 +103,12 @@
             </div>
         }
 
-        @if ((_data?.Externals.Length ?? 0) > 0)
+        @if ((Data?.Externals.Length ?? 0) > 0)
         {
             <div class="ec-card flex-row-no-wrap gap spacing">
                 <span class="ec-card-symbol">🔗</span>
                 <div class="flex-column gap">
-                    @foreach (var external in _data!.Externals)
+                    @foreach (var external in Data!.Externals)
                     {
                         <a style="color: cornflowerblue" href="@external.Url">@external.Name</a>
                     }
@@ -119,17 +119,20 @@
     </div>
 
     @* Timeline *@
-    <span style="font-size: x-large">
-        <b>Timeline</b>
-    </span>
-    <div class="hide-on-mobile">
-        <LineChart Values="@ConvertToLineChartEntry()"/>
+    <div class="hide-on-mobile flex-column gap">
+        <span style="font-size: x-large">
+            <b>Timeline</b>
+        </span>
+
+        <LineChart Values="_lineChartData"/>
     </div>
 
     @* Quarters *@
-    <span style="font-size: x-large">
-        <b>Last 4 Quarters</b>
-    </span>
-    <BarChart Values="@ConvertToBarChartEntry()"/>
+    <div class="flex-column gap">
+        <span style="font-size: x-large">
+            <b>Last 4 Quarters</b>
+        </span>
+        <BarChart Values="_barChartData"/>
+    </div>
 
 </div>

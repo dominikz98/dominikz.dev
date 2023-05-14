@@ -42,7 +42,7 @@ internal class QueueWorkerHub : IDisposable
 
     public IReadOnlyCollection<QueueWorkerEntry> Poll()
     {
-        var active = _queue.Where(x => x.Worker.Timestamp == null || x.Worker.Timestamp.Value.IsLowerOrEqualWithoutSeconds(DateTime.Now)).ToList();
+        var active = _queue.Where(x => x.Worker.Timestamp == null || x.Worker.Timestamp.Value.IsLowerOrEqualWithoutSeconds(DateTime.UtcNow)).ToList();
         _queue = _queue.Except(active).ToList();
         return active;
     }

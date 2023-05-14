@@ -50,14 +50,14 @@ internal class CrontabWorkerHub : IDisposable
     {
         var active = _worker.Select(x => new { Type = x, Instance = (CrontabWorker?)Activator.CreateInstance(x) })
             .Where(x => x.Instance != null)
-            .Where(x => x.Instance!.Schedules.Any(y => y.IsTime(DateTime.Now)))
+            .Where(x => x.Instance!.Schedules.Any(y => y.IsTime(DateTime.UtcNow)))
             .ToList();
 
         var result = new List<CrontabWorker>();
         foreach (var worker in active)
         {
             // already executed this minute?
-            var key = $"{worker.Type.Name}#{DateTime.Now.Minute}";
+            var key = $"{worker.Type.Name}#{DateTime.UtcNow.Minute}";
             if (_cache.TryGetValue(key, out _))
                 continue;
 

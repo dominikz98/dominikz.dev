@@ -1,6 +1,7 @@
 ﻿using dominikz.Domain.Models;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Finance;
+using dominikz.Infrastructure.Extensions;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Worker.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,9 @@ public class FinanceReleaseDataCrontabWorker : CrontabWorker
 {
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
-        // At 23:55 AM, Monday through Friday
+        // At 21:30 AM UTC, Monday through Friday
         // https://crontab.cronhub.io/
-        new("55 23 * * 1-5")
+        new("30 21 * * 1-5")
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
@@ -51,16 +52,17 @@ public class FinanceReleaseDataCollector
 
     public async Task Execute(CancellationToken cancellationToken)
     {
-        var calendar = (await _finnhub.GetEarningsCalendar(DateTime.Now, DateTime.Now, cancellationToken))
+        var calendar = (await _finnhub.GetEarningsCalendar(DateTime.UtcNow, DateTime.UtcNow, cancellationToken))
             .EarningsCalendar
             .Where(x => x.EpsEstimate != null)
             .Where(x => x.EpsActual != null)
             .Where(x => x.RevenueEstimate != null)
             .Where(x => x.RevenueActual != null)
             .ToList();
-        
+
+        var (todayStart, todayEnd) = DateOnly.FromDateTime(DateTime.UtcNow).ToUnixRange();
         var calls = await _database.From<EarningCall>()
-            .Where(x => x.Timestamp.Date == DateTime.Now.Date)
+            .Where(x => x.UtcTimestamp >= todayStart && x.UtcTimestamp <= todayEnd)
             .ToListAsync(cancellationToken);
 
         foreach (var ecEvent in calendar)
@@ -77,6 +79,6 @@ public class FinanceReleaseDataCollector
         }
 
         await _database.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: financial release data attached to {Count} calls", DateTime.Now, calls.Count(x => x.EpsActual != 0));
+        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: financial release data attached to {Count} calls", DateTime.UtcNow, calls.Count(x => x.EpsActual != 0));
     }
 }

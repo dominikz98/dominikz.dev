@@ -10,22 +10,31 @@ public partial class BarChart
     private Canvas2DContext? _context;
     private BECanvasComponent? _canvasRef;
 
-    [Parameter] public List<BarChartItem> Values { get; set; } = new();
+    [Parameter] public List<BarChartValue> Values { get; set; } = new();
     [Parameter] public int Height { get; set; } = 300;
     [Parameter] public int Width { get; set; } = 250;
     [Parameter] public int Minimum { get; set; } = 20;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender == false || Values.Count == 0)
+        if (firstRender == false)
             return;
 
         _context = await _canvasRef.CreateCanvas2DAsync();
-        await DrawBarChart();
+        await DrawChart();
     }
 
-    private async Task DrawBarChart()
+    protected override async Task OnParametersSetAsync()
+        => await DrawChart();
+
+    private async Task DrawChart()
     {
+        if (_context == null)
+            return;
+
+        if (Values.Count == 0)
+            return;
+            
         await _context!.ClearRectAsync(0, 0, Width, Height);
 
         var maxValue = Values.Max(d => d.Value);
@@ -73,4 +82,4 @@ public partial class BarChart
     }
 }
 
-public record BarChartItem(string Text, decimal Value);
+public record BarChartValue(string Text, decimal Value);

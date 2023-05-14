@@ -10,7 +10,7 @@ public class EarningCall
     public string ISIN { get; set; } = string.Empty;
     public bool LogoAvailable { get; set; }
     public EarningCallTime Time { get; set; }
-    public DateTime Timestamp { get; set; }
+    public long UtcTimestamp { get; set; }
     public decimal EpsActual { get; set; }
     public decimal EpsEstimate { get; set; }
     public long RevenueActual { get; set; }
@@ -19,4 +19,6 @@ public class EarningCall
     public decimal Q2 { get; set; }
     public decimal Q3 { get; set; }
     public decimal Q4 { get; set; }
+    
+    public IReadOnlyCollection<StockPrice> StockPrices { get; set; } = new List<StockPrice>();
 }

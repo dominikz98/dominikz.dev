@@ -2,6 +2,7 @@
 using dominikz.Domain.Models;
 using dominikz.Domain.Structs;
 using dominikz.Infrastructure.Clients.Finance;
+using dominikz.Infrastructure.Extensions;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using dominikz.Infrastructure.Provider.Storage.Requests;
@@ -18,9 +19,9 @@ public class EarningsDatesCrontabWorker : CrontabWorker
 {
     public override CronSchedule[] Schedules { get; } = new CronSchedule[]
     {
-        // At 06:30 AM, Monday through Friday
+        // At 04:30 AM UTC, Monday through Friday
         // https://crontab.cronhub.io/
-        new("30 6 * * 1-5")
+        new("30 4 * * 1-5")
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
@@ -77,7 +78,7 @@ public class EarningsDatesCollector
             return;
 
         // get earnings calls calender from finnhub
-        var finnhubCalls = (await _finnhub.GetEarningsCalendar(DateTime.Now, DateTime.Now, cancellationToken)).EarningsCalendar.ToList();
+        var finnhubCalls = (await _finnhub.GetEarningsCalendar(DateTime.UtcNow, DateTime.UtcNow, cancellationToken)).EarningsCalendar.ToList();
         if (finnhubCalls.Count == 0)
             return;
 
@@ -118,7 +119,7 @@ public class EarningsDatesCollector
                 Company = company?.Name ?? ovStock?.Name ?? string.Empty,
                 ISIN = ovStock?.ISIN ?? string.Empty,
                 LogoAvailable = logoAvailable, 
-                Timestamp = release,
+                UtcTimestamp = release.ToUnixTimestamp(),
                 Time = time,
                 Q1 = quarters.Count > 0 ? quarters[0].Surprise ?? 0 : 0,
                 Q2 = quarters.Count > 1 ? quarters[1].Surprise ?? 0 : 0,
@@ -128,17 +129,17 @@ public class EarningsDatesCollector
         }
 
         await _database.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: {Count} calls created", DateTime.Now, counter);
+        _logger.LogInformation("[{Timestamp:HH:mm:ss}]: {Count} calls created", DateTime.UtcNow, counter);
     }
 
     private (EarningCallTime Time, DateTime Release) GetTimestamps(EwCall call)
     {
-        var release = DateOnly.FromDateTime(DateTime.Now).ToDateTime(call.Release!.Value, DateTimeKind.Utc).ToLocalTime();
+        var release = DateOnly.FromDateTime(DateTime.UtcNow).ToDateTime(call.Release!.Value, DateTimeKind.Utc);
 
         EarningCallTime time;
-        if (release < DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(15, 30, 0)))
+        if (release < DateOnly.FromDateTime(DateTime.UtcNow).ToDateTime(new TimeOnly(13, 30, 0)))
             time = EarningCallTime.BMO;
-        else if (release >= DateOnly.FromDateTime(DateTime.Now).ToDateTime(new TimeOnly(22, 0, 0)))
+        else if (release >= DateOnly.FromDateTime(DateTime.UtcNow).ToDateTime(new TimeOnly(20, 0, 0)))
             time = EarningCallTime.AMC;
         else
             time = EarningCallTime.DMO;

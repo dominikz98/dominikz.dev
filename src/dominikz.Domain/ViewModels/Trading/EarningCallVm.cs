@@ -24,39 +24,39 @@ public class EarningCallVm : EarningCallListVm
     public DateTime? Updated { get; set; }
     public int Snapshots { get; set; }
     public TradeVm? Trade { get; set; }
-    public MarketEvent[] MarketEvents { get; set; } = Array.Empty<MarketEvent>();
-    public PriceSnapshot[] PriceSnapshots { get; set; } = Array.Empty<PriceSnapshot>();
-    public BotEvent[] BotEvents { get; set; } = Array.Empty<BotEvent>();
-    public EarningCallQuarter[] Quarters { get; set; } = Array.Empty<EarningCallQuarter>();
-    public ExternalUrl[] Externals { get; set; } = Array.Empty<ExternalUrl>();
+    public MarketEventVm[] MarketEvents { get; set; } = Array.Empty<MarketEventVm>();
+    public PriceSnapshotVm[] PriceSnapshots { get; set; } = Array.Empty<PriceSnapshotVm>();
+    public BotEventVm[] BotEvents { get; set; } = Array.Empty<BotEventVm>();
+    public EarningCallQuarterVm[] Quarters { get; set; } = Array.Empty<EarningCallQuarterVm>();
+    public ExternalUrlVm[] Externals { get; set; } = Array.Empty<ExternalUrlVm>();
 }
 
-public class MarketEvent
+public class MarketEventVm
 {
     public DateTime Timestamp { get; set; }
     public string Name { get; set; } = string.Empty;
 }
 
-public class PriceSnapshot
+public class PriceSnapshotVm
 {
     public DateTime Timestamp { get; set; }
     public decimal Value { get; set; }
 }
 
-public class BotEvent
+public class BotEventVm
 {
     public DateTime Timestamp { get; set; }
     public string Name { get; set; } = string.Empty;
     public decimal Value { get; set; }
 }
 
-public class EarningCallQuarter
+public class EarningCallQuarterVm
 {
     public string Name { get; set; } = string.Empty;
     public decimal Value { get; set; }
 }
 
-public class ExternalUrl
+public class ExternalUrlVm
 {
     public string Name { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;

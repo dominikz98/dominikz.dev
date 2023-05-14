@@ -1,4 +1,5 @@
 ﻿using dominikz.Domain.Models;
+using dominikz.Infrastructure.Provider.Database.Converter;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

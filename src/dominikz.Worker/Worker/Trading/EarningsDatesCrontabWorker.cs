@@ -47,14 +47,14 @@ public class EarningsDatesCollector
     private readonly FinnhubClient _finnhub;
     private readonly EarningsWhispersClient _whispers;
     private readonly OnVistaClient _onVista;
-    private readonly StorageProvider _storage;
+    private readonly IStorageProvider _storage;
     private readonly DatabaseContext _database;
 
     public EarningsDatesCollector(ILogger logger,
         FinnhubClient finnhub,
         EarningsWhispersClient whispers,
         OnVistaClient onVista,
-        StorageProvider storage,
+        IStorageProvider storage,
         DatabaseContext database)
     {
         _logger = logger;

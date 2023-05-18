@@ -45,6 +45,7 @@ public class EarningsWhispersClient
         var showAllButton = await page.QuerySelectorAsync(".switch-label.switch-label-both");
         await showAllButton.ClickAsync(new ClickOptions() { Button = MouseButton.Left, Delay = 5 });
         await page.EvaluateExpressionAsync("hideorshow()");
+        // await Wait1Sec(page);
 
         var result = new List<EwCall>();
         var calendar = await CrawListById(page, "epscalendar");
@@ -59,7 +60,19 @@ public class EarningsWhispersClient
         var moreCalendar = await CrawListById(page, "morecalendar");
         result.AddRange(moreCalendar);
 
-        return result;
+        return result.DistinctBy(x => x.Symbol).OrderBy(x => x.Symbol)
+            .ToList();
+    }
+
+    private async Task Wait1Sec(IPage page)
+    {
+        try
+        {
+            await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions() { IdleTime = 1000, Timeout = 1000 });
+        }
+        catch (TimeoutException)
+        {
+        }
     }
 
     private async Task<IReadOnlyCollection<EwCall>> CrawListById(IPage page, string id)
@@ -79,7 +92,8 @@ public class EarningsWhispersClient
 
             var earning = new EwCall();
             await AttachSymbol(earning, page, entry);
-            await AttachTimeInfo(earning, page, entry);
+            await TryAttachEpsResult(earning, page, entry);
+            await TryAttachTimeInfo(earning, page, entry);
             result.Add(earning);
         }
 
@@ -92,7 +106,32 @@ public class EarningsWhispersClient
         callVm.Symbol = await page.EvaluateFunctionAsync<string>("e => e.textContent", tickerElement);
     }
 
-    private async Task AttachTimeInfo(EwCall callVm, IPage page, IElementHandle entry)
+    private async Task TryAttachEpsResult(EwCall callVm, IPage page, IElementHandle entry)
+    {
+        var negative = false;
+        var element = await entry.QuerySelectorAsync(".actual.green");
+        if (element == null)
+            negative = true;
+
+        element ??= await entry.QuerySelectorAsync(".actual.red");
+        if (element == null)
+            return;
+
+        var rawValue = await page.EvaluateFunctionAsync<string>("e => e.textContent", element);
+        if (string.IsNullOrWhiteSpace(rawValue))
+            return;
+
+        rawValue = rawValue.Replace("(", "")
+            .Replace(")", "")
+            .Replace("$", "");
+
+        if (decimal.TryParse(rawValue, CultureInfo.InvariantCulture, out var value) == false)
+            return;
+
+        callVm.Eps = value * (negative ? -1 : 1);
+    }
+
+    private async Task TryAttachTimeInfo(EwCall callVm, IPage page, IElementHandle entry)
     {
         var element = await entry.QuerySelectorAsync(".time");
         if (element == null)
@@ -113,4 +152,5 @@ public class EwCall
 {
     public string Symbol { get; set; } = string.Empty;
     public TimeOnly? Release { get; set; }
+    public decimal? Eps { get; set; }
 }

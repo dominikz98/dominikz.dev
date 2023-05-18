@@ -12,7 +12,8 @@ public static class ServiceCollectionExtensions
         => services.Configure<ConnectionStrings>(configuration.GetSection(nameof(ConnectionStrings)))
             .Configure<EmailOptions>(configuration.GetSection(nameof(EmailOptions)))
             .Configure<ExternalUrlsOptions>(configuration.GetSection(nameof(ExternalUrlsOptions)))
-            .Configure<ApiKeysOptions>(configuration.GetSection(nameof(ApiKeysOptions)));
+            .Configure<ApiKeysOptions>(configuration.GetSection(nameof(ApiKeysOptions)))
+            .Configure<ExcelOptions>(configuration.GetSection(nameof(ExcelOptions)));
 
     public static IServiceCollection AddProvider(this IServiceCollection services, IConfigurationRoot configuration)
         => services.AddContext(configuration, true)
@@ -23,5 +24,6 @@ public static class ServiceCollectionExtensions
         => services.AddFinancialClients()
             .AddMedlanClient()
             .AddNoobitClient()
+            .AddExcelSheets()
             .AddSupermarktCheckClient();
 }

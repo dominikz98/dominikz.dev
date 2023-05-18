@@ -4,6 +4,7 @@ using dominikz.Infrastructure.Clients.Finance;
 using dominikz.Infrastructure.Clients.JustWatch;
 using dominikz.Infrastructure.Clients.Noobit;
 using dominikz.Infrastructure.Clients.SupermarktCheck;
+using dominikz.Infrastructure.Excel;
 using dominikz.Infrastructure.Provider.Database;
 using dominikz.Infrastructure.Provider.Storage;
 using Microsoft.EntityFrameworkCore;
@@ -58,4 +59,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
         => services.AddSingleton<IStorageProvider>(_ =>
             new StorageProvider(configuration.GetConnectionString(nameof(StorageProvider))));
+
+    public static IServiceCollection AddExcelSheets(this IServiceCollection services)
+        => services.AddScoped<TradingProtocolExcel>();
 }

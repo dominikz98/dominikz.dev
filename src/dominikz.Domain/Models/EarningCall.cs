@@ -8,17 +8,8 @@ public class EarningCall
     public string Symbol { get; set; } = string.Empty;
     public string Company { get; set; } = string.Empty;
     public string ISIN { get; set; } = string.Empty;
-    public bool LogoAvailable { get; set; }
     public EarningCallTime Time { get; set; }
     public long UtcTimestamp { get; set; }
-    public decimal EpsActual { get; set; }
-    public decimal EpsEstimate { get; set; }
-    public long RevenueActual { get; set; }
-    public long RevenueEstimate { get; set; }
-    public decimal Q1 { get; set; }
-    public decimal Q2 { get; set; }
-    public decimal Q3 { get; set; }
-    public decimal Q4 { get; set; }
-    
-    public IReadOnlyCollection<StockPrice> StockPrices { get; set; } = new List<StockPrice>();
+    public bool? EpsFlag { get; set; }
+    public bool? NetIncomeFlag { get; set; }
 }

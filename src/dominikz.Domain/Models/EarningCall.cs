@@ -11,5 +11,7 @@ public class EarningCall
     public EarningCallTime Time { get; set; }
     public long UtcTimestamp { get; set; }
     public bool? EpsFlag { get; set; }
-    public bool? NetIncomeFlag { get; set; }
+    public bool? RevenueFlag { get; set; }
+    public decimal? Growth { get; set; }
+    public decimal? Surprise { get; set; }
 }

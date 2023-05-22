@@ -64,17 +64,6 @@ public class EarningsWhispersClient
             .ToList();
     }
 
-    private async Task Wait1Sec(IPage page)
-    {
-        try
-        {
-            await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions() { IdleTime = 1000, Timeout = 1000 });
-        }
-        catch (TimeoutException)
-        {
-        }
-    }
-
     private async Task<IReadOnlyCollection<EwCall>> CrawListById(IPage page, string id)
     {
         var result = new List<EwCall>();
@@ -93,6 +82,9 @@ public class EarningsWhispersClient
             var earning = new EwCall();
             await AttachSymbol(earning, page, entry);
             await TryAttachEpsResult(earning, page, entry);
+            await TryAttachRevenueResult(earning, page, entry);
+            await TryAttachGrowthResult(earning, page, entry);
+            await TryAttachSurpriseResult(earning, page, entry);
             await TryAttachTimeInfo(earning, page, entry);
             result.Add(earning);
         }
@@ -108,10 +100,10 @@ public class EarningsWhispersClient
 
     private async Task TryAttachEpsResult(EwCall callVm, IPage page, IElementHandle entry)
     {
-        var negative = false;
+        var factor = 1;
         var element = await entry.QuerySelectorAsync(".actual.green");
         if (element == null)
-            negative = true;
+            factor = -1;
 
         element ??= await entry.QuerySelectorAsync(".actual.red");
         if (element == null)
@@ -123,12 +115,92 @@ public class EarningsWhispersClient
 
         rawValue = rawValue.Replace("(", "")
             .Replace(")", "")
-            .Replace("$", "");
+            .Replace("$", "")
+            .Trim();
 
         if (decimal.TryParse(rawValue, CultureInfo.InvariantCulture, out var value) == false)
             return;
 
-        callVm.Eps = value * (negative ? -1 : 1);
+        callVm.Eps = value * factor;
+    }
+
+    private async Task TryAttachRevenueResult(EwCall callVm, IPage page, IElementHandle entry)
+    {
+        var factor = 1;
+        var element = await entry.QuerySelectorAsync(".revactual.green");
+        if (element == null)
+            factor = -1;
+
+        element ??= await entry.QuerySelectorAsync(".revactual.red");
+        if (element == null)
+            return;
+
+        var rawValue = await page.EvaluateFunctionAsync<string>("e => e.textContent", element);
+        if (string.IsNullOrWhiteSpace(rawValue))
+            return;
+
+        if (rawValue.Contains('B'))
+            factor *= 1000;
+
+        rawValue = rawValue.Replace("B", "")
+            .Replace("M", "")
+            .Replace("$", "")
+            .Trim();
+
+        if (decimal.TryParse(rawValue, CultureInfo.InvariantCulture, out var value) == false)
+            return;
+
+        callVm.Revenue = value * factor;
+    }
+
+    private async Task TryAttachGrowthResult(EwCall callVm, IPage page, IElementHandle entry)
+    {
+        var factor = 1;
+        var element = await entry.QuerySelectorAsync(".revgrowthfull.green");
+        if (element == null)
+            factor = -1;
+
+        element ??= await entry.QuerySelectorAsync(".revgrowthfull.red");
+        if (element == null)
+            return;
+
+        var rawValue = await page.EvaluateFunctionAsync<string>("e => e.textContent", element);
+        if (string.IsNullOrWhiteSpace(rawValue))
+            return;
+
+        rawValue = rawValue.Replace("-", "")
+            .Replace("%", "")
+            .Trim();
+
+        if (decimal.TryParse(rawValue, CultureInfo.InvariantCulture, out var value) == false)
+            return;
+
+        callVm.Growth = value * factor;
+    }
+
+    private async Task TryAttachSurpriseResult(EwCall callVm, IPage page, IElementHandle entry)
+    {
+        var factor = 1;
+        var element = await entry.QuerySelectorAsync(".epssurpfull.green");
+        if (element == null)
+            factor = -1;
+
+        element ??= await entry.QuerySelectorAsync(".epssurpfull.red");
+        if (element == null)
+            return;
+
+        var rawValue = await page.EvaluateFunctionAsync<string>("e => e.textContent", element);
+        if (string.IsNullOrWhiteSpace(rawValue))
+            return;
+
+        rawValue = rawValue.Replace("-", "")
+            .Replace("%", "")
+            .Trim();
+
+        if (decimal.TryParse(rawValue, CultureInfo.InvariantCulture, out var value) == false)
+            return;
+
+        callVm.Surprise = value * factor;
     }
 
     private async Task TryAttachTimeInfo(EwCall callVm, IPage page, IElementHandle entry)
@@ -153,4 +225,7 @@ public class EwCall
     public string Symbol { get; set; } = string.Empty;
     public TimeOnly? Release { get; set; }
     public decimal? Eps { get; set; }
+    public decimal? Revenue { get; set; }
+    public decimal? Growth { get; set; }
+    public decimal? Surprise { get; set; }
 }

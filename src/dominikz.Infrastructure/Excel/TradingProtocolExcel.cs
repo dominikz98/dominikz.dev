@@ -4,7 +4,6 @@ using dominikz.Domain.Models;
 using dominikz.Domain.Options;
 using dominikz.Infrastructure.Extensions;
 using Microsoft.Extensions.Options;
-using PuppeteerSharp.Input;
 
 namespace dominikz.Infrastructure.Excel;
 
@@ -49,7 +48,7 @@ public class TradingProtocolExcel : ExcelEditor
 
     private void PrintSeparator(DateTime date, ref int rowIdx)
     {
-        var cell = Merge($"B{rowIdx}:J{rowIdx}");
+        var cell = Merge($"B{rowIdx}:L{rowIdx}");
         cell.Style.Fill.BackgroundColor = XLColor.BlueBell;
         cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
         cell.Value = $"Next Day ({date:dd.MM.yyyy})";
@@ -57,7 +56,7 @@ public class TradingProtocolExcel : ExcelEditor
 
     private void PrintMarketEvent(ref int rowIdx)
     {
-        var cell = Merge($"B{rowIdx}:J{rowIdx}");
+        var cell = Merge($"B{rowIdx}:L{rowIdx}");
         cell.Style.Fill.BackgroundColor = XLColor.Apricot;
         cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
         cell.Value = $"NYSE Market ({NyseOpen.ToLocalTime():HH:mm} - {NyseClose.ToLocalTime():HH:mm})";
@@ -72,16 +71,45 @@ public class TradingProtocolExcel : ExcelEditor
         UpdateCell(rowIdx, StartColumn + 2, $"{timestamp:HH:mm} ({call.Time})"); // Time
         UpdateCell(rowIdx, StartColumn + 3, call.Symbol); // Symbol
         UpdateCell(rowIdx, StartColumn + 4, call.ISIN); // ISIN
-        UpdateCell(rowIdx, StartColumn + 5, FlatToString(call.EpsFlag)); // EPS
-        UpdateCell(rowIdx, StartColumn + 6, FlatToString(call.NetIncomeFlag)); // NET
+        PrintFlag(rowIdx, StartColumn + 5, call.EpsFlag); // EPS
+        PrintFlag(rowIdx, StartColumn + 6, call.RevenueFlag); // Revenue
+        PrintPerCent(rowIdx, StartColumn + 7, call.Growth); // Growth
+        PrintPerCent(rowIdx, StartColumn + 8, call.Surprise); // Surprise
+
+        // highlight
+        if (call is { EpsFlag: true, RevenueFlag: true }
+            && (call.Growth > 30 || call.Surprise > 30))
+            GetCellRef($"B{rowIdx}:L{rowIdx}").Style.Fill.BackgroundColor = XLColor.LightGreen;
+
         rowIdx++;
     }
 
-    private string FlatToString(bool? value)
-        => value switch
+    private void PrintFlag(int rowIdx, int columnIdx, bool? value)
+    {
+        if (value == null)
         {
-            true => "✅",
-            false => "❌",
-            _ => "-"
-        };
+            UpdateCell(rowIdx, columnIdx, "-");
+            return;
+        }
+
+        if (value == true)
+        {
+            UpdateCell(rowIdx, columnIdx, "✓", cell => cell.Style.Font.FontColor = XLColor.Green);
+            return;
+        }
+
+        if (value == false)
+            UpdateCell(rowIdx, columnIdx, "╳", cell => cell.Style.Font.FontColor = XLColor.Red);
+    }
+
+    private void PrintPerCent(int rowIdx, int columnIdx, decimal? value)
+    {
+        if (value == null)
+        {
+            UpdateCell(rowIdx, columnIdx, "-");
+            return;
+        }
+
+        UpdateCell(rowIdx, columnIdx, $"{value} %");
+    }
 }

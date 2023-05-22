@@ -23,18 +23,25 @@ public abstract class ExcelEditor : IDisposable
         _workSheet = sheet;
     }
 
+    protected void UpdateCell(int rowIdx, int columnIdx, string value, Action<IXLCell> formatter)
+    {
+        var cell = GetCellRef(rowIdx, columnIdx);
+        cell.Value = value;
+        formatter(cell);
+    }
+
     protected void UpdateCell(int rowIdx, int columnIdx, string value)
-        => _workSheet.Cell(rowIdx, columnIdx).Value = value;
+        => UpdateCell(rowIdx, columnIdx, value, _ => { });
 
     protected IXLCell GetCellRef(int rowIdx, int columnIdx)
         => _workSheet.Cell(rowIdx, columnIdx);
 
     protected IXLCells GetCellRef(string range)
         => _workSheet.Cells(range);
-    
+
     protected IXLCell Merge(string range)
         => _workSheet.Range(range).Merge().FirstCell();
-    
+
     protected void Save()
         => _workBook.SaveAs(_filepath);
 

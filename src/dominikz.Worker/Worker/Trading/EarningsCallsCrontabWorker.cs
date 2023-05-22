@@ -23,8 +23,8 @@ public class EarningsCallsCrontabWorker : CrontabWorker
         new("30 4 * * 1-5"),
         // At 13:14 AM UTC, Monday through Friday
         new("15 13 * * 1-5"),
-        // At 21:45 AM UTC, Monday through Friday
-        new("45 21 * * 1-5")
+        // At 21:55 AM UTC, Monday through Friday
+        new("55 21 * * 1-5")
     };
 
     protected override async Task Execute(ILogger logger, IConfigurationRoot configuration, CancellationToken cancellationToken)
@@ -88,13 +88,16 @@ public class EarningsCallsCollector
         foreach (var whisperCall in whispersCalls)
         {
             var databaseCall = databaseCalls.FirstOrDefault(x => x.Symbol == whisperCall.Symbol);
-            if (databaseCall != null && whisperCall.Eps != null)
+            if (databaseCall != null)
             {
                 updCounter++;
-                databaseCall.EpsFlag = whisperCall.Eps.Value > 0;
+                databaseCall.EpsFlag = whisperCall.Eps is null ? null : whisperCall.Eps.Value > 0;
+                databaseCall.RevenueFlag = whisperCall.Revenue is null ? null : whisperCall.Revenue.Value > 0;
+                databaseCall.Surprise = whisperCall.Surprise;
+                databaseCall.Growth = whisperCall.Growth;
                 _database.Update(databaseCall);
             }
-            else if (databaseCall == null && whisperCall.Release != null)
+            else if (whisperCall.Release != null)
             {
                 var (time, release) = GetTimestamps(whisperCall);
                 if (time == EarningCallTime.DMO)
@@ -105,7 +108,7 @@ public class EarningsCallsCollector
                 var company = await _finnhub.GetCompany(whisperCall.Symbol, cancellationToken);
                 var ovStock = await _onVista.SearchStockBySymbol(whisperCall.Symbol, cancellationToken);
 
-                await _database.AddAsync( new EarningCall()
+                await _database.AddAsync(new EarningCall()
                 {
                     Symbol = whisperCall.Symbol,
                     Company = company?.Name ?? ovStock?.Name ?? string.Empty,
@@ -126,10 +129,10 @@ public class EarningsCallsCollector
         var calls = await _database.From<EarningCall>()
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        
+
         _protocolExcel.Create(calls);
     }
-    
+
     private (EarningCallTime Time, DateTime Release) GetTimestamps(EwCall call)
     {
         var release = DateOnly.FromDateTime(DateTime.UtcNow).ToDateTime(call.Release!.Value, DateTimeKind.Utc);
